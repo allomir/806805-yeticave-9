@@ -1,7 +1,7 @@
 <?php
 $is_auth = rand(0, 1);
 
-$user_name = 'Михаил Лебедев'; // укажите здесь ваше имя
+$user_name = 'Михаил Лебедев';
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -25,27 +25,23 @@ $user_name = 'Михаил Лебедев'; // укажите здесь ваш�
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
         <a class="main-header__add-lot button" href="pages/add-lot.html">Добавить лот</a>
-
         <nav class="user-menu">
             <?php if ($is_auth == 1): ?>
-            <div class=\"user-menu__logged\">
+            <div class="user-menu__logged">
                 <p><?=$user_name; ?></p>
-                <a class=\"user-menu__bets\" href=\"pages/my-bets.html\">Мои ставки</a>
-                <a class=\"user-menu__logout\" href=\"#\">Выход</a>
+                <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
+                <a class="user-menu__logout" href="#">Выход</a>
             </div>
             <?php else: ?>
-            <ul class=\"user-menu__list\">
-                <li class=\"user-menu__item\">
-                    <a href=\"#\">Регистрация</a>
+            <ul class="user-menu__list">
+                <li class="user-menu__item">
+                    <a href="#">Регистрация</a>
                 </li>
-                <li class=\"user-menu__item\">
-                    <a href=\"#\">Вход</a>
+                <li class="user-menu__item">
+                    <a href="#">Вход</a>
                 </li>
             </ul>
             <?php endif; ?>
-         ?>
-        <!-- здесь должен быть PHP код для показа меню и данных пользователя -->
-
         </nav>
     </div>
 </header>

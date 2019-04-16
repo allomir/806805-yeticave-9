@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 $is_auth = rand(0, 1);
 
 $user_name = 'Михаил Лебедев';
@@ -41,7 +44,18 @@ $items = [
         'price' => '5400',
         'imgURL' => 'img/lot-6.jpg'
     ]
-]
+    ];
+
+
+function makePriceFormat($price) {
+    $priceFormat = ceil($price); // Округление и значение поумолчанию если < 1000
+
+    if ($priceFormat >= 1000) {
+        $priceFormat = number_format($price, $decimals = 0, ".", " ");
+    }
+         return $priceFormat .= ' ₽';
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -118,7 +132,7 @@ $items = [
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?=$item['price'];?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?=makePriceFormat($item['price']);?></span>
                         </div>
                         <div class="lot__timer timer">
                             12:23

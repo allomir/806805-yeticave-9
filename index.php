@@ -44,17 +44,17 @@ $items = [
         'price' => '5400',
         'imgURL' => 'img/lot-6.jpg'
     ]
-    ];
-
+];
 
 function makePriceFormat($price) {
     $priceFormat = ceil($price); // Округление и значение поумолчанию если < 1000
 
-    if ($priceFormat >= 1000) {
-        $priceFormat = number_format($price, $decimals = 0, ".", " ");
-    }
-         return $priceFormat .= ' ₽';
-    }
+        if ($priceFormat >= 1000) {
+            $priceFormat = number_format($price, $decimals = 0, ".", " ");
+        }
+        
+    return $priceFormat .= " <b class=\"rub\">₽</b>";
+}
 
 ?>
 

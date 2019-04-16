@@ -1,8 +1,63 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 $is_auth = rand(0, 1);
 
 $user_name = 'Михаил Лебедев';
+$categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];
+
+$items = [
+    [
+        'name' => '2014 Rossignol District Snowboard',
+        'category' => 'Доски и лыжи',
+        'price' => '10999',
+        'imgURL' => 'img/lot-1.jpg'
+    ],
+    [
+        'name' => 'DC Ply Mens 2016/2017 Snowboard',
+        'category' => 'Доски и лыжи',
+        'price' => '159999',
+        'imgURL' => 'img/lot-2.jpg'
+    ],
+    [
+        'name' => 'Крепления Union Contact Pro 2015 года размер L/XL',
+        'category' => 'Крепления',
+        'price' => '8000',
+        'imgURL' => 'img/lot-3.jpg'
+    ],
+    [
+        'name' => 'Ботинки для сноуборда DC Mutiny Charocal',
+        'category' => 'Ботинки',
+        'price' => '10999',
+        'imgURL' => 'img/lot-4.jpg'
+    ],
+    [
+        'name' => 'Куртка для сноуборда DC Mutiny Charocal',
+        'category' => 'Одежда',
+        'price' => '7500',
+        'imgURL' => 'img/lot-5.jpg'
+    ],
+    [
+        'name' => 'Маска Oakley Canopy',
+        'category' => 'Разное',
+        'price' => '5400',
+        'imgURL' => 'img/lot-6.jpg'
+    ]
+];
+
+function makePriceFormat($price) {
+    $priceFormat = ceil($price); // Округление и значение поумолчанию если < 1000
+
+        if ($priceFormat >= 1000) {
+            $priceFormat = number_format($price, $decimals = 0, ".", " ");
+        }
+        
+    return $priceFormat .= " <b class=\"rub\">₽</b>";
+}
+
 ?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -52,10 +107,7 @@ $user_name = 'Михаил Лебедев';
         <p class="promo__text">На нашем интернет-аукционе ты найдёшь самое эксклюзивное сноубордическое и горнолыжное снаряжение.</p>
         <ul class="promo__list">
             <!--заполните этот список из массива категорий-->
-            <?php 
-            $categoryN = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];
-            foreach ($categoryN as $category): 
-            ?>
+            <?php foreach ($categories as $category): ?>
             <li class="promo__item promo__item--boards">
                 <a class="promo__link" href="pages/all-lots.html"><?=$category;?></a>
             </li>
@@ -69,47 +121,7 @@ $user_name = 'Михаил Лебедев';
         <ul class="lots__list">
             <!--заполните этот список из массива с товарами-->
 
-            <?php 
-            $item01 = [
-                'name' => '2014 Rossignol District Snowboard',
-                'category' => 'Доски и лыжи',
-                'price' => '10999',
-                'imgURL' => 'img/lot-1.jpg'
-            ];
-            $item02 = [
-                'name' => 'DC Ply Mens 2016/2017 Snowboard',
-                'category' => 'Доски и лыжи',
-                'price' => '159999',
-                'imgURL' => 'img/lot-2.jpg'
-            ];
-            $item03 = [
-                'name' => 'Крепления Union Contact Pro 2015 года размер L/XL',
-                'category' => 'Крепления',
-                'price' => '8000',
-                'imgURL' => 'img/lot-3.jpg'
-            ];
-            $item04 = [
-                'name' => 'Ботинки для сноуборда DC Mutiny Charocal',
-                'category' => 'Ботинки',
-                'price' => '10999',
-                'imgURL' => 'img/lot-4.jpg'
-            ];
-            $item05 = [
-                'name' => 'Куртка для сноуборда DC Mutiny Charocal',
-                'category' => 'Одежда',
-                'price' => '7500',
-                'imgURL' => 'img/lot-5.jpg'
-            ];
-            $item06 = [
-                'name' => 'Маска Oakley Canopy',
-                'category' => 'Разное',
-                'price' => '5400',
-                'imgURL' => 'img/lot-6.jpg'
-            ];
-
-            $itemN = [$item01, $item02, $item03, $item04, $item05, $item06]; 
-            foreach ($itemN as $item):
-            ?>
+            <?php foreach ($items as $item): ?>
             <li class="lots__item lot">
                 <div class="lot__image">
                     <img src="<?=$item['imgURL'];?>" width="350" height="260" alt="<?=$item['name'];?>">
@@ -120,7 +132,7 @@ $user_name = 'Михаил Лебедев';
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?=$item['price'];?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?=makePriceFormat($item['price']);?></span>
                         </div>
                         <div class="lot__timer timer">
                             12:23
@@ -138,7 +150,7 @@ $user_name = 'Михаил Лебедев';
     <nav class="nav">
         <ul class="nav__list container">
             <!--заполните этот список из массива категорий-->
-            <?php foreach ($categoryN as $category): ?>
+            <?php foreach ($categories as $category): ?>
             <li class="nav__item">
                 <a href="pages/all-lots.html"><?=$category;?></a>
             </li>

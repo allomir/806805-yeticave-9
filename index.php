@@ -57,6 +57,7 @@ function makePriceFormat($price) {
 require('helpers.php');
 
 $page_content = include_template('index.php', ['categories' => $_categories, 'items' => $_items]);
+// Добавление массива кактегории для меню футера - нет в задании
 $layout_content = include_template('layout.php', ['categories' => $_categories, 'content' => $page_content, 'user_name' => $user_name, 'title' => 'Главная']);
 
 print( $layout_content );

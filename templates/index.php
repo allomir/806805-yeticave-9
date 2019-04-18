@@ -21,10 +21,12 @@
             <?php foreach ($items as $item): ?>
             <li class="lots__item lot">
                 <div class="lot__image">
+                    <!-- Защита от XSS -->
                     <img src="<?= $item['imgURL']; ?>" width="350" height="260" alt="<?= htmlspecialchars($item['name']); ?>">
                 </div>
                 <div class="lot__info">
                     <span class="lot__category"><?= $item['category']; ?></span>
+                    <!-- Защита от XSS -->
                     <h3 class="lot__title"><a class="text-link" href="pages/lot.html"><?= htmlspecialchars($item['name']); ?></a></h3>
                     <div class="lot__state">
                         <div class="lot__rate">

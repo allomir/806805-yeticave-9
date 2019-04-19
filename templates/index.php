@@ -6,7 +6,8 @@
 
             <?php foreach ($categories as $category): ?>
             <li class="promo__item promo__item--boards">
-                <a class="promo__link" href="pages/all-lots.html"><?= $category; ?></a>
+                <!-- Защита от XSS -->
+                <a class="promo__link" href="pages/all-lots.html"><?= htmlspecialchars($category); ?></a>
             </li>
             <?php endforeach; ?>
 
@@ -22,16 +23,17 @@
             <li class="lots__item lot">
                 <div class="lot__image">
                     <!-- Защита от XSS -->
-                    <img src="<?= $item['imgURL']; ?>" width="350" height="260" alt="<?= htmlspecialchars($item['name']); ?>">
+                    <img src="<?= htmlspecialchars($item['imgURL']); ?>" width="350" height="260" alt="<?= htmlspecialchars($item['name']); ?>">
                 </div>
                 <div class="lot__info">
-                    <span class="lot__category"><?= $item['category']; ?></span>
+                    <!-- Защита от XSS -->
+                    <span class="lot__category"><?= htmlspecialchars($item['category']); ?></span>
                     <!-- Защита от XSS -->
                     <h3 class="lot__title"><a class="text-link" href="pages/lot.html"><?= htmlspecialchars($item['name']); ?></a></h3>
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?= makePriceFormat($item['price']); ?></span>
+                            <span class="lot__cost"><?= makePriceFormat(htmlspecialchars($item['price'])); ?></span>
                         </div>
                         <div class="lot__timer timer">
                             12:23

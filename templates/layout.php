@@ -23,7 +23,7 @@
         <a class="main-header__add-lot button" href="pages/add-lot.html">Добавить лот</a>
         <nav class="user-menu">
 
-            <?php $is_auth = rand(0, 1); if ($is_auth == 1): ?>
+            <?php if ($is_auth == 1): ?>
             <div class="user-menu__logged">
                 <!-- Защита от XSS -->
                 <p><?= htmlspecialchars($user_name); ?></p> 

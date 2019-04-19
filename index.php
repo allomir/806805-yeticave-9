@@ -2,10 +2,11 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+$is_auth = rand(0, 1);
 $user_name = 'Михаил Лебедев';
-$_categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];
+$categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];
 
-$_items = [
+$items = [
     [
         'name' => '2014 Rossignol District Snowboard',
         'category' => 'Доски и лыжи',
@@ -51,13 +52,22 @@ function makePriceFormat($price) {
             $priceFormat = number_format($price, $decimals = 0, ".", " ");
         }
         
-    return $priceFormat .= " <b class=\"rub\">р</b>";
+    return $priceFormat . '<b class="rub">р</b>';
 }
 
 require('helpers.php');
 
-$page_content = include_template('index.php', ['categories' => $_categories, 'items' => $_items]);
-// Добавление массива кактегории для меню футера - нет в задании
-$layout_content = include_template('layout.php', ['categories' => $_categories, 'content' => $page_content, 'user_name' => $user_name, 'title' => 'Главная']);
+$page_content = include_template('index.php', [
+    'categories' => $categories, 
+    'items' => $items
+]);
 
-print( $layout_content );
+$layout_content = include_template('layout.php', [
+    'is_auth' => $is_auth,
+    'categories' => $categories, 
+    'content' => $page_content, 
+    'user_name' => $user_name, 
+    'title' => 'Главная'
+]);
+
+print($layout_content);

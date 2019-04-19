@@ -55,11 +55,27 @@ function makePriceFormat($price) {
     return $priceFormat . '<b class="rub">р</b>';
 }
 
+date_default_timezone_set("Europe/Moscow");
+$TS_midnight = strtotime('tomorrow');
+$TS_diff = $TS_midnight - time();
+
+$hours = floor($TS_diff / 3600);
+$minutes = floor(($TS_diff % 3600) / 60);
+$timer = $hours . ":" . $minutes;
+$timer_style = '';
+
+if ($TS_diff <= 3600) {
+    $timer_style = 'timer--finishing';
+}
+$timer = [$timer, $timer_style];
+
+
 require('helpers.php');
 
 $page_content = include_template('index.php', [
     'categories' => $categories, 
-    'items' => $items
+    'items' => $items,
+    'timer' => $timer
 ]);
 
 $layout_content = include_template('layout.php', [

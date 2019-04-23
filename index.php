@@ -1,6 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 $is_auth = rand(0, 1);
 $user_name = 'Михаил Лебедев';

@@ -45,3 +45,8 @@ CREATE TABLE bets (
   ts_bet TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   dt_bet DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE UNIQUE INDEX ctg ON categories(title);
+CREATE UNIQUE INDEX eml ON users(email);
+CREATE INDEX itmn ON items(item_name);
+CREATE INDEX usrn ON users(user_name);

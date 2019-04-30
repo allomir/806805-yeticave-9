@@ -25,7 +25,7 @@ if (!$result) {
 // передача значений в ассоциативный массив с категориями
 $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);  
 foreach ($rows as $category_row) {
-    $categories[$category_row[symbol]] = $category_row[title]; 
+    $categories[$category_row['symbol']] = $category_row['title']; 
 }
 
 /* 2часть. Извлечение лотов из таблицы */
@@ -75,10 +75,10 @@ function getLastPrice ($itemID, $price) {
     
     // передача значений в ассоциативный массив с количеством ставок и макс ценой
     $bet = mysqli_fetch_assoc($result);
-    $bet[number_bets] .= ' ставок';
+    $bet['number_bets'] .= ' ставок';
     if (mysqli_num_rows($result) == 0) {
-        $bet[last_price] = $price;
-        $bet[number_bets] = 'Стартовая цена';
+        $bet['last_price'] = $price;
+        $bet['number_bets'] = 'Стартовая цена';
     }
     return $bet;
 }
@@ -163,7 +163,6 @@ require('helpers.php');
 $page_content = include_template('index.php', [
     'categories' => $categories, 
     'items' => $items,
-    'timer' => $timer
 ]);
 
 $layout_content = include_template('layout.php', [

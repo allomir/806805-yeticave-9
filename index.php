@@ -72,14 +72,18 @@ function getLastPrice ($itemID, $price) {
         $error = mysqli_error($conn);
         print("Ошибка MySQL: " . $error);
     }
-    
+
     // передача значений в ассоциативный массив с количеством ставок и макс ценой
-    $bet = mysqli_fetch_assoc($result);
-    $bet['number_bets'] .= ' ставок';
-    if (mysqli_num_rows($result) == 0) {
+    
+    if (mysqli_num_rows($result)) {
+        $bet = mysqli_fetch_assoc($result);
+        $bet['number_bets'] .= ' ставок';
+    }
+    else {
         $bet['last_price'] = $price;
         $bet['number_bets'] = 'Стартовая цена';
     }
+    
     return $bet;
 }
 

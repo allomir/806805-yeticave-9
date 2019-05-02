@@ -10,6 +10,24 @@ $user_name = 'Михаил Лебедев';
 */
 $response_code = ''; 
 
+/* Общее подключение к БД */
+
+$conn = mysqli_connect("localhost", "root", "", "yeticave");
+mysqli_set_charset($conn, "utf8"); // первым делом кодировка
+if ($conn == false) {
+    print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
+}
+
+/* Общий запрос категорий из БД таблицы без защиты от sql-инъекции, тк нет переменных */
+
+$sql = 'SELECT symbol, title FROM categories'; 
+$result = mysqli_query($conn, $sql);
+if (!$result) {
+    $error = mysqli_error($conn);
+    print("Ошибка MySQL: " . $error);
+}
+$categories = mysqli_fetch_all($result, MYSQLI_ASSOC);  
+
 /* Горизонтальное простое меню - для всех страниц кроме главной */
 
 function makeMainMenuSimple($categories) {
@@ -17,7 +35,7 @@ function makeMainMenuSimple($categories) {
     foreach ($categories as $category) {
         $MenuSimple .= '<li class="nav__item"><a href="all-lots.php">' . htmlspecialchars($category["title"]) . '</a></li>';
     }
-return $MenuSimple;
+    return $MenuSimple;
 }
 
 /* функция формат цены */
@@ -36,7 +54,6 @@ function makeTimer($TS_end) {
     date_default_timezone_set("Europe/Moscow");
     $TS_diff = strtotime($TS_end) - time(); // Осталось до конца ставки
     $timer_style = '';
-
     // Создаем таймер День : Час : Мин
     if ($TS_diff > 0) {
         /* Дней осталось
@@ -63,7 +80,6 @@ function makeTimer($TS_end) {
     return $timer = ['DDHHMM' => $timer, 'style' => $timer_style];
 }
 
-
 /* функция последняя цена и колво ставок */
 
 function getLastPrice ($itemID, $price) {
@@ -75,19 +91,16 @@ function getLastPrice ($itemID, $price) {
     if ($conn == false) {
         print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
     }   
-
     // запрос группировка ставок по лотам, активных лотов (не закрытый) без защиты от sql-инъекции, тк нет переменных
     $sql = "SELECT item_id, COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price FROM bets 
         WHERE winner_id IS NULL AND item_id = '$itemID' /* проверяем что лот не закрыт, те нет победителя и врямя не вышло. Если никто не сделал ставку лота нет в таблице */
         GROUP BY item_id DESC 
     "; 
-
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         $error = mysqli_error($conn);
         print("Ошибка MySQL: " . $error);
     }
-
     // передача значений в ассоциативный массив с количеством ставок и макс ценой
     if (mysqli_num_rows($result)) {
         $bet = mysqli_fetch_assoc($result);
@@ -97,7 +110,6 @@ function getLastPrice ($itemID, $price) {
         $bet['last_price'] = $price;
         $bet['number_bets'] = 'Стартовая цена';
     }
-
     return $bet;
 }
 

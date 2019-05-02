@@ -1,7 +1,5 @@
 <?php
 
-$is_auth = rand(0, 1);
-$user_name = 'Михаил Лебедев';
 require('function.php'); // функции
 require('helpers.php'); // шаблонизатор
 
@@ -50,6 +48,7 @@ if (isset($_GET['itemID'])) {
     }
     elseif(!mysqli_num_rows($result)){
         $page_name = '404 Страница не найдена';
+        $response_code = http_response_code(404);
         $error = '<h2>404 Страница не найдена</h2>
     <p>Данной страницы не существует на сайте.</p>';
         $page_content = include_template('error.php', [
@@ -67,6 +66,7 @@ if (isset($_GET['itemID'])) {
 }
 else {
     $page_name = '404 Страница не найдена';
+    $response_code = http_response_code(404);
     $error = '<h2>404 Страница не найдена</h2>
     <p>Данной страницы не существует на сайте.</p>';
     $page_content = include_template('error.php', [
@@ -83,7 +83,8 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'user_name' => $user_name, 
-    'title' => $page_name
+    'title' => $page_name,
+    'response_code' => $response_code
 ]);
 
 print($layout_content);

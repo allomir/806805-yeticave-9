@@ -55,7 +55,8 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'user_name' => $user_name, 
-    'title' => 'Главная'
+    'title' => 'Главная',
+    'response_code' => $response_code
 ]);
 
 print($layout_content);

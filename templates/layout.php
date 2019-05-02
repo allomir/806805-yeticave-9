@@ -54,13 +54,9 @@
     <nav class="nav">
         <ul class="nav__list container">
 
-            <?php foreach ($categories as $category): ?>
-            <li class="nav__item">
-                <!-- Защита от XSS -->
-                <a href="pages/all-lots.html"><?= htmlspecialchars($category); ?></a>
-            </li>
-            <?php endforeach; ?>
-
+        <!-- Горизонтальное простое меню -->
+        <?= makeMainMenuSimple($categories); ?>
+        
         </ul>
     </nav>
     <div class="main-footer__bottom container">

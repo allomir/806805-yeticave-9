@@ -1,26 +1,18 @@
-    
-    <section class="promo">
-        <h2 class="promo__title">Нужен стафф для катки?</h2>
-        <p class="promo__text">На нашем интернет-аукционе ты найдёшь самое эксклюзивное сноубордическое и горнолыжное снаряжение.</p>
-        <ul class="promo__list">
 
-            <?php /* Главное меню - главная страница */
-            foreach ($categories as $category): ?>
-            <li class="promo__item promo__item--<?= htmlspecialchars($category['symbol']); ?>">
-                <!-- Защита от XSS -->
-                <a class="promo__link" href="all-lots.php"><?= htmlspecialchars($category['title']); ?></a>
-            </li>
-            <?php endforeach; ?>
+    <nav class="nav">
+      <ul class="nav__list container">
+        
+        <!-- Горизонтальное простое меню -->
+        <?= makeMainMenuSimple($categories); ?>
 
-        </ul>
-    </section>
-    <section class="lots">
-        <div class="lots__header">
-            <h2>Открытые лоты</h2>
-        </div>
+      </ul>
+    </nav>
+    <div class="container">
+      <section class="lots">
+        <h2>Все лоты в категории <span>«Доски и лыжи»</span></h2>
         <ul class="lots__list">
 
-            <?php 
+        <?php 
             // Показ элементов (лотов) страницы
             foreach ($items as $item):
             
@@ -49,8 +41,16 @@
                     </div>
                 </div>
             </li>
-
             <?php endforeach; ?>
 
         </ul>
-    </section>
+      </section>
+      <ul class="pagination-list">
+        <li class="pagination-item pagination-item-prev"><a>Назад</a></li>
+        <li class="pagination-item pagination-item-active"><a>1</a></li>
+        <li class="pagination-item"><a href="#">2</a></li>
+        <li class="pagination-item"><a href="#">3</a></li>
+        <li class="pagination-item"><a href="#">4</a></li>
+        <li class="pagination-item pagination-item-next"><a href="#">Вперед</a></li>
+      </ul>
+    </div>

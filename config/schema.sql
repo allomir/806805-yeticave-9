@@ -7,18 +7,18 @@ USE yeticave;
 CREATE TABLE categories (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   symbol CHAR(64) NOT NULL UNIQUE,
-  title CHAR(64) NOT NULL UNIQUE
+  name CHAR(64) NOT NULL UNIQUE
 );
 
 CREATE TABLE items (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  category CHAR(64) NOT NULL,
+  category_id CHAR(64) NOT NULL,
   user_id INT UNSIGNED NOT NULL,
   name CHAR(255) NOT NULL,
   description TEXT(1024) NOT NULL,
   img_url CHAR(255) NOT NULL,
   price INT NOT NULL,
-  bet_step INT UNSIGNED NOT NULL,
+  step INT UNSIGNED NOT NULL,
   ts_add TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   ts_end TIMESTAMP NOT NULL
 );
@@ -42,13 +42,12 @@ CREATE TABLE bets (
   ts_betted TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE UNIQUE INDEX ctg ON categories(title);
+CREATE UNIQUE INDEX ctg ON categories(name);
 CREATE UNIQUE INDEX eml ON users(email);
 CREATE INDEX usr ON users(name);
 CREATE INDEX itm ON items(name);
 CREATE INDEX f_prc ON items(price);
-CREATE INDEX step ON items(bet_step);
 CREATE INDEX wnr ON bets(winner_id);
-CREATE INDEX date ON bets(ts_betted);
-CREATE INDEX l_prc ON bets(bet_price);
+CREATE INDEX b_ts ON bets(ts_betted);
+CREATE INDEX b_prc ON bets(bet_price);
 

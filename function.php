@@ -28,16 +28,6 @@ if (!$result) {
 }
 $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);  
 
-/* Горизонтальное простое меню - для всех страниц кроме главной */
-
-function makeMainMenuSimple($categories) {
-    $MenuSimple = '';
-    foreach ($categories as $category) {
-        $MenuSimple .= '<li class="nav__item"><a href="all-lots.php">' . htmlspecialchars($category["name"]) . '</a></li>';
-    }
-    return $MenuSimple;
-}
-
 /* функция формат цены */
 
 function makePriceFormat($price) {

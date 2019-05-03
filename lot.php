@@ -11,8 +11,8 @@ if (isset($_GET['itemID'])) {
 
     /* Запрос элемента из БД таблицы по id */
 
-    $sql = "SELECT items.*, title FROM items
-        JOIN categories ON items.category = categories.id
+    $sql = "SELECT items.*, categories.name AS category FROM items
+        JOIN categories ON items.category_id = categories.id
         WHERE items.id = '$safe_item_id'
     ";
     $result = mysqli_query($conn, $sql);

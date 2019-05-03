@@ -8,7 +8,7 @@
             foreach ($categories as $category): ?>
             <li class="promo__item promo__item--<?= htmlspecialchars($category['symbol']); ?>">
                 <!-- Защита от XSS -->
-                <a class="promo__link" href="all-lots.php"><?= htmlspecialchars($category['title']); ?></a>
+                <a class="promo__link" href="all-lots.php"><?= htmlspecialchars($category['name']); ?></a>
             </li>
             <?php endforeach; ?>
 
@@ -25,7 +25,7 @@
             foreach ($items as $item):
             
             // функция последняя цена и колво ставок, кол-во ставок - number_bets, стартовая цена или послед ставка - last_price
-            $bet = getLastPrice($item['id'], $item['price']); 
+            $betsPrices = getBetsPrices($item['id'], $item['price']); 
             ?>
 
             <li class="lots__item lot">
@@ -37,8 +37,8 @@
                     <h3 class="lot__title"><a class="text-link" href="lot.php?itemID=<?= $item['id']; ?>"><?= htmlspecialchars($item['name']); ?></a></h3>
                     <div class="lot__state">
                         <div class="lot__rate">
-                            <span class="lot__amount"><?= $bet['number_bets'] ?></span>
-                            <span class="lot__cost"><?= makePriceFormat( htmlspecialchars($bet['last_price']) ); ?><b class="rub">р</b></span>
+                            <span class="lot__amount"><?= $betsPrices['number_bets'] ?></span>
+                            <span class="lot__cost"><?= makePriceFormat( htmlspecialchars($betsPrices['l_price']) ); ?><b class="rub">р</b></span>
                         </div>
 
                         <?php $Timer = makeTimer(htmlspecialchars($item['ts_end'])); /* функция таймер */ ?>

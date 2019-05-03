@@ -7,8 +7,8 @@ require('helpers.php'); // шаблонизатор
 /* Извлечение лотов из таблицы */
 // запрос значений для лотов, активных (не закрытый) без защиты от sql-инъекции, тк нет переменных
 
-$sql = "SELECT items.*, title AS category, symbol FROM items 
-    JOIN categories ON items.category = categories.id
+$sql = "SELECT items.*, categories.name AS category, symbol FROM items 
+    JOIN categories ON items.category_id = categories.id
     WHERE items.ts_end > CURRENT_TIMESTAMP /* проверяем что лот не закрыт */
     ORDER BY ts_add DESC 
     LIMIT 9

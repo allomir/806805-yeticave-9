@@ -20,7 +20,7 @@ if ($conn == false) {
 
 /* Общий запрос категорий из БД таблицы без защиты от sql-инъекции, тк нет переменных */
 
-$sql = 'SELECT symbol, title FROM categories'; 
+$sql = 'SELECT symbol, name FROM categories'; 
 $result = mysqli_query($conn, $sql);
 if (!$result) {
     $error = mysqli_error($conn);
@@ -33,7 +33,7 @@ $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
 function makeMainMenuSimple($categories) {
     $MenuSimple = '';
     foreach ($categories as $category) {
-        $MenuSimple .= '<li class="nav__item"><a href="all-lots.php">' . htmlspecialchars($category["title"]) . '</a></li>';
+        $MenuSimple .= '<li class="nav__item"><a href="all-lots.php">' . htmlspecialchars($category["name"]) . '</a></li>';
     }
     return $MenuSimple;
 }
@@ -82,7 +82,7 @@ function makeTimer($TS_end) {
 
 /* функция последняя цена и колво ставок */
 
-function getLastPrice ($itemID, $price) {
+function getBetsPrices($itemID, $price, $step = 0) {
 
     // Внутри функции новое подключение, наружное не видет
     $conn = mysqli_connect("localhost", "root", "", "yeticave");
@@ -91,9 +91,10 @@ function getLastPrice ($itemID, $price) {
     if ($conn == false) {
         print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
     }   
-    // запрос группировка ставок по лотам, активных лотов (не закрытый) без защиты от sql-инъекции, тк нет переменных
-    $sql = "SELECT item_id, COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price FROM bets 
-        WHERE winner_id IS NULL AND item_id = '$itemID' /* проверяем что лот не закрыт, те нет победителя и врямя не вышло. Если никто не сделал ставку лота нет в таблице */
+    // запрос группировка ставок по лотам, активных лотов (не закрытый), поиск ставок без защиты от sql-инъекции, тк нет GET-переменных
+    // Если никто не сделал ставку лота нет в таблице
+    $sql = "SELECT item_id, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM bets 
+        WHERE winner_id IS NULL AND item_id = '$itemID'
         GROUP BY item_id DESC 
     "; 
     $result = mysqli_query($conn, $sql);
@@ -103,21 +104,17 @@ function getLastPrice ($itemID, $price) {
     }
     // передача значений в ассоциативный массив с количеством ставок и макс ценой
     if (mysqli_num_rows($result)) {
-        $bet = mysqli_fetch_assoc($result);
-        $bet['number_bets'] .= ' ставок';
+        $last_price = mysqli_fetch_assoc($result);
+        $last_price['number_bets'] .= ' ставок';
     }
     else {
-        $bet['last_price'] = $price;
-        $bet['number_bets'] = 'Стартовая цена';
+        $last_price['l_price'] = $price;
+        $last_price['number_bets'] = 'Стартовая цена';
     }
-    return $bet;
+
+    $last_price['min_bet'] = $last_price['l_price'] + $step;
+
+    return $last_price;
 }
 
 /* Минимальная ставка  */
-
-function getMinBet($lastPrice, $betStep) {
-    $lastPrice = intval($lastPrice);
-    $betStep = intval($betStep);
-
-    return $lastPrice + $betStep;
-}

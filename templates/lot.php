@@ -14,7 +14,7 @@
           <div class="lot-item__image">
             <img src="<?= htmlspecialchars($item['img_url']); ?>" width="730" height="548" alt="<?= htmlspecialchars($item['name']) ?>">
           </div>
-          <p class="lot-item__category">Категория: <span><?= htmlspecialchars($item['title']) ?></span></p>
+          <p class="lot-item__category">Категория: <span><?= htmlspecialchars($item['category']) ?></span></p>
           <p class="lot-item__description"><?= htmlspecialchars($item['description']) ?></p>
         </div>
         <div class="lot-item__right">
@@ -25,13 +25,12 @@
             </div>
             <div class="lot-item__cost-state">
               <div class="lot-item__rate">
-                <?php $bet = getLastPrice($item['id'], $item['price']); /* функция последняя цена и колво ставок */ ?>
+                <?php $bets_prices = getBetsPrices($item['id'], $item['price'], $item['step']); /* функция последняя цена и колво ставок */ ?>
                 <span class="lot-item__amount">Текущая цена</span>
-                <span class="lot-item__cost"><?= makePriceFormat(htmlspecialchars($bet['last_price'])); ?></span>
+                <span class="lot-item__cost"><?= makePriceFormat(htmlspecialchars($bets_prices['l_price'])); ?></span>
               </div>
               <div class="lot-item__min-cost">
-                <?php $min_bet = getMinBet($bet['last_price'], $item['bet_step']); ?>
-                Мин. ставка <span><?= makePriceFormat($min_bet); ?> р</span>
+                Мин. ставка <span><?= makePriceFormat($bets_prices['min_bet']); ?> р</span>
               </div>
             </div>
           </div>

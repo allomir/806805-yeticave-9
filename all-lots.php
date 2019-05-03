@@ -7,10 +7,10 @@ require('helpers.php'); // шаблонизатор
 /* Извлечение лотов из таблицы */
 // запрос значений для лотов, активных (не закрытый), но в выбранной категории
 
-$sql = "SELECT items.*, title AS category, symbol FROM items 
-    JOIN categories ON items.category = categories.id
+$sql = "SELECT items.*, categories.name AS category, symbol FROM items 
+    JOIN categories ON items.category_id = categories.id
     WHERE items.ts_end > CURRENT_TIMESTAMP 
-    AND  categories.title = 'Доски и лыжи'
+    AND  categories.name = 'Доски и лыжи'
     ORDER BY ts_add DESC 
 "; 
 

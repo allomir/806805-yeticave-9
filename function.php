@@ -104,17 +104,17 @@ function getBetsPrices($itemID, $price, $step = 0) {
     }
     // передача значений в ассоциативный массив с количеством ставок и макс ценой
     if (mysqli_num_rows($result)) {
-        $last_price = mysqli_fetch_assoc($result);
-        $last_price['number_bets'] .= ' ставок';
+        $betsPrices = mysqli_fetch_assoc($result);
+        $betsPrices['number_bets'] .= ' ставок';
     }
     else {
-        $last_price['l_price'] = $price;
-        $last_price['number_bets'] = 'Стартовая цена';
+        $betsPrices['l_price'] = $price;
+        $betsPrices['number_bets'] = 'Стартовая цена';
     }
 
-    $last_price['min_bet'] = $last_price['l_price'] + $step;
+    $betsPrices['min_bet'] = $betsPrices['l_price'] + $step;
 
-    return $last_price;
+    return $betsPrices;
 }
 
 /* Минимальная ставка  */

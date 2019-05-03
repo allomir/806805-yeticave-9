@@ -1,5 +1,6 @@
 <?php
 
+// faq.php - удаленные промежуточные данные заданий.
 $is_auth = rand(0, 1);
 $user_name = 'Михаил Лебедев';
 
@@ -11,10 +12,14 @@ $user_name = 'Михаил Лебедев';
 $response_code = ''; 
 
 /* Общее подключение к БД */
+
 function getConn() {
     $conn = mysqli_connect("localhost", "root", "", "yeticave");
     mysqli_set_charset($conn, "utf8"); // первым делом кодировка
-
+    if (!$conn) {
+        print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error()); 
+        // die('Ошибка при подключении: ' . mysqli_connect_error()); // вариант 2.
+    }
     return $conn;
 }
 
@@ -23,8 +28,10 @@ function getConn() {
 function getCategories($conn) {
     $sql = 'SELECT symbol, name FROM categories'; 
     $result = mysqli_query($conn, $sql);
-
-    return $result; 
+    if (!$result) {
+        print("Ошибка MySQL: " . mysqli_error($conn)); 
+    }
+    return mysqli_fetch_all($result, MYSQLI_ASSOC); 
 }
 
 /* функция формат цены */
@@ -105,5 +112,3 @@ function getBetsPrices($itemID, $price, $step = 0) {
 
     return $betsPrices;
 }
-
-/* Минимальная ставка  */

@@ -3,10 +3,10 @@
 require('inc/function.php'); // функции
 require('helpers.php'); // шаблонизатор
 
-$conn = getConn();
-$categories = getCategories($conn);
+$conn = getConn(); // Подключение к БД
+$categories = getCategories($conn); // Запрос Показать Таблицу Категории
 
-/* Получение элементов по id из параметра запроса */
+/* Страница лотов. Запровс элементов из таблиц БД по id из параметра запроса методом GET*/
 
 if (isset($_GET['itemID'])) {
     // $safe_item_id = intval($_GET['itemID']); // Защита от SQL-инъкция, приведение к числу
@@ -21,13 +21,10 @@ if (isset($_GET['itemID'])) {
     $result = mysqli_query($conn, $sql);
 
     if (!$result) {
-        $page_name = 'Ошибка MySQL';
-        $error = "Ошибка MySQL: " . mysqli_error($conn);
-        $page_content = include_template('error.php', [
-            'error' => $error
-        ]);
+        print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
-    elseif(!mysqli_num_rows($result)){
+    
+    if(!mysqli_num_rows($result)){
         $page_name = '404 Страница не найдена';
         $response_code = http_response_code(404);
         $error = '<h2>404 Страница не найдена</h2>
@@ -55,6 +52,7 @@ else {
     ]);
 }
 
+// Закрытие подключения к БД
 mysqli_close($conn);
 
 /* Шаблонизация - подключение подложики */

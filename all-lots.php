@@ -3,8 +3,8 @@
 require('inc/function.php'); // функции
 require('helpers.php'); // шаблонизатор
 
-$conn = getConn();
-$categories = getCategories($conn);
+$conn = getConn(); // Подключение к БД
+$categories = getCategories($conn); // Запрос Показать Таблицу Категории
 
 /* Извлечение лотов из таблицы */
 // запрос значений для лотов, активных (не закрытый), но в выбранной категории
@@ -18,14 +18,14 @@ $sql = "SELECT items.*, categories.name AS category, symbol FROM items
 
 $result = mysqli_query($conn, $sql);
 if (!$result) {
-    $error = mysqli_error($conn);
-    print("Ошибка MySQL: " . $error);
+    print("Ошибка MySQL: " . mysqli_error($conn)); 
 }
-
 $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 // Закрытие подключения к БД
 mysqli_close($conn);
+
+/* Шаблонизация - подключение подложики */
 
 $page_content = include_template('all-lots.php', [
     'categories' => $categories, 

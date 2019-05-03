@@ -1,31 +1,10 @@
 <?php
 
-// faq.php - удаленные промежуточные данные заданий.
 require('inc/function.php'); // функции
 require('helpers.php'); // шаблонизатор
 
-// Подключение к БД
-$conn = getConn();
-if (!$conn) {
-    $page_name = 'Ошибка MySQL';
-    $error = "Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error();
-    $page_content = include_template('error.php', [
-        'error' => $error
-    ]);
-}
-
-// Запрос Показать Таблицу Категории
-$result = getCategories($conn);
-if ($result) {
-    $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
-}
-else {
-    $page_name = 'Ошибка MySQL';
-    $error = "Ошибка MySQL: " . mysqli_error($conn);
-    $page_content = include_template('error.php', [
-        'error' => $error
-    ]);
-}
+$conn = getConn(); // Подключение к БД
+$categories = getCategories($conn); // Запрос Показать Таблицу Категории
 
 // Главная стр - Запрос показать активные лоты (врямя окончания не вышло), сортировать от последнего добавленного
 
@@ -37,26 +16,22 @@ $sql = "SELECT items.*, categories.name AS category, symbol FROM items
 "; 
 
 $result = mysqli_query($conn, $sql);
-if ($result) {
-    $page_name = 'Главная';
-    $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
-    $page_content = include_template('index.php', [
-        'categories' => $categories, 
-        'items' => $items
-    ]);
+if (!$result) {
+    print("Ошибка MySQL: " . mysqli_error($conn)); 
 }
-else {
-    $page_name = 'Ошибка MySQL';
-    $error = "Ошибка MySQL: " . mysqli_error($conn);
-    $page_content = include_template('error.php', [
-        'error' => $error
-    ]);
-}
+$items = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 // Закрытие подключения к БД
 mysqli_close($conn);
 
-// Подложка
+/* Шаблонизация - подключение подложики */
+
+$page_name = 'Главная';
+
+$page_content = include_template('index.php', [
+    'categories' => $categories, 
+    'items' => $items
+]);
 
 $layout_content = include_template('layout.php', [
     'is_auth' => $is_auth,

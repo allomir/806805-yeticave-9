@@ -1,6 +1,7 @@
 <?php
 
 require('inc/function.php'); // функции
+require('inc/queries.php'); // Запросы и подключение
 require('helpers.php'); // шаблонизатор
 
 $conn = getConn(); // Подключение к БД

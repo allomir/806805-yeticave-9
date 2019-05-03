@@ -11,22 +11,21 @@ $user_name = 'Михаил Лебедев';
 $response_code = ''; 
 
 /* Общее подключение к БД */
+function getConn() {
+    $conn = mysqli_connect("localhost", "root", "", "yeticave");
+    mysqli_set_charset($conn, "utf8"); // первым делом кодировка
 
-$conn = mysqli_connect("localhost", "root", "", "yeticave");
-mysqli_set_charset($conn, "utf8"); // первым делом кодировка
-if ($conn == false) {
-    print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
+    return $conn;
 }
 
 /* Общий запрос категорий из БД таблицы без защиты от sql-инъекции, тк нет переменных */
 
-$sql = 'SELECT symbol, name FROM categories'; 
-$result = mysqli_query($conn, $sql);
-if (!$result) {
-    $error = mysqli_error($conn);
-    print("Ошибка MySQL: " . $error);
+function getCategories($conn) {
+    $sql = 'SELECT symbol, name FROM categories'; 
+    $result = mysqli_query($conn, $sql);
+
+    return $result; 
 }
-$categories = mysqli_fetch_all($result, MYSQLI_ASSOC);  
 
 /* функция формат цены */
 

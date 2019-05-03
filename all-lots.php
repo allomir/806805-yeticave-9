@@ -1,8 +1,10 @@
 <?php
 
-// faq.php - удаленные промежуточные данные заданий.
-require('function.php'); // функции
+require('inc/function.php'); // функции
 require('helpers.php'); // шаблонизатор
+
+$conn = getConn();
+$categories = getCategories($conn);
 
 /* Извлечение лотов из таблицы */
 // запрос значений для лотов, активных (не закрытый), но в выбранной категории

@@ -1,7 +1,10 @@
 <?php
 
-require('function.php'); // функции
+require('inc/function.php'); // функции
 require('helpers.php'); // шаблонизатор
+
+$conn = getConn();
+$categories = getCategories($conn);
 
 /* Получение элементов по id из параметра запроса */
 

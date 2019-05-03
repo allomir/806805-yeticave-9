@@ -1,41 +1,69 @@
 <?php
 
 // faq.php - удаленные промежуточные данные заданий.
-require('function.php'); // функции
+require('inc/function.php'); // функции
 require('helpers.php'); // шаблонизатор
 
-/* Извлечение лотов из таблицы */
-// запрос значений для лотов, активных (не закрытый) без защиты от sql-инъекции, тк нет переменных
+// Подключение к БД
+$conn = getConn();
+if (!$conn) {
+    $page_name = 'Ошибка MySQL';
+    $error = "Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error();
+    $page_content = include_template('error.php', [
+        'error' => $error
+    ]);
+}
+
+// Запрос Показать Таблицу Категории
+$result = getCategories($conn);
+if ($result) {
+    $categories = mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
+else {
+    $page_name = 'Ошибка MySQL';
+    $error = "Ошибка MySQL: " . mysqli_error($conn);
+    $page_content = include_template('error.php', [
+        'error' => $error
+    ]);
+}
+
+// Главная стр - Запрос показать активные лоты (врямя окончания не вышло), сортировать от последнего добавленного
 
 $sql = "SELECT items.*, categories.name AS category, symbol FROM items 
     JOIN categories ON items.category_id = categories.id
-    WHERE items.ts_end > CURRENT_TIMESTAMP /* проверяем что лот не закрыт */
+    WHERE items.ts_end > CURRENT_TIMESTAMP 
     ORDER BY ts_add DESC 
     LIMIT 9
 "; 
 
 $result = mysqli_query($conn, $sql);
-if (!$result) {
-    $error = mysqli_error($conn);
-    print("Ошибка MySQL: " . $error);
+if ($result) {
+    $page_name = 'Главная';
+    $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $page_content = include_template('index.php', [
+        'categories' => $categories, 
+        'items' => $items
+    ]);
 }
-
-$items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+else {
+    $page_name = 'Ошибка MySQL';
+    $error = "Ошибка MySQL: " . mysqli_error($conn);
+    $page_content = include_template('error.php', [
+        'error' => $error
+    ]);
+}
 
 // Закрытие подключения к БД
 mysqli_close($conn);
 
-$page_content = include_template('index.php', [
-    'categories' => $categories, 
-    'items' => $items
-]);
+// Подложка
 
 $layout_content = include_template('layout.php', [
     'is_auth' => $is_auth,
     'categories' => $categories, 
     'content' => $page_content, 
     'user_name' => $user_name, 
-    'title' => 'Главная',
+    'title' => $page_name,
     'response_code' => $response_code
 ]);
 

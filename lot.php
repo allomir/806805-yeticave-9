@@ -11,9 +11,9 @@ $categories = getCategories($conn); // Запрос Показать Табли�
 
 if (isset($_GET['itemID'])) {
     $saveItemID = mysqli_real_escape_string($conn, $_GET['itemID']); // Защита от SQL-инъкция - экранирование
-    // $safe_item_id = intval($_GET['itemID']); // Защита от SQL-инъкция (вариант 2) - приведение к числу
+    // $saveItemID = intval($_GET['itemID']); // Защита от SQL-инъкция (вариант 2) - приведение к числу
 
-    $item = getItemsByID($conn, $saveItemID); // Запрос элемента из БД таблицы по id, массив или 0 
+    $item = getItemByID($conn, $saveItemID); // Запрос элемента из БД таблицы по id, массив или 0 
 }
 
 // Закрытие подключения к БД
@@ -40,9 +40,9 @@ else {
 
 $layout_content = include_template('layout.php', [
     'is_auth' => $is_auth,
+    'user_name' => $user_name, 
     'categories' => $categories, 
     'content' => $page_content, 
-    'user_name' => $user_name, 
     'title' => $page_name,
     'response_code' => $response_code
 ]);

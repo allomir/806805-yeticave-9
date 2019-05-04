@@ -53,39 +53,3 @@ function makeTimer($TS_end) {
     return $timer = ['DDHHMM' => $timer, 'style' => $timer_style];
 }
 
-/* функция последняя цена и колво ставок */
-
-function getBetsPrices($itemID, $price, $step = 0) {
-
-    // Внутри функции новое подключение, наружное не видет
-    $conn = mysqli_connect("localhost", "root", "", "yeticave");
-    mysqli_set_charset($conn, "utf8"); // первым делом кодировка
-
-    if ($conn == false) {
-        print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
-    }   
-    // запрос группировка ставок по лотам, активных лотов (не закрытый), поиск ставок без защиты от sql-инъекции, тк нет GET-переменных
-    // Если никто не сделал ставку лота нет в таблице
-    $sql = "SELECT item_id, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM bets 
-        WHERE winner_id IS NULL AND item_id = '$itemID'
-        GROUP BY item_id DESC 
-    "; 
-    $result = mysqli_query($conn, $sql);
-    if (!$result) {
-        $error = mysqli_error($conn);
-        print("Ошибка MySQL: " . $error);
-    }
-    // передача значений в ассоциативный массив с количеством ставок и макс ценой
-    if (mysqli_num_rows($result)) {
-        $betsPrices = mysqli_fetch_assoc($result);
-        $betsPrices['number_bets'] .= ' ставок';
-    }
-    else {
-        $betsPrices['l_price'] = $price;
-        $betsPrices['number_bets'] = 'Стартовая цена';
-    }
-
-    $betsPrices['min_bet'] = $betsPrices['l_price'] + $step;
-
-    return $betsPrices;
-}

@@ -20,9 +20,9 @@ $page_content = include_template('index.php', [
 
 $layout_content = include_template('layout.php', [
     'is_auth' => $is_auth,
+    'user_name' => $user_name, 
     'categories' => $categories, 
     'content' => $page_content, 
-    'user_name' => $user_name, 
     'title' => $page_name,
     'response_code' => $response_code
 ]);

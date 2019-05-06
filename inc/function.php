@@ -1,7 +1,7 @@
 <?php
 
 // faq.php - удаленные промежуточные данные заданий.
-$is_auth = rand(0, 1);
+$is_auth = 1;
 $user_name = 'Михаил Лебедев';
 
 /* Переопределение кода ответа. Переменная передается в подложку.
@@ -53,3 +53,25 @@ function makeTimer($TS_end) {
     return $timer = ['DDHHMM' => $timer, 'style' => $timer_style];
 }
 
+/* Функция - Вставить класс ошибки, стр добавление лота */
+
+function insErrStyle($errors) {
+    // Виды стилей при ошибках заполнения
+    $result = '';
+    $formErrStyle = ['form--invalid', 'form__item--invalid']; // типы CLASS
+    if (isset($_POST['add_lot'])) {
+        if (is_string($errors)) {
+            if (!empty($errors)) {
+                $result =  $formErrStyle[1];
+            }
+            else {$result = $errors;}
+        }
+        else {
+            if (count($errors)) {
+                $result = $formErrStyle[0];
+            }
+            else {$result = $errors;}
+        }
+    }
+    return $result;
+}

@@ -81,6 +81,54 @@ function checkCategoryByID($conn, $categoryID) {
     return mysqli_fetch_assoc($result);
 }
 
+/* Запрос добави новый лот */
+
+function addItem($conn, $item) {
+
+    $category_id = $item['category_id'];
+    $user_id = $item['user_id'];
+    $name = $item['name'];
+    $description = $item['description'];
+    $img_url = $item['img_url'];
+    $price = $item['price'];
+    $step = $item['step'];
+    $ts_add = $item['ts_add'];
+    $ts_end = $item['ts_end'];
+
+    $sql = "INSERT INTO items 
+        (
+            category_id, 
+            user_id, 
+            name,
+            description,
+            img_url,
+            price,
+            step,
+         -- ts_add, 
+            ts_end
+        )
+            VALUES
+        (  
+            '$category_id',
+            '$user_id',
+            '$name',
+            '$description',
+            '$img_url',
+            '$price',
+            '$step',
+        -- '$ts_add',
+            '$ts_end'
+        )
+    ";
+
+    $result = mysqli_query($conn, $sql);
+    if (!$result) {
+        print("Ошибка MySQL: " . mysqli_error($conn)); 
+    }
+
+    return $result;
+}
+
 /* Главная стр. Запрос показать активные лоты (врямя окончания не вышло), сортировать от последнего добавленного, не более 9 */
 
 function getItems($conn) {
@@ -119,6 +167,9 @@ function getItemByID($conn, $itemID) {
     }
     if(mysqli_num_rows($result)) {
         $item = mysqli_fetch_assoc($result); // Ассоциативный массив 
+        if(!$item['l_price']) {
+            $item['l_price'] = $item['price']; // Последняя ставка или стартовая цена
+        }
         $item['min_bet'] = $item['l_price'] + $item['step']; // Добавление поля - Мин ставка
     } else {$item = 0;} // Число
 

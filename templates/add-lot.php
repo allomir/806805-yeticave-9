@@ -71,5 +71,17 @@
         </div>
       </div>
       <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
+      <?php // печать ошибок в верстке
+      /* $i = 0;
+        foreach ($formErrors as $value) {
+          if (!empty($value)) {
+            $i++;
+            print($i . '. ');
+            print($value . '<br>');
+          }
+        }
+      if(empty($imgData['img_url'])) {print(++$i . '. файл не загружен <br>');}
+      print('<br>'); */
+      ?>
       <button type="submit" class="button" name="add_lot">Добавить лот</button>
     </form>

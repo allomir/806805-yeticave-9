@@ -47,14 +47,7 @@ foreach ($params as $param => $error) {
 }
 If ($formData['category'] == 'Выберите категорию') {$formData['category'] = '';} // Исключение - параметр приравниваем к пусто
 
-$formData['lot-date'] = '2019-03-10';
-echo $FFF['mintime'];
-print_r('<br>');
-echo strtotime($formData['lot-date']);
-
-print_r('<br>');
-print_r($formData);
-print_r('<br>');
+$formData['lot-date'] = '2019-05-10'; // пример даты
 
 // Параметры файла-изображения
 
@@ -64,15 +57,14 @@ print_r('<br> ------------- <br>');
 $imgData = $_FILES['lot-img'] ?? []; 
 $imgData['mess_err'] = ''; // хранилище ошибок и сообщений для поля загрузить файл
 $imgData['maxlen'] = '64'; // Ограничим название файла до 64
-$imgData['img_url'] = ''; // url изображения - значение устанавливается после успешной загрузки, и передается в POST
-
+// url изображения - значение устанавливается после успешной загрузки, и передается в POST
+$imgData['img_url'] = $img_url = ''; //копия для передачи в массиве
 
 /********************************** Форма отправлена *************************************/
 
 
-/* Проверки пустых полей и валидация полей */
 // Проверка - событие нажатие кнопки
-if (isset($_POST['add_lot'])) {
+if (isset($_POST['add_lot']) ) {
 
 
     /* 1часть. Заполнение массива ошибок, если поле пусто */
@@ -80,7 +72,7 @@ if (isset($_POST['add_lot'])) {
         if (empty($formData[$param])) {
             $formErrors[$param] = $error;
         }
-        // Если поле не пусто, проверяем от переполнения
+        // Если поле не пусто, проверяем особые условия для каждого поля, переполнение, число
         else{
             if ($param == 'lot-name') {
                 if (strlen($formData[$param]) > $AAA['maxlen'] ) {
@@ -117,7 +109,8 @@ if (isset($_POST['add_lot'])) {
         }
     }
 
-    //2часть. Валидация времени, функция из helpers
+    /* 2часть. Валидация времени, функция из helpers */
+
     if (!empty($formData['lot-date'])) {
         $result_date = is_date_valid($formData['lot-date']);
         if (!is_date_valid($formData['lot-date'])) {
@@ -128,13 +121,15 @@ if (isset($_POST['add_lot'])) {
         }
     }
 
-    // 3часть. Проверка - файл не выбран
+    /* 3часть. Проверка файла и загрузка в директорию */
+
+    // Если имя файла нет - файл не выбран или был загружен до этого
     if (empty($imgData['name'])) {
         // Проверка - если файл не выбран, используется файл из предыдущей загрузки 
         if (isset($_POST['img-url'])) {
             // Скрытое поле POST с URL файла и сообщение об успешной загрузке файла в предыдущий раз
             $imgData['mess_err'] = ' Файл загружен <input type="hidden" name="img-url" value="' . $_POST['img-url'] . '">';
-            $img_url = $_POST['img-url'];
+            $imgData['img_url'] = $img_url = $_POST['img-url'];
         }
         else {
             $imgData['mess_err'] = ' Выберите файл';
@@ -156,7 +151,7 @@ if (isset($_POST['add_lot'])) {
         // Если ошибок не найдено, Перемещение файла в директорию, даем сообщение файл загружен - URL файла сохраняется скрытым полем в POST.
         if (empty($imgData['mess_err'])) {
             $img_path = __DIR__ . '/uploads/';
-            $img_url = '/uploads/' . $imgData['name'];
+            $imgData['img_url'] = $img_url = '/uploads/' . $imgData['name'];
 
             // Проверка что файл загружен и перемещен на сервер без ошибок, те он там есть
             // Примечание Если файл уже существует, он будет перезаписан функцией move_uploaded_file
@@ -169,7 +164,54 @@ if (isset($_POST['add_lot'])) {
                 $imgData['mess_err'] = "<h3>Ошибка! Не удалось загрузить файл на сервер!</h3>";
             }
         }
-    // 4. Переадресация 
+    }
+
+    /****************************************** Переадресация ***************************************/
+
+    // Условие все поля заполнены правильно - $formError пусто и $img_url содержит URL 
+    $number_err = 0;
+    foreach ($formErrors as $value) {
+        if (!empty($value)) {
+            $number_err++;
+        }
+    }
+    if (!$number_err && !empty($img_url)) {
+        // определение id категории
+        foreach ($categories as $category) {
+            if ($category['name'] == $formData['category']) {
+                $category_id = $category['id'];
+            }
+        }
+        // Параметры лота, юзер вводится вручную на данном этапе
+        $item_params = $arr = [
+            'category_id' => $category_id,
+            'user_id' => '1',
+            'name' => $formData['lot-name'],
+            'description' => $formData['message'],
+            'img_url' => $img_url,
+            'price' => $formData['lot-rate'],
+            'step' => $formData['lot-step'],
+            //'ts_add' => strtotime('now + 1 hour'), Incorrect datetime value: '1557159721' 
+            'ts_end' => $formData['lot-date']
+        ];
+
+        // Защита от SQL-инъкция - экранирование
+        foreach ($arr as $key => $value) {
+            $saveValue = mysqli_real_escape_string($conn, $value); 
+            $saveArr[$key] = [$saveValue];
+        }
+        
+        // Функция добавить лот со всеми значениями
+        if (addItem($conn, $arr)) {
+            $last_id = mysqli_insert_id($conn);
+
+            // Перенаправление
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                header("Location: /lot.php?success=true&itemID=" . $last_id);
+            }
+                
+        }
+
     }
 }
 

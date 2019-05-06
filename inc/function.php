@@ -64,13 +64,17 @@ function insErrStyle($errors) {
             if (!empty($errors)) {
                 $result =  $formErrStyle[1];
             }
-            else {$result = $errors;}
         }
         else {
-            if (count($errors)) {
+            $number_err = 0;
+            foreach ($formErrors as $value) {
+                if (!empty($value)) {
+                    $number_err++;
+                }
+            }
+            if (!$number_err) {
                 $result = $formErrStyle[0];
             }
-            else {$result = $errors;}
         }
     }
     return $result;

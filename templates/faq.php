@@ -1,5 +1,20 @@
 <?php
 
+/* Заметки */
+
+// печать ошибок в добавлении лота
+$i = 0;
+  foreach ($formErrors as $value) {
+    if (!empty($value)) {
+      $i++;
+      print($i . '. ');
+      print($value . '<br>');
+    }
+  }
+if(empty($imgData['img_url'])) {print(++$i . '. файл не загружен <br>');}
+print('<br>');
+
+
 $categories = ['Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'];
 $items = [
     [

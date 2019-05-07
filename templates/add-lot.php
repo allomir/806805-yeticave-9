@@ -7,7 +7,7 @@
       ?>
       </ul>
     </nav>
-    <form class="form form--add-lot container <?= insErrStyle($formErrors); ?>" action="add.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->
+    <form class="form form--add-lot container <?php if (empty($imgData['img_url'])) {$formErrors['img_url'] = 'mess_err';} print(insErrStyle($formErrors)); ?>" action="add.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->
       <h2>Добавление лота</h2>
       <div class="form__container-two">
         <div class="form__item <?= insErrStyle($formErrors['lot-name']); ?>">
@@ -18,17 +18,15 @@
         <div class="form__item <?= insErrStyle($formErrors['category']); ?>">
           <label for="category">Категория <sup>*</sup></label>
           <select id="category" name="category">
-            <option>Выберите категорию</option>
+            <option value="Выберите категорию">Выберите категорию</option>
 
             <?php 
             /* Итерация Категории из БД */
-            foreach ($categories as $category) {
-              $selected = '';
-              if ($category['name'] == $formData['category']) {
-                $selected = ' selected';
-              }
-              print('<option' . $selected . '>' . deffXSS($category['name']) . '</option>');
-            } 
+            foreach ($categories as $category) :
+              $selected = ''; if ($category['id'] == $formData['category']) { $selected = ' selected';}
+            ?>
+              <option <?= $selected; ?> value="<?= $category['id']; ?>"> <?= deffXSS($category['name']); ?></option>
+            <?php endforeach; ?>
             ?>
 
           </select>
@@ -42,7 +40,7 @@
       </div>
 
       <!--  добавить файл-изображение -->
-      <div class="form__item form__item--file">
+      <div class="form__item form__item--file <?php if (empty($imgData['img_url'])) {print(insErrStyle('mess_err'));} ?>">
         <label>Изображение <sup>*</sup></label>
         <div class="form__input-file">
           <input class="visually-hidden" type="file" id="lot-img" name="lot-img" value="">
@@ -50,7 +48,8 @@
             Добавить
           </label>
         </div>
-        <?= $imgData['mess_err']; ?>
+        <span class="form__error"><?= $imgData['mess_err']; ?></span>
+        <?php if(!empty($imgData['img_url'])) {print(' Файл загружен!');} ?>     
       </div>
 
       <div class="form__container-three">
@@ -66,22 +65,10 @@
         </div>
         <div class="form__item <?= insErrStyle($formErrors['lot-date']); ?>">
           <label for="lot-date">Дата окончания торгов <sup>*</sup></label>
-          <input class="form__input-date" id="lot-date" type="text" name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?= deffXSS($formData['lot-date']); ?>">
+          <input class="form__input-date" id="lot-date" type="date" name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?= deffXSS($formData['lot-date']); ?>">
           <span class="form__error"><?= $formErrors['lot-date'] ?></span>
         </div>
       </div>
       <span class="form__error form__error--bottom">Пожалуйста, исправьте ошибки в форме.</span>
-      <?php // печать ошибок в верстке
-      /* $i = 0;
-        foreach ($formErrors as $value) {
-          if (!empty($value)) {
-            $i++;
-            print($i . '. ');
-            print($value . '<br>');
-          }
-        }
-      if(empty($imgData['img_url'])) {print(++$i . '. файл не загружен <br>');}
-      print('<br>'); */
-      ?>
       <button type="submit" class="button" name="add_lot">Добавить лот</button>
     </form>

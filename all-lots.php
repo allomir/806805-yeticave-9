@@ -23,7 +23,6 @@ mysqli_close($conn);
 /* Шаблонизация - подключение шаблонов */
 
 if (!$items && $checkCategory) {
-    echo $saveCategoryID;
     $page_name = $checkCategory['name'];
     $page_content = include_template('all-lots.php', [
         'categories' => $categories,

@@ -44,6 +44,7 @@ foreach ($params as $param => $error) {
     $formErrors[$param] = ''; // Массив для хранения названия ошибки или пусто, вначале всегда пусто, используется для сообщий в верстке
     $formData[$param] = $_POST[$param] ?? ''; // Массив для получения данных из форм, используется для автозаполнения в верстке 
 }
+
 If ($formData['category'] == 'Выберите категорию') {$formData['category'] = '';} // Исключение - параметр приравниваем к пусто
 
 // $formData['lot-date'] = '2019-05-10'; // пример даты
@@ -53,6 +54,8 @@ If ($formData['category'] == 'Выберите категорию') {$formData['
 $imgData = $_FILES['lot-img'] ?? []; 
 $imgData['mess_err'] = ''; // хранилище ошибок и сообщений для поля загрузить файл
 $imgData['maxlen'] = '64'; // Ограничим название файла до 64
+$imgData['accept_type'] = ['image/gif', 'image/jpeg', 'image/png']; // типы файла изображений
+$imgData['max_size'] = 1048576; // максимальный размер в кб
 // url изображения - значение устанавливается после успешной загрузки, и передается в POST
 $imgData['img_url'] = $img_url = ''; //копия для передачи в массиве
 
@@ -88,8 +91,8 @@ if (isset($_POST['add_lot']) ) {
                 elseif (strlen($formData[$param]) > $DDD['maxlen'] ) {
                     $formErrors[$param] = 'Превышено значение числа';
                 }
-                elseif ($formData[$param] < 1) {
-                    $formErrors[$param] = 'Число не положительное';
+                elseif ($formData[$param] < 0) {
+                    $formErrors[$param] = 'Введите положительное число';
                 }
             }
             elseif ($param == 'lot-step') {
@@ -99,8 +102,8 @@ if (isset($_POST['add_lot']) ) {
                 elseif (strlen($formData[$param]) > $EEE['maxlen'] ) {
                     $formErrors[$param] = 'Превышено значение числа';
                 }
-                elseif ($formData[$param] < 1) {
-                    $formErrors[$param] = 'Число не положительное';
+                elseif ($formData[$param] < 0) {
+                    $formErrors[$param] = 'Введите положительное число';
                 }
             }
         }
@@ -120,12 +123,12 @@ if (isset($_POST['add_lot']) ) {
 
     /* 3часть. Проверка файла и загрузка в директорию */
 
-    // Если имя файла нет - файл не выбран или был загружен до этого
+    // Если имя файла нет - файл не выбран или был загружен до этого, но форма заполнена с ошибкой
     if (empty($imgData['name'])) {
         // Проверка - если файл не выбран, используется файл из предыдущей загрузки 
         if (isset($_POST['img-url'])) {
             // Скрытое поле POST с URL файла и сообщение об успешной загрузке файла в предыдущий раз
-            $imgData['mess_err'] = ' Файл загружен <input type="hidden" name="img-url" value="' . $_POST['img-url'] . '">';
+            $imgData['mess_err'] = '<input type="hidden" name="img-url" value="' . $_POST['img-url'] . '">';
             $imgData['img_url'] = $img_url = $_POST['img-url'];
         }
         else {
@@ -134,14 +137,27 @@ if (isset($_POST['add_lot']) ) {
     }
     // Если выбран новый файл, старый файл удаляется (удаление не сделано). Выполняется валидация файла - тип и макс. размер
     else {
-        if (strlen($imgData['name']) > 64) {
-            $imgData['mess_err'] = ' Название файла не более 64';
+        
+        if (strlen($imgData['name']) > $imgData['maxlen']) {
+            $imgData['mess_err'] = ' Название файла не более' . $imgData['maxlen'];
         }
-        elseif ($imgData['size'] > 1048576) {
-            $imgData['mess_err'] = ' Размер файла не более 1Мб';
+        elseif ($imgData['size'] > $imgData['max_size']) {
+            $imgData['mess_err'] = ' Размер файла не более: ' . $imgData['max_size'] / 1048576 . 'Мб';
         }
-        elseif ($imgData['type'] == 'image/gif' OR $imgData['type'] == 'image/jpeg' OR $imgData['type'] == 'image/png') {}
-        else {
+
+        // Сравниваем исходные параметры с типом загружаемого файла
+        $finfo = finfo_open(FILEINFO_MIME_TYPE); // встроенные PHP MAGIC file по умолчанию
+        // $file_type = finfo_file($finfo, $imgData['tmp_name']); // определяем тип файла с именем во временной директории (2 вариант)
+        $file_type = mime_content_type($imgData['tmp_name']); // MIME-тип файла, используя для определения информацию из файла magic.mime.
+        finfo_close($finfo);
+
+        $result_type = 0;
+        foreach ($imgData['accept_type'] AS $accept_type) {
+            if ($accept_type == $file_type) {
+                $result_type++; 
+            }
+        }
+        if (!$result_type) {
             $imgData['mess_err'] = ' Формат файла должен быть: gif, jpg, png';
         }
 
@@ -155,7 +171,7 @@ if (isset($_POST['add_lot']) ) {
             if(move_uploaded_file($imgData['tmp_name'], $img_path . $imgData['name'])) {
                 
                 // Скрытое поле POST с URL файла и сообщение об успешной загрузке файла
-                $imgData['mess_err'] = ' Файл загружен <input type="hidden" name="img-url" value="' . $img_url . '">';
+                $imgData['mess_err'] = '<input type="hidden" name="img-url" value="' . $img_url . '">';
             }
             else { 
                 $imgData['mess_err'] = "<h3>Ошибка! Не удалось загрузить файл на сервер!</h3>";
@@ -173,15 +189,10 @@ if (isset($_POST['add_lot']) ) {
         }
     }
     if (!$number_err && !empty($img_url)) {
-        // определение id категории
-        foreach ($categories as $category) {
-            if ($category['name'] == $formData['category']) {
-                $category_id = $category['id'];
-            }
-        }
+
         // Параметры лота, юзер вводится вручную на данном этапе
         $item_params = $arr = [
-            'category_id' => $category_id,
+            'category_id' => $formData['category'],
             'user_id' => '1',
             'name' => $formData['lot-name'],
             'description' => $formData['message'],

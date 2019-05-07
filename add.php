@@ -85,22 +85,34 @@ if (isset($_POST['add_lot']) ) {
                 }
             }
             elseif ($param == 'lot-rate') {
+
+                $diff = $formData[$param] - intval($formData[$param]); 
+
                 if (!is_numeric($formData[$param])) {
                     $formErrors[$param] = 'Цена должна быть числом';
                 }
                 elseif (strlen($formData[$param]) > $DDD['maxlen'] ) {
                     $formErrors[$param] = 'Превышено значение числа';
                 }
+                elseif ($diff !== 0) {
+                    $formErrors[$param] = 'Введите целое число'; 
+                }
                 elseif ($formData[$param] < 0) {
                     $formErrors[$param] = 'Введите положительное число';
                 }
             }
             elseif ($param == 'lot-step') {
+                
+                $diff = $formData[$param] - intval($formData[$param]); 
+
                 if (!is_numeric($formData[$param])) {
                     $formErrors[$param] = 'Шаг ставки должен быть числом';
                 }
                 elseif (strlen($formData[$param]) > $EEE['maxlen'] ) {
                     $formErrors[$param] = 'Превышено значение числа';
+                }
+                elseif ($diff !== 0) {
+                    $formErrors[$param] = 'Введите целое число';
                 }
                 elseif ($formData[$param] < 0) {
                     $formErrors[$param] = 'Введите положительное число';

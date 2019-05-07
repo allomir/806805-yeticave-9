@@ -11,6 +11,10 @@ $user_name = 'Михаил Лебедев';
 */
 $response_code = ''; 
 
+function deffXSS($value) {
+    return htmlspecialchars($value, ENT_QUOTES,'cp1251');
+}
+
 /* функция формат цены */
 
 function makePriceFormat($price) {

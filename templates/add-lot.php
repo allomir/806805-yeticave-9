@@ -12,7 +12,7 @@
       <div class="form__container-two">
         <div class="form__item <?= insErrStyle($formErrors['lot-name']); ?>">
           <label for="lot-name">Наименование <sup>*</sup></label>
-          <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота" value="<?= $formData['lot-name']; ?>">
+          <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота" value="<?= deffXSS($formData['lot-name']); ?>">
           <span class="form__error"><?= $formErrors['lot-name'] ?></span>
         </div>
         <div class="form__item <?= insErrStyle($formErrors['category']); ?>">
@@ -27,7 +27,7 @@
               if ($category['name'] == $formData['category']) {
                 $selected = ' selected';
               }
-              print('<option' . $selected . '>' . $category['name'] . '</option>');
+              print('<option' . $selected . '>' . deffXSS($category['name']) . '</option>');
             } 
             ?>
 
@@ -37,7 +37,7 @@
       </div>
       <div class="form__item form__item--wide <?= insErrStyle($formErrors['message']); ?>">
         <label for="message">Описание <sup>*</sup></label>
-        <textarea id="message" name="message" placeholder="Напишите описание лота"><?= $formData['message']; ?></textarea>
+        <textarea id="message" name="message" placeholder="Напишите описание лота"><?= deffXSS($formData['message']); ?></textarea>
         <span class="form__error"><?= $formErrors['message'] ?></span>
       </div>
 
@@ -56,17 +56,17 @@
       <div class="form__container-three">
         <div class="form__item form__item--small <?= insErrStyle($formErrors['lot-rate']); ?>">
           <label for="lot-rate">Начальная цена <sup>*</sup></label>
-          <input id="lot-rate" type="text" name="lot-rate" placeholder="0" value="<?= $formData['lot-rate']; ?>">
+          <input id="lot-rate" type="text" name="lot-rate" placeholder="0" value="<?= deffXSS($formData['lot-rate']); ?>">
           <span class="form__error"><?= $formErrors['lot-rate'] ?></span>
         </div>
         <div class="form__item form__item--small <?= insErrStyle($formErrors['lot-step']); ?>">
           <label for="lot-step">Шаг ставки <sup>*</sup></label>
-          <input id="lot-step" type="text" name="lot-step" placeholder="0" value="<?= $formData['lot-step']; ?>">
+          <input id="lot-step" type="text" name="lot-step" placeholder="0" value="<?= deffXSS($formData['lot-step']); ?>">
           <span class="form__error"><?= $formErrors['lot-step'] ?></span>
         </div>
         <div class="form__item <?= insErrStyle($formErrors['lot-date']); ?>">
           <label for="lot-date">Дата окончания торгов <sup>*</sup></label>
-          <input class="form__input-date" id="lot-date" type="text" name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?= $formData['lot-date']; ?>">
+          <input class="form__input-date" id="lot-date" type="text" name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?= deffXSS($formData['lot-date']); ?>">
           <span class="form__error"><?= $formErrors['lot-date'] ?></span>
         </div>
       </div>

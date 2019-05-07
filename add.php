@@ -56,7 +56,9 @@ $imgData['maxlen'] = '64'; // Ограничим название файла д�
 // url изображения - значение устанавливается после успешной загрузки, и передается в POST
 $imgData['img_url'] = $img_url = ''; //копия для передачи в массиве
 
+
 /********************************** Форма отправлена *************************************/
+
 
 // Проверка - событие нажатие кнопки
 if (isset($_POST['add_lot']) ) {
@@ -186,18 +188,18 @@ if (isset($_POST['add_lot']) ) {
             'img_url' => $img_url,
             'price' => $formData['lot-rate'],
             'step' => $formData['lot-step'],
-            //'ts_add' => strtotime('now + 1 hour'), Incorrect datetime value: '1557159721' 
+            //'ts_add' => strtotime('now + 1 hour'), // ошибка - Incorrect datetime value: '1557159721' 
             'ts_end' => $formData['lot-date']
         ];
 
         // Защита от SQL-инъкция - экранирование
         foreach ($arr as $key => $value) {
             $saveValue = mysqli_real_escape_string($conn, $value); 
-            $saveArr[$key] = [$saveValue];
+            $saveArr[$key] = $saveValue;
         }
-        
+
         // Функция добавить лот со всеми значениями
-        if (addItem($conn, $arr)) {
+        if (addItem($conn, $saveArr)) {
             $last_id = mysqli_insert_id($conn);
 
             // Перенаправление

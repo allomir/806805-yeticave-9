@@ -92,7 +92,7 @@ function addItem($conn, $item) {
     $img_url = $item['img_url'];
     $price = $item['price'];
     $step = $item['step'];
-    $ts_add = $item['ts_add'];
+    // $ts_add = $item['ts_add'];
     $ts_end = $item['ts_end'];
 
     $sql = "INSERT INTO items 

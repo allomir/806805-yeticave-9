@@ -1,6 +1,7 @@
 <?php
 
-$is_auth = rand(0, 1);
+// faq.php - удаленные промежуточные данные заданий.
+$is_auth = 1;
 $user_name = 'Михаил Лебедев';
 
 /* Переопределение кода ответа. Переменная передается в подложку.
@@ -10,21 +11,8 @@ $user_name = 'Михаил Лебедев';
 */
 $response_code = ''; 
 
-/* Общее подключение к БД */
-function getConn() {
-    $conn = mysqli_connect("localhost", "root", "", "yeticave");
-    mysqli_set_charset($conn, "utf8"); // первым делом кодировка
-
-    return $conn;
-}
-
-/* Общий запрос категорий из БД таблицы без защиты от sql-инъекции, тк нет переменных */
-
-function getCategories($conn) {
-    $sql = 'SELECT symbol, name FROM categories'; 
-    $result = mysqli_query($conn, $sql);
-
-    return $result; 
+function deffXSS($value) {
+    return htmlspecialchars($value, ENT_QUOTES,'cp1251');
 }
 
 /* функция формат цены */
@@ -69,41 +57,102 @@ function makeTimer($TS_end) {
     return $timer = ['DDHHMM' => $timer, 'style' => $timer_style];
 }
 
-/* функция последняя цена и колво ставок */
+/* Функция - Вставить класс ошибки, стр добавление лота */
 
-function getBetsPrices($itemID, $price, $step = 0) {
-
-    // Внутри функции новое подключение, наружное не видет
-    $conn = mysqli_connect("localhost", "root", "", "yeticave");
-    mysqli_set_charset($conn, "utf8"); // первым делом кодировка
-
-    if ($conn == false) {
-        print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
-    }   
-    // запрос группировка ставок по лотам, активных лотов (не закрытый), поиск ставок без защиты от sql-инъекции, тк нет GET-переменных
-    // Если никто не сделал ставку лота нет в таблице
-    $sql = "SELECT item_id, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM bets 
-        WHERE winner_id IS NULL AND item_id = '$itemID'
-        GROUP BY item_id DESC 
-    "; 
-    $result = mysqli_query($conn, $sql);
-    if (!$result) {
-        $error = mysqli_error($conn);
-        print("Ошибка MySQL: " . $error);
+function insErrStyle($errors) {
+    // Виды стилей при ошибках заполнения
+    $result = '';
+    $formErrStyle = ['form--invalid', 'form__item--invalid']; // типы CLASS
+    if (isset($_POST['add_lot'])) {
+        if (is_string($errors)) {
+            if (!empty($errors)) {
+                $result =  $formErrStyle[1];
+            }
+        }
+        else {
+            $number_err = 0;
+            foreach ($errors as $value) {
+                if (!empty($value)) {
+                    $number_err++;
+                }
+            }
+            if ($number_err) {
+                $result = $formErrStyle[0];
+            }
+        }
     }
-    // передача значений в ассоциативный массив с количеством ставок и макс ценой
-    if (mysqli_num_rows($result)) {
-        $betsPrices = mysqli_fetch_assoc($result);
-        $betsPrices['number_bets'] .= ' ставок';
-    }
-    else {
-        $betsPrices['l_price'] = $price;
-        $betsPrices['number_bets'] = 'Стартовая цена';
-    }
-
-    $betsPrices['min_bet'] = $betsPrices['l_price'] + $step;
-
-    return $betsPrices;
+    return $result;
 }
 
-/* Минимальная ставка  */
+function getFileType($filename) {
+
+    $mime_types = array(
+
+        'txt' => 'text/plain',
+        'htm' => 'text/html',
+        'html' => 'text/html',
+        'php' => 'text/html',
+        'css' => 'text/css',
+        'js' => 'application/javascript',
+        'json' => 'application/json',
+        'xml' => 'application/xml',
+        'swf' => 'application/x-shockwave-flash',
+        'flv' => 'video/x-flv',
+
+        // images
+        'png' => 'image/png',
+        'jpe' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'jpg' => 'image/jpeg',
+        'gif' => 'image/gif',
+        'bmp' => 'image/bmp',
+        'ico' => 'image/vnd.microsoft.icon',
+        'tiff' => 'image/tiff',
+        'tif' => 'image/tiff',
+        'svg' => 'image/svg+xml',
+        'svgz' => 'image/svg+xml',
+
+        // archives
+        'zip' => 'application/zip',
+        'rar' => 'application/x-rar-compressed',
+        'exe' => 'application/x-msdownload',
+        'msi' => 'application/x-msdownload',
+        'cab' => 'application/vnd.ms-cab-compressed',
+
+        // audio/video
+        'mp3' => 'audio/mpeg',
+        'qt' => 'video/quicktime',
+        'mov' => 'video/quicktime',
+
+        // adobe
+        'pdf' => 'application/pdf',
+        'psd' => 'image/vnd.adobe.photoshop',
+        'ai' => 'application/postscript',
+        'eps' => 'application/postscript',
+        'ps' => 'application/postscript',
+
+        // ms office
+        'doc' => 'application/msword',
+        'rtf' => 'application/rtf',
+        'xls' => 'application/vnd.ms-excel',
+        'ppt' => 'application/vnd.ms-powerpoint',
+
+        // open office
+        'odt' => 'application/vnd.oasis.opendocument.text',
+        'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+    );
+
+    $ext = strtolower(array_pop(explode('.',$filename)));
+    if (array_key_exists($ext, $mime_types)) {
+        return $mime_types[$ext];
+    }
+    elseif (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME);
+        $mimetype = finfo_file($finfo, $filename);
+        finfo_close($finfo);
+        return $mimetype;
+    }
+    else {
+        return 'application/octet-stream';
+    }
+}

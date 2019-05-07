@@ -1,4 +1,10 @@
 
+<?php if (isset($_GET['success'])): ?>
+  <div class="alert alert-success">
+    <p>Спасибо за ваше сообщение!</p>
+  </div>
+<?php endif; ?>
+
     <nav class="nav">
       <ul class="nav__list container">
         <?php 
@@ -25,12 +31,11 @@
             </div>
             <div class="lot-item__cost-state">
               <div class="lot-item__rate">
-                <?php $bets_prices = getBetsPrices($item['id'], $item['price'], $item['step']); /* функция последняя цена и колво ставок */ ?>
                 <span class="lot-item__amount">Текущая цена</span>
-                <span class="lot-item__cost"><?= makePriceFormat(htmlspecialchars($bets_prices['l_price'])); ?></span>
+                <span class="lot-item__cost"><?= makePriceFormat(htmlspecialchars($item['l_price'])); ?></span>
               </div>
               <div class="lot-item__min-cost">
-                Мин. ставка <span><?= makePriceFormat($bets_prices['min_bet']); ?> р</span>
+                Мин. ставка <span><?= makePriceFormat($item['min_bet']); ?> р</span>
               </div>
             </div>
           </div>

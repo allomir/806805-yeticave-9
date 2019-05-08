@@ -83,7 +83,7 @@ function checkCategoryByID($conn, $categoryID) {
 
 /* Запрос добави новый лот */
 
-function addItem($conn, $item) {
+function insertNewItem($conn, $item) {
 
     $category_id = $item['category_id'];
     $user_id = $item['user_id'];
@@ -126,7 +126,7 @@ function addItem($conn, $item) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
 
-    return $result;
+    return $result; // Возвращает тру или ошибка
 }
 
 /* Главная стр. Запрос показать активные лоты (врямя окончания не вышло), сортировать от последнего добавленного, не более 9 */

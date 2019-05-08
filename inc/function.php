@@ -59,7 +59,7 @@ function makeTimer($TS_end) {
 
 /* Функция - Вставить класс ошибки, стр добавление лота */
 
-function insErrStyle($errors) {
+function addErrorStyle($errors) {
     // Виды стилей при ошибках заполнения
     $result = '';
     $formErrStyle = ['form--invalid', 'form__item--invalid']; // типы CLASS

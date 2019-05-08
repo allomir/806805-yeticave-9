@@ -14,6 +14,26 @@ $i = 0;
 if(empty($imgData['img_url'])) {print(++$i . '. файл не загружен <br>');}
 print('<br>');
 
+/*  Глобальные переменные
+Список параметров 
+_POST['lot-name']; 
+_POST['category'];
+_POST['message'];
+_POST['lot-rate'];
+_POST['lot-step'];
+_POST['lot-date'];
+_POST['add_lot']; // кнопка добавить лот
+_FILES['lot-img']['name']; // Оригинальное имя файла на компьютере клиента
+_FILES['lot-img']['type']; // Mime-тип файла, если браузер предоставил информацию, например "image/gif".
+_FILES['lot-img']['size'] // Размер в байтах принятого файла.
+_FILES['lot-img']['tmp_name'] // Временное имя, с которым принятый файл был сохранен на сервере.
+*/
+
+        // Проверка типа загружаемого файла (2 вариант)
+        $finfo = finfo_open(FILEINFO_MIME_TYPE); // встроенные PHP MAGIC file по умолчанию
+        $file_type = finfo_file($finfo, $imgData['tmp_name']); // определяем тип файла с именем во временной директории 
+        finfo_close($finfo);
+
 // Аналог функции mime_content_type по данным из массива
 
 function getFileType($filename) {

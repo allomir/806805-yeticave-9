@@ -22,6 +22,18 @@ print('<br>');
 */
 $response_code = ''; 
 
+// <!-- Горизонтальное простое меню - для всех страниц кроме главной -->
+            <?php foreach ($categories as $category): ?>
+            <li class="nav__item">
+                <a href="all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
+            </li>
+            <?php endforeach; ?>
+
+        <?php 
+        /* Вкладывание простое горизонтальное меню, кроме главной страницы */
+        require(__DIR__ . '/../inc/mainMenuSimple.php'); 
+        ?>
+
 // стр. лот
 $saveItemID = intval($_GET['itemID']); // Защита от SQL-инъкция (вариант 2) - приведение к числу
 

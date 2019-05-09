@@ -81,7 +81,20 @@ function checkCategoryByID($conn, $categoryID) {
     return mysqli_fetch_assoc($result);
 }
 
-/* Запрос добави новый лот */
+/* Проверка существования email */
+
+function checkUserByEmail($conn, $email) {
+    $sql = "SELECT id FROM users 
+        WHERE email='$email'
+    ";
+    $result = mysqli_query($conn, $sql);
+    if (!$result) {
+        print("Ошибка MySQL: " . mysqli_error($conn)); 
+    }
+    return mysqli_fetch_assoc($result);
+}
+
+/* Запрос добавить новый лот */
 
 function insertNewItem($conn, $item) {
 
@@ -108,6 +121,37 @@ function insertNewItem($conn, $item) {
     $item['step'],
     // $item['ts_add'],
     $item['ts_end']
+    );
+
+    $result = mysqli_query($conn, $sql);
+    if (!$result) {
+        print("Ошибка MySQL: " . mysqli_error($conn)); 
+    }
+
+    return $result; // Возвращает тру или ошибка
+}
+
+/* Запрос добавить нового пользователя */
+
+function insertNewUser($conn, $user) {
+echo 22222;
+    $sql = sprintf("INSERT INTO users 
+    (
+        email, 
+        password, 
+        name, 
+        contacts,
+        avatar_url -- не требуется по заданию, но не может быть пусто
+        -- ts_created -- автозаполнение
+    )
+    VALUES
+    ('%s', '%s', '%s', '%s', '%s')",  
+        $user['email'], 
+        $user['password'], 
+        $user['name'], 
+        $user['contacts'],
+        '/img/user.png' // не требуется по заданию, но не может быть пусто
+        // ts_created // автозаполнение
     );
 
     $result = mysqli_query($conn, $sql);

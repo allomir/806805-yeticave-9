@@ -1,7 +1,7 @@
 <?php
 
 // faq.php - удаленные промежуточные данные заданий.
-$is_auth = 1;
+$is_auth = 0;
 $user_name = 'Михаил Лебедев';
 
 function deffXSS($value) {
@@ -56,21 +56,19 @@ function addErrorStyle($errors) {
     // Виды стилей CLASS при заполнении полей или формы
     $formErrStyle = ['form--invalid', 'form__item--invalid']; 
 
-    if (isset($_POST['add_lot'])) {
-        if (is_string($errors)) {
-            if (!empty($errors)) {
-                return $formErrStyle[1];
-            }
+    if (is_string($errors)) {
+        if (!empty($errors)) {
+            return $formErrStyle[1];
         }
-        
-        $number_err = 0;
-        foreach ($errors as $error) {
-            if (!empty($error)) {
-                $number_err++;
-            }
+    }
+    // Если массив
+    $number_err = 0;
+    foreach ($errors as $error) {
+        if (!empty($error)) {
+            $number_err++;
         }
-        if ($number_err) {
-            return $formErrStyle[0];
-        }
+    }
+    if ($number_err) {
+        return $formErrStyle[0];
     }
 }

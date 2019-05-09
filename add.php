@@ -19,11 +19,11 @@ $params = [
 
 // Особые параметры полей формы кроме файла, указываются и проверяются индвивидуально
 $specpars = [
-    'name' => ['maxlen' => '255'], // lot-name
-    'mess' => ['maxlen' => '1024'], // message
-    'rate' => ['maxlen' => '7'], // lot-rate
-    'step' => ['maxlen' => '7'], // lot-step
-    'date' => ['mindate' => strtotime('tomorrow + 1 days')] // lot-date
+    'lot-name' => ['maxlen' => '255'], 
+    'message' => ['maxlen' => '1024'], 
+    'lot-rate' => ['maxlen' => '7'], 
+    'lot-step' => ['maxlen' => '7'], 
+    'lot-date' => ['mindate' => strtotime('tomorrow + 1 days')] // lot-date
 ];
 
 // Загрузка данных полей из глобальной переменной POST, если нет данных то пусто 
@@ -42,12 +42,13 @@ $imgData['maxlen'] = '64'; // Ограничим название файла д�
 $imgData['accept_type'] = ['image/gif', 'image/jpeg', 'image/png']; // особый параметр файла - типы файла изображений
 $imgData['maxsize'] = 1048576; // особый параметр - максимальный размер в кб (подсчет в Мб в сообщении)
 
-
+$item = []; // Параметры лота для инсерта
+$number_err = 0; // Колво ошибок
 /********************************** Форма отправлена *************************************/
 
 
 // Проверка - событие нажатие кнопки
-if (isset($_POST['add_lot']) ) {
+if (isset($_POST['add_lot'])) {
 
     /* 1 часть. Заполнение массива ошибок полей, если поле пусто */
 
@@ -55,51 +56,36 @@ if (isset($_POST['add_lot']) ) {
         if (empty($formData[$param])) {
             $formErrors[$param] = $error;
         }
+        
         // Если поле не пусто, проверяем особые условия для каждого поля, переполнение, число
-        else{
-            if ($param == 'lot-name') {
-                if (strlen($formData[$param]) > $specpars['name']['maxlen'] ) {
-                    $formErrors[$param] = 'Превышена максимальная длина' . $specpars['name']['maxlen'];
-                }
+        elseif ($param == 'lot-name' OR $param == 'message') {
+            if (strlen($formData[$param]) > $specpars[$param]['maxlen'] ) {
+                    $formErrors[$param] = 'Превышено число знаков' . $specpars[$param]['maxlen'];
             }
-            elseif ($param == 'message') {
-                if (strlen($formData[$param]) > $specpars['mess']['maxlen'] ) {
-                    $formErrors[$param] = 'Превышена максимальная длина' . $specpars['mess']['maxlen'];
-                }
-            }
-            elseif ($param == 'lot-rate') {
-                if (strlen($formData[$param]) > $specpars['rate']['maxlen'] ) {
-                    $formErrors[$param] = 'Превышено значение';
-                }
-            }
-            elseif ($param == 'lot-step') {
-                if (strlen($formData[$param]) > $specpars['step']['maxlen'] ) {
-                    $formErrors[$param] = 'Превышено значение';
-                }
-            }
-            // Общие проверки для числовых полей
-            if ($param == 'lot-rate' OR $param == 'lot-step') {
-
-                // Проверка число или строка с числом (как поле ввода в форме, которое всегда является строкой), используйте is_numeric()!!!
-                if (!is_numeric($formData[$param])) {
+        }
+        elseif ($param == 'lot-rate' OR $param == 'lot-step') {
+            // Проверка число или строка с числом (как поле ввода в форме, которое всегда является строкой), используйте is_numeric()!!!
+            if (!is_numeric($formData[$param])) {
                     $formErrors[$param] = 'Введите число';
-                }
-                elseif (!is_int($formData[$param] * 1)) {
+            }
+            elseif (strlen($formData[$param]) > $specpars[$param]['maxlen'] ) {
+                $formErrors[$param] = 'Превышено значение';
+            }
+            elseif (!is_int($formData[$param] * 1)) {
                     $formErrors[$param] = 'Введите целое число'; 
-                }
-                elseif ($formData[$param] <= 0 ) {
+            }
+            elseif ($formData[$param] <= 0 ) {
                     $formErrors[$param] = 'Введите положительное число';
-                }
-                elseif (strpos($formData[$param], '0') === 0) {
+            }
+            elseif (strpos($formData[$param], '0') === 0) {
                     $formErrors[$param] = 'Слишком много нулей :)';
-                }
             }
         }
     }
 
     /* 2 часть. Валидация времени, функция из helpers */
 
-    if (!empty($formData['lot-date'])) {
+    if (empty($formErrors['lot-date'])) {
         $result_date = is_date_valid($formData['lot-date']);
         if (!is_date_valid($formData['lot-date'])) {
             $formErrors['lot-date'] = 'Время должно быть корректное ГГГГ-ММ-ДД';
@@ -123,28 +109,27 @@ if (isset($_POST['add_lot']) ) {
             $imgData['img_err'] = ' Выберите файл';
         }
     }
-    // Файл выбран новый или тотже, старый файл удаляется (удаление не сделано). Выполняется валидация файла - тип и макс. размер
+    // Файл выбран новый или тотже, старый файл удаляется (удаление не требуется). Выполняется валидация файла - тип и макс. размер
     else {
+        // Проверка формата загружаемого файла
+        $file_type = mime_content_type($imgData['tmp_name']); // MIME-тип файла, из встроенного файла magic.mime.
+        $correct_type = 0;
+        foreach ($imgData['accept_type'] AS $accept_type) {
+            if ($accept_type == $file_type) {
+                $correct_type++; 
+            }
+        }
+        // Если совпадений нет
+        if (empty($correct_type)) {
+            $imgData['img_err'] = ' Формат файла должен быть: gif, jpg, png';
+        }
         // Проверка длины имени файла
-        if (strlen($imgData['name']) > $imgData['maxlen']) {
-            $imgData['img_err'] = ' Название файла не более' . $imgData['maxlen'];
+        elseif (strlen($imgData['name']) > $imgData['maxlen']) {
+            $imgData['img_err'] = ' Превышено число знаков' . $imgData['maxlen'];
         }
         // Проверка размера файла
         elseif ($imgData['size'] > $imgData['maxsize']) {
             $imgData['img_err'] = ' Размер файла не более: ' . $imgData['maxsize'] / 1048576 . 'Мб';
-        }
-
-        // Проверка типа загружаемого файла
-        $file_type = mime_content_type($imgData['tmp_name']); // MIME-тип файла, используя для определения информацию из файла magic.mime.
-        $result_type = 0;
-        foreach ($imgData['accept_type'] AS $accept_type) {
-            if ($accept_type == $file_type) {
-                $result_type++; 
-            }
-        }
-        // Если совпадений нет
-        if (!$result_type) {
-            $imgData['img_err'] = ' Формат файла должен быть: gif, jpg, png';
         }
     }
 
@@ -166,7 +151,7 @@ if (isset($_POST['add_lot']) ) {
             $imgData['img_err'] = "Ошибка загрузки файла! ";
         }
     }
-    echo $imgData['img_err'];
+
     /* 5 часть. Колво ошибок */
 
     // Добавляем в массив ошибок полей формы ошибки файла и загрузки файла
@@ -206,13 +191,13 @@ if (isset($_POST['add_lot']) && $number_err == 0) {
 
     // Функция добавить лот со всеми значениями
     if (insertNewItem($conn, $saveItem)) {
+        
         // Запрос последнего добавленного ID
         $last_id = mysqli_insert_id($conn);
+        mysqli_close($conn);
 
-        // Перенаправление, если ПОСТ
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            header("Location: /lot.php?success=true&itemID=" . $last_id);
-        }        
+        // Перенаправление на страницу добавленного лота, если ПОСТ
+        header("Location: lot.php?success=true&itemID=" . $last_id);
     }
 }
 

@@ -42,7 +42,7 @@
       </div>
 
       <!--  добавить файл-изображение -->
-      <div class="form__item form__item--file <?= addErrorStyle($imgData['img_err']); ?><?= addErrorStyle($imgData['img_post']); ?>">
+      <div class="form__item form__item--file <?= addErrorStyle($imgData['img_err']); ?>">
         <label>Изображение <sup>*</sup></label>
         <div class="form__input-file">
           <input class="visually-hidden" type="file" id="lot-img" name="lot-img" value="">
@@ -51,7 +51,7 @@
           </label>
         </div>
         <span class="form__error"><?= $imgData['img_err']; ?></span>
-        <span class="form__error" style="color: inherit;"> <?= $imgData['img_post']; ?></span>
+        <span style="color: inherit; display: block; clear: left"> <?= $imgData['img_post']; ?></span>
       </div>
 
       <div class="form__container-three">

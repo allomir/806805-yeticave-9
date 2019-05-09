@@ -26,7 +26,8 @@ mysqli_close($conn);
 
 /* Шаблонизация - подключение шаблонов */
 
-if (empty($items) && isset($checkCategory)) {
+// Категория есть, но в ней отсутствуют лоты
+if (empty($items) && !empty($checkCategory)) {
     $page_name = $checkCategory['name'];
     $page_content = include_template('all-lots.php', [
         'categories' => $categories,
@@ -34,7 +35,8 @@ if (empty($items) && isset($checkCategory)) {
         'page_name' => $page_name
 ]);
 }
-elseif ($items) {
+// В категории есть лоты
+elseif (!empty($items)) {
     $page_name = $items['0']['category'];
     $page_content = include_template('all-lots.php', [
         'categories' => $categories, 
@@ -42,6 +44,7 @@ elseif ($items) {
         'page_name' => $page_name
     ]);
 }
+// Такого id категории нет или нет параметра запроса
 else {
     $page_name = '404 Страница не найдена';
     $response_code = http_response_code(404);
@@ -62,5 +65,5 @@ $layout_content = include_template('layout.php', [
     'page_style_main' => ''
 ]);
 
-print($response_code);
+$response_code;
 print($layout_content);

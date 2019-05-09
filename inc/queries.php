@@ -85,41 +85,30 @@ function checkCategoryByID($conn, $categoryID) {
 
 function insertNewItem($conn, $item) {
 
-    $category_id = $item['category_id'];
-    $user_id = $item['user_id'];
-    $name = $item['name'];
-    $description = $item['description'];
-    $img_url = $item['img_url'];
-    $price = $item['price'];
-    $step = $item['step'];
-    // $ts_add = $item['ts_add'];
-    $ts_end = $item['ts_end'];
-
-    $sql = "INSERT INTO items 
-        (
-            category_id, 
-            user_id, 
-            name,
-            description,
-            img_url,
-            price,
-            step,
-         -- ts_add, 
-            ts_end
-        )
-            VALUES
-        (  
-            '$category_id',
-            '$user_id',
-            '$name',
-            '$description',
-            '$img_url',
-            '$price',
-            '$step',
-        -- '$ts_add',
-            '$ts_end'
-        )
-    ";
+    $sql = sprintf("INSERT INTO items 
+    (
+    category_id, 
+    user_id, 
+    name,
+    description,
+    img_url,
+    price,
+    step,
+    -- ts_add, -- автозаполнение
+    ts_end
+    )
+    VALUES
+    ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",  
+    $item['category_id'],
+    $item['user_id'],
+    $item['name'],
+    $item['description'],
+    $item['img_url'],
+    $item['price'],
+    $item['step'],
+    // $item['ts_add'],
+    $item['ts_end']
+    );
 
     $result = mysqli_query($conn, $sql);
     if (!$result) {
@@ -145,7 +134,7 @@ function getItems($conn) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
 
-    $item = [];
+    $items = [];
     if(mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
@@ -193,7 +182,7 @@ function getItemsByCategory($conn, $categoryID) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
 
-    $item = [];
+    $items = [];
     if(mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка

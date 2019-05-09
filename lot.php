@@ -21,7 +21,8 @@ if (isset($_GET['itemID'])) {
 mysqli_close($conn);
 
 /* Шаблонизация - подключение шаблонов */
-    
+
+// Лот пуст (лота с таким id нет) или id лота нет (параметра запроса нет)
 if(empty($item) OR empty($_GET['itemID'])){
     $page_name = '404 Страница не найдена';
     $response_code = http_response_code(404);
@@ -29,6 +30,7 @@ if(empty($item) OR empty($_GET['itemID'])){
             'categories' => $categories
     ]);
 }
+// Id Лота существует и лот не пуст
 else {
     $page_name = $item['name'];
     $page_content = include_template('lot.php', [
@@ -48,5 +50,5 @@ $layout_content = include_template('layout.php', [
     'page_style_main' => ''
 ]);
 
-print($response_code);
+$response_code;
 print($layout_content);

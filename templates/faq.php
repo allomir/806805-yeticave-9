@@ -213,3 +213,7 @@ $item['step'],
 $item['ts_add'],
 $item['ts_end']
 );
+
+// пример
+
+$sql = sprintf('SELECT * FROM weather WHERE day = "%s"', mysqli_real_escape_string($con, $date));

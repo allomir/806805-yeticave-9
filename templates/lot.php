@@ -1,7 +1,7 @@
 
 <?php if (isset($_GET['success'])): ?>
   <div class="alert alert-success">
-    <p>Спасибо за ваше сообщение!</p>
+    <p>Лот успешно добавлен!</p>
   </div>
 <?php endif; ?>
 

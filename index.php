@@ -24,7 +24,6 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => $page_name,
-    'response_code' => $response_code,
     'page_style_main' => 'container'
 
 ]);

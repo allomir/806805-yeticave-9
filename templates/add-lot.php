@@ -21,13 +21,11 @@
             <option value="Выберите категорию">Выберите категорию</option>
 
             <?php 
-            /* Итерация Категории из БД */
             foreach ($categories as $category) :
-              $selected = ''; if ($category['id'] == $formData['category']) { $selected = ' selected';}
+            $selected = ''; if ($category['id'] == $formData['category']) { $selected = ' selected';}
             ?>
               <option <?= $selected; ?> value="<?= $category['id']; ?>"> <?= deffXSS($category['name']); ?></option>
             <?php endforeach; ?>
-            ?>
 
           </select>
           <span class="form__error"><?= $formErrors['category'] ?></span>

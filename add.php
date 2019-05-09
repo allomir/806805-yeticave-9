@@ -1,6 +1,6 @@
 <?php
 
-require('inc/function.php'); // функции
+require('inc/function.php'); // функции, response_code, is_auth
 require('inc/queries.php'); // Запросы и подключение
 require('helpers.php'); // шаблонизатор
 
@@ -25,20 +25,19 @@ $specpars = [
     'step' => ['maxlen' => '7'], // lot-step
     'date' => ['mindate' => strtotime('tomorrow + 1 days')] // lot-date
 ];
+
 // Загрузка данных полей из глобальной переменной POST, если нет данных то пусто 
 foreach ($params as $param => $error) {
     $formErrors[$param] = ''; // Массив для хранения названия ошибки или пусто, вначале всегда пусто, используется для сообщий в верстке
     $formData[$param] = $_POST[$param] ?? ''; // Массив для получения данных из форм, используется для автозаполнения в верстке 
 }
-
 If ($formData['category'] == 'Выберите категорию') {$formData['category'] = '';} // Исключение - параметр приравниваем к пусто
 
 // Параметры файла-изображения
-
 $imgData = $_FILES['lot-img'] ?? []; // Сокращенная запись isset else
 $imgData['img_err'] = ''; // хранилище ошибок для поля загрузить файл
 $imgData['img_url'] = $_POST['img-url'] ?? ''; // url изображения - значение определяется после загрузки, передается в POST, используется при автозаполнение
-$imgData['img_post'] = ''; // автозаполнение файл загружен, если новый файл не выбран, добавляет скрытое поле POST с URL прежнего файла
+$imgData['img_post'] = ''; // автозаполнение и файл загружен, если новый файл не выбран, добавляет скрытое поле POST с URL прежнего файла
 $imgData['maxlen'] = '64'; // Ограничим название файла до 64
 $imgData['accept_type'] = ['image/gif', 'image/jpeg', 'image/png']; // особый параметр файла - типы файла изображений
 $imgData['maxsize'] = 1048576; // особый параметр - максимальный размер в кб (подсчет в Мб в сообщении)
@@ -80,17 +79,19 @@ if (isset($_POST['add_lot']) ) {
             }
             // Общие проверки для числовых полей
             if ($param == 'lot-rate' OR $param == 'lot-step') {
-                
-                $diff = $formData[$param] - intval($formData[$param]); 
 
+                // Проверка число или строка с числом (как поле ввода в форме, которое всегда является строкой), используйте is_numeric()!!!
                 if (!is_numeric($formData[$param])) {
                     $formErrors[$param] = 'Введите число';
                 }
-                elseif ($diff !== 0) {
-                    $formErrors[$param] = 'Введите целое число';
+                elseif (!is_int($formData[$param] * 1)) {
+                    $formErrors[$param] = 'Введите целое число'; 
                 }
-                elseif ($formData[$param] < 0) {
+                elseif ($formData[$param] <= 0 ) {
                     $formErrors[$param] = 'Введите положительное число';
+                }
+                elseif (strpos($formData[$param], '0') === 0) {
+                    $formErrors[$param] = 'Слишком много нулей :)';
                 }
             }
         }
@@ -234,7 +235,7 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => $page_name,
-    'response_code' => $response_code
+    'page_style_main' => ''
 ]);
 
 print($layout_content);

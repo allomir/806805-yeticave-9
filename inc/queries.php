@@ -144,11 +144,12 @@ function getItems($conn) {
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
+
+    $item = [];
     if(mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
-    } else {$items = 0;} // Число
-
+    }
     return  $items;
 }
 
@@ -165,14 +166,15 @@ function getItemByID($conn, $itemID) {
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
+
+    $item = []; 
     if(mysqli_num_rows($result)) {
         $item = mysqli_fetch_assoc($result); // Ассоциативный массив 
         if(!$item['l_price']) {
             $item['l_price'] = $item['price']; // Последняя ставка или стартовая цена
         }
         $item['min_bet'] = $item['l_price'] + $item['step']; // Добавление поля - Мин ставка
-    } else {$item = 0;} // Число
-
+    } 
     return $item;
 }
 
@@ -191,11 +193,10 @@ function getItemsByCategory($conn, $categoryID) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
 
+    $item = [];
     if(mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
     } 
-    else {$items = 0;} // Число
-
     return $items;
 }

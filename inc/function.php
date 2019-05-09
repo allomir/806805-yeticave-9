@@ -4,15 +4,8 @@
 $is_auth = 1;
 $user_name = 'Михаил Лебедев';
 
-/* Переопределение кода ответа. Переменная передается в подложку.
-- По умолчанию 200 или ничего, 
-- стр не найдена 404, http_response_code(404)
-- при переезде стр 302, при переадресации 301 и тд. 
-*/
-$response_code = ''; 
-
 function deffXSS($value) {
-    return htmlspecialchars($value, ENT_QUOTES,'cp1251');
+    return htmlspecialchars($value, ENT_QUOTES,'UTF-8', true);
 }
 
 /* функция формат цены */
@@ -60,26 +53,24 @@ function makeTimer($TS_end) {
 /* Функция - Вставить класс ошибки, стр добавление лота */
 
 function addErrorStyle($errors) {
-    // Виды стилей при ошибках заполнения
-    $result = '';
-    $formErrStyle = ['form--invalid', 'form__item--invalid']; // типы CLASS
+    // Виды стилей CLASS при заполнении полей или формы
+    $formErrStyle = ['form--invalid', 'form__item--invalid']; 
+
     if (isset($_POST['add_lot'])) {
         if (is_string($errors)) {
             if (!empty($errors)) {
-                $result =  $formErrStyle[1];
+                return $formErrStyle[1];
             }
         }
-        else {
-            $number_err = 0;
-            foreach ($errors as $value) {
-                if (!empty($value)) {
-                    $number_err++;
-                }
+        
+        $number_err = 0;
+        foreach ($errors as $error) {
+            if (!empty($error)) {
+                $number_err++;
             }
-            if ($number_err) {
-                $result = $formErrStyle[0];
-            }
+        }
+        if ($number_err) {
+            return $formErrStyle[0];
         }
     }
-    return $result;
 }

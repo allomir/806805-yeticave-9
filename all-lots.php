@@ -3,11 +3,15 @@
 require('inc/function.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('helpers.php'); // шаблонизатор
+$response_code = '';
 
 $conn = getConn(); // Подключение к БД
 $categories = getCategories($conn); // Запрос Показать Таблицу Категории
 
 /* Страница категорий. Получение id категории */
+
+$items = []; // массив с данными лотов.
+$checkCategory = []; // массив с данными выбранной категории.
 
 if (isset($_GET['categoryID'])) {
     $saveCategoryID = mysqli_real_escape_string($conn, $_GET['categoryID']); // Защита от SQL-инъкция - экранирование
@@ -22,7 +26,7 @@ mysqli_close($conn);
 
 /* Шаблонизация - подключение шаблонов */
 
-if (!$items && $checkCategory) {
+if (empty($items) && isset($checkCategory)) {
     $page_name = $checkCategory['name'];
     $page_content = include_template('all-lots.php', [
         'categories' => $categories,
@@ -55,7 +59,8 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => $page_name,
-    'response_code' => $response_code
+    'page_style_main' => ''
 ]);
 
+print($response_code);
 print($layout_content);

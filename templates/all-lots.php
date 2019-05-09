@@ -19,19 +19,19 @@
             if ($items):
             foreach ($items as $item):
             // функция таймер 
-            $Timer = makeTimer(htmlspecialchars($item['ts_end'])); 
+            $Timer = makeTimer(deffXSS($item['ts_end'])); 
           ?>
             <li class="lots__item lot">
                 <div class="lot__image">
-                    <img src="<?= htmlspecialchars($item['img_url']); ?>" width="350" height="260" alt="<?= htmlspecialchars($item['name']); ?>">
+                    <img src="<?= deffXSS($item['img_url']); ?>" width="350" height="260" alt="<?= deffXSS($item['name']); ?>">
                 </div>
                 <div class="lot__info">
-                    <span class="lot__category"><?= htmlspecialchars($item['category']); ?></span>
-                    <h3 class="lot__title"><a class="text-link" href="lot.php?itemID=<?= $item['id']; ?>"><?= htmlspecialchars($item['name']); ?></a></h3>
+                    <span class="lot__category"><?= deffXSS($item['category']); ?></span>
+                    <h3 class="lot__title"><a class="text-link" href="lot.php?itemID=<?= $item['id']; ?>"><?= deffXSS($item['name']); ?></a></h3>
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount"><?= $item['number_bets'] ?></span>
-                            <span class="lot__cost"><?= makePriceFormat( htmlspecialchars($item['l_price']) ); ?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?= makePriceFormat( deffXSS($item['l_price']) ); ?><b class="rub">р</b></span>
                         </div>
                         <div class="lot__timer timer <?= $Timer['style']; ?>">
                             <?= $Timer['DDHHMM']; ?>

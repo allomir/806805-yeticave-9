@@ -1,4 +1,3 @@
-<?php $response_code; ?>
 
 <!DOCTYPE html>
 <html lang="ru">

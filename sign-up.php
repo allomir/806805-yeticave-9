@@ -1,8 +1,12 @@
 <?php
 
-require('inc/function.php'); // функции, response_code, is_auth
+require('inc/function.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
-require('helpers.php'); // шаблонизатор
+require('inc/helpers.php'); // шаблонизатор
+$response_code = '';
+
+session_start();
+$user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : 0;
 
 $conn = getConn(); // Подключение к БД
 $categories = getCategories($conn); // Запрос Показать Таблицу Категории
@@ -54,7 +58,10 @@ if (isset($_POST['sign-up'])) {
         }
     }
 
-    /* 2часть. Проверки поля email */
+    /* 2часть. Проверки поля email - экранирование */
+
+    // Защита email от SQL-инъекции
+    $saveEmail = mysqli_real_escape_string($formData['email']);
 
     if(empty($formErrors['email'])) {
         // проверка валидность
@@ -62,7 +69,7 @@ if (isset($_POST['sign-up'])) {
             $formErrors['email'] = 'Email должен быть корректным';
         }
         // проверка на уникальность
-        elseif (!empty(checkUserByEmail($conn, $formData['email']))) {
+        elseif (!empty(checkUserByEmail($conn, $saveEmail))) {
             $formErrors['email'] = 'email занят';
         }
     }
@@ -100,8 +107,10 @@ if (isset($_POST['sign-up']) && $number_err === 0) {
 
     // Защита от SQL-инъкция - экранирование
     foreach ($user as $key => $value) {
-        $saveValue = mysqli_real_escape_string($conn, $value); 
+        if ($key !== 'password') {
+        $saveValue = mysqli_real_escape_string($conn, $value);
         $saveUser[$key] = $saveValue;
+        }
     }
 
     // Запрос БД на добавление нового пользователя
@@ -111,7 +120,7 @@ if (isset($_POST['sign-up']) && $number_err === 0) {
         mysqli_close($conn);
 
         // Перенаправление на страницу входа
-        header("Location: login.php/?success=true");
+        header("Location: login.php/?congratulation=true");
     }
 }
 
@@ -126,7 +135,6 @@ $page_content = include_template('sign-up.php', [
 ]);
 
 $layout_content = include_template('layout.php', [
-    'is_auth' => $is_auth,
     'user_name' => $user_name, 
     'categories' => $categories, 
     'content' => $page_content, 

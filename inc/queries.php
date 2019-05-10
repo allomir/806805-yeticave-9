@@ -71,7 +71,7 @@ function getCategories($conn) {
 /* Проверка существования категории */
 
 function checkCategoryByID($conn, $categoryID) {
-    $sql = "SELECT id, name FROM categories
+    $sql = "SELECT * FROM categories
         WHERE categories.id = '$categoryID'
     "; 
     $result = mysqli_query($conn, $sql);
@@ -84,7 +84,7 @@ function checkCategoryByID($conn, $categoryID) {
 /* Проверка существования email */
 
 function checkUserByEmail($conn, $email) {
-    $sql = "SELECT id FROM users 
+    $sql = "SELECT * FROM users 
         WHERE email='$email'
     ";
     $result = mysqli_query($conn, $sql);

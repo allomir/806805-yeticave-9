@@ -24,7 +24,7 @@
         <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
         <nav class="user-menu">
 
-            <?php if ($is_auth == 1): ?>
+            <?php if ($user_name) : ?>
             <div class="user-menu__logged">
 
                 <p><?= deffXSS($user_name); ?></p> 

@@ -48,7 +48,7 @@ if (isset($_POST['sign-up'])) {
         }
         // Минимальное число знаков пароля
         elseif ($param == 'password') {
-            if (strlen($formData[$param]) <= 4) {
+            if (strlen($formData[$param]) < 4) {
                 $formErrors[$param] = 'Пароль должен быть не менее ' . $specpars[$param]['minlen'] . ' знаков';
             }
         }
@@ -68,9 +68,10 @@ if (isset($_POST['sign-up'])) {
     }
 
     /* 3 часть. Поле пароль обработать встроенной функцией password_hash */
-
-
-
+    if (empty($formErrors['password'])) {
+        $passwordHash = password_hash($formData['password'], PASSWORD_DEFAULT);
+    }
+    
     /* 4 часть. Колво ошибок */
 
     // Результат - Cчитаем колво ошибок после нажатия кнопки и проверок
@@ -86,11 +87,11 @@ if (isset($_POST['sign-up'])) {
 
 // После нажатия кнопки и Колво ошибок 0 
 if (isset($_POST['sign-up']) && $number_err === 0) {
-    print(11111);
+
     // Параметры пользователя для инсерта
     $user = [
         'email' => $formData['email'], 
-        'password' => $formData['password'], 
+        'password' => $passwordHash, 
         'name' => $formData['name'], 
         'contacts' => $formData['message']
         // avatar_url, // не требуется по заданию
@@ -116,7 +117,7 @@ if (isset($_POST['sign-up']) && $number_err === 0) {
 
 /* Шаблонизатор */
 
-$page_name = 'Добавление лота';
+$page_name = 'Регистрация';
 
 $page_content = include_template('sign-up.php', [
     'categories' => $categories, 

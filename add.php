@@ -90,8 +90,8 @@ if (isset($_POST['add_lot'])) {
         if (!is_date_valid($formData['lot-date'])) {
             $formErrors['lot-date'] = 'Время должно быть корректное ГГГГ-ММ-ДД';
         }
-        elseif (strtotime($formData['lot-date']) < $specpars['date']['mindate']) {
-            $formErrors['lot-date'] = 'Минимальная дата завершения: ' . date('Y-m-d', $specpars['date']['mindate']);
+        elseif (strtotime($formData['lot-date']) < $specpars['lot-date']['mindate']) {
+            $formErrors['lot-date'] = 'Минимальная дата завершения: ' . date('Y-m-d', $specpars['lot-date']['mindate']);
         }
     }
 

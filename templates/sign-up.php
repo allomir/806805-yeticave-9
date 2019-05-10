@@ -17,7 +17,7 @@
       </div>
       <div class="form__item <?= addErrorStyle($formErrors['password']); ?>">
         <label for="password">Пароль <sup>*</sup></label>
-        <input id="password" type="password" name="password" placeholder="Введите пароль">
+        <input id="password" type="password" name="password" placeholder="Введите пароль" value="<?= deffXSS($formData['password']) ?>">
         <span class="form__error"><?= $formErrors['password']; ?></span>
       </div>
       <div class="form__item <?= addErrorStyle($formErrors['name']); ?>">

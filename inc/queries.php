@@ -134,7 +134,7 @@ function insertNewItem($conn, $item) {
 /* Запрос добавить нового пользователя */
 
 function insertNewUser($conn, $user) {
-echo 22222;
+
     $sql = sprintf("INSERT INTO users 
     (
         email, 
@@ -150,7 +150,7 @@ echo 22222;
         $user['password'], 
         $user['name'], 
         $user['contacts'],
-        '/img/user.png' // не требуется по заданию, но не может быть пусто
+        $user['avatar_url'] // не требуется по заданию, но не может быть пусто
         // ts_created // автозаполнение
     );
 

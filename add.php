@@ -177,7 +177,7 @@ if (isset($_POST['add_lot']) && $number_err == 0) {
     // Параметры лота
     $item = [
         'category_id' => $formData['category'],
-        'user_id' => '1',
+        'user_id' => $user_id,
         'name' => $formData['lot-name'],
         'description' => $formData['message'],
         'img_url' => $imgData['img_url'],
@@ -200,23 +200,31 @@ if (isset($_POST['add_lot']) && $number_err == 0) {
         $last_id = mysqli_insert_id($conn);
         mysqli_close($conn);
 
-        // Перенаправление на страницу добавленного лота, если ПОСТ
+        // Перенаправление на страницу добавленного лота
         header("Location: lot.php?success=true&itemID=" . $last_id);
     }
 }
 
+mysqli_close($conn);
 
 /* Шаблонизатор */
 
 $page_name = 'Добавление лота';
 
-$page_content = include_template('add-lot.php', [
-    'categories' => $categories, 
-    'formData' => $formData,
-    'formErrors' => $formErrors,
-    'imgData' => $imgData
-    
-]);
+if (isset($_SESSION['user'])) {
+    $page_content = include_template('add-lot.php', [
+        'categories' => $categories, 
+        'formData' => $formData,
+        'formErrors' => $formErrors,
+        'imgData' => $imgData
+        
+    ]);
+} else {
+    $response_code = http_response_code(403);
+    $page_content = 'Для просмотра Зарегистрируйтесь' ;
+}
+
+
 
 $layout_content = include_template('layout.php', [
     'user_name' => $user_name, 
@@ -226,4 +234,5 @@ $layout_content = include_template('layout.php', [
     'page_style_main' => ''
 ]);
 
+$response_code;
 print($layout_content);

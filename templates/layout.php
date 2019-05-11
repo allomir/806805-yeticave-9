@@ -1,4 +1,3 @@
-<?php $response_code; ?>
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -15,7 +14,7 @@
 <header class="main-header">
     <div class="main-header__container container">
         <h1 class="visually-hidden">YetiCave</h1>
-        <a class="main-header__logo">
+        <a class="main-header__logo" href="/">
             <img src="../img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
         </a>
         <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru" autocomplete="off">
@@ -29,16 +28,16 @@
             <div class="user-menu__logged">
 
                 <p><?= deffXSS($user_name); ?></p> 
-                <a class="user-menu__bets" href="pages/my-bets.html">Мои ставки</a>
+                <a class="user-menu__bets" href="my-bets.php">Мои ставки</a>
                 <a class="user-menu__logout" href="#">Выход</a>
             </div>
             <?php else: ?>
             <ul class="user-menu__list">
                 <li class="user-menu__item">
-                    <a href="#">Регистрация</a>
+                    <a href="sign-up.php">Регистрация</a>
                 </li>
                 <li class="user-menu__item">
-                    <a href="#">Вход</a>
+                    <a href="login.php">Вход</a>
                 </li>
             </ul>
             <?php endif; ?>
@@ -55,10 +54,14 @@
 <footer class="main-footer">
     <nav class="nav">
         <ul class="nav__list container">
-            <?php 
-            /* Вкладывание простое горизонтальное меню, кроме главной страницы */
-            require(__DIR__ . '/../inc/mainMenuSimple.php'); 
-            ?>
+
+        <?php /* Главное меню - все страницы кроме главной */
+        foreach ($categories as $category): ?>
+            <li class="nav__item">
+                <a href="all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
+            </li>
+        <?php endforeach; ?>
+            
         </ul>
     </nav>
     <div class="main-footer__bottom container">

@@ -1,21 +1,18 @@
 <?php
 
-require('inc/function.php'); // функции
+require('inc/function.php'); // функции, response_code, is_auth
 require('inc/queries.php'); // Запросы и подключение
 require('helpers.php'); // шаблонизатор
 
 $conn = getConn(); // Подключение к БД
 $categories = getCategories($conn); // Запрос Показать Таблицу Категории
-$items = getItems($conn); // Главная стр показать активные лоты, до 9 шт
-mysqli_close($conn);
 
-/* Шаблонизация */
+/* Шаблонизатор */
 
-$page_name = 'Главная';
+$page_name = 'Вход на сайт';
 
-$page_content = include_template('index.php', [
-    'categories' => $categories, 
-    'items' => $items
+$page_content = include_template('login.php', [
+    'categories' => $categories
 ]);
 
 $layout_content = include_template('layout.php', [
@@ -24,8 +21,7 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => $page_name,
-    'page_style_main' => 'container'
-
+    'page_style_main' => ''
 ]);
 
 print($layout_content);

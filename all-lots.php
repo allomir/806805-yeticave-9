@@ -3,11 +3,15 @@
 require('inc/function.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('helpers.php'); // шаблонизатор
+$response_code = '';
 
 $conn = getConn(); // Подключение к БД
 $categories = getCategories($conn); // Запрос Показать Таблицу Категории
 
 /* Страница категорий. Получение id категории */
+
+$items = []; // массив с данными лотов.
+$checkCategory = []; // массив с данными выбранной категории.
 
 if (isset($_GET['categoryID'])) {
     $saveCategoryID = mysqli_real_escape_string($conn, $_GET['categoryID']); // Защита от SQL-инъкция - экранирование
@@ -22,7 +26,8 @@ mysqli_close($conn);
 
 /* Шаблонизация - подключение шаблонов */
 
-if (!$items && $checkCategory) {
+// Категория есть, но в ней отсутствуют лоты
+if (empty($items) && !empty($checkCategory)) {
     $page_name = $checkCategory['name'];
     $page_content = include_template('all-lots.php', [
         'categories' => $categories,
@@ -30,7 +35,8 @@ if (!$items && $checkCategory) {
         'page_name' => $page_name
 ]);
 }
-elseif ($items) {
+// В категории есть лоты
+elseif (!empty($items)) {
     $page_name = $items['0']['category'];
     $page_content = include_template('all-lots.php', [
         'categories' => $categories, 
@@ -38,6 +44,7 @@ elseif ($items) {
         'page_name' => $page_name
     ]);
 }
+// Такого id категории нет или нет параметра запроса
 else {
     $page_name = '404 Страница не найдена';
     $response_code = http_response_code(404);
@@ -55,7 +62,8 @@ $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => $page_name,
-    'response_code' => $response_code
+    'page_style_main' => ''
 ]);
 
+$response_code;
 print($layout_content);

@@ -1,18 +1,11 @@
 <?php
 
 // faq.php - удаленные промежуточные данные заданий.
-$is_auth = 1;
+$is_auth = 0;
 $user_name = 'Михаил Лебедев';
 
-/* Переопределение кода ответа. Переменная передается в подложку.
-- По умолчанию 200 или ничего, 
-- стр не найдена 404, http_response_code(404)
-- при переезде стр 302, при переадресации 301 и тд. 
-*/
-$response_code = ''; 
-
 function deffXSS($value) {
-    return htmlspecialchars($value, ENT_QUOTES,'cp1251');
+    return htmlspecialchars($value, ENT_QUOTES,'UTF-8', true);
 }
 
 /* функция формат цены */
@@ -59,100 +52,26 @@ function makeTimer($TS_end) {
 
 /* Функция - Вставить класс ошибки, стр добавление лота */
 
-function insErrStyle($errors) {
-    // Виды стилей при ошибках заполнения
-    $result = '';
-    $formErrStyle = ['form--invalid', 'form__item--invalid']; // типы CLASS
-    if (isset($_POST['add_lot'])) {
-        if (is_string($errors)) {
-            if (!empty($errors)) {
-                $result =  $formErrStyle[1];
+function addErrorStyle($errors) {
+    // Виды стилей CLASS при заполнении полей или формы
+    $formErrStyle = ['form--invalid', 'form__item--invalid']; 
+ 
+    if (is_string($errors)) {
+        if (!empty($errors)) {
+            return $formErrStyle[1];
+        }
+    } else {
+        // Если массив
+        $number_err = 0;
+        foreach ($errors as $error) {
+            if (!empty($error)) {
+                $number_err++;
             }
         }
-        else {
-            $number_err = 0;
-            foreach ($errors as $value) {
-                if (!empty($value)) {
-                    $number_err++;
-                }
-            }
-            if ($number_err) {
-                $result = $formErrStyle[0];
-            }
+        if ($number_err) {
+            return $formErrStyle[0];
         }
     }
-    return $result;
-}
-
-function getFileType($filename) {
-
-    $mime_types = array(
-
-        'txt' => 'text/plain',
-        'htm' => 'text/html',
-        'html' => 'text/html',
-        'php' => 'text/html',
-        'css' => 'text/css',
-        'js' => 'application/javascript',
-        'json' => 'application/json',
-        'xml' => 'application/xml',
-        'swf' => 'application/x-shockwave-flash',
-        'flv' => 'video/x-flv',
-
-        // images
-        'png' => 'image/png',
-        'jpe' => 'image/jpeg',
-        'jpeg' => 'image/jpeg',
-        'jpg' => 'image/jpeg',
-        'gif' => 'image/gif',
-        'bmp' => 'image/bmp',
-        'ico' => 'image/vnd.microsoft.icon',
-        'tiff' => 'image/tiff',
-        'tif' => 'image/tiff',
-        'svg' => 'image/svg+xml',
-        'svgz' => 'image/svg+xml',
-
-        // archives
-        'zip' => 'application/zip',
-        'rar' => 'application/x-rar-compressed',
-        'exe' => 'application/x-msdownload',
-        'msi' => 'application/x-msdownload',
-        'cab' => 'application/vnd.ms-cab-compressed',
-
-        // audio/video
-        'mp3' => 'audio/mpeg',
-        'qt' => 'video/quicktime',
-        'mov' => 'video/quicktime',
-
-        // adobe
-        'pdf' => 'application/pdf',
-        'psd' => 'image/vnd.adobe.photoshop',
-        'ai' => 'application/postscript',
-        'eps' => 'application/postscript',
-        'ps' => 'application/postscript',
-
-        // ms office
-        'doc' => 'application/msword',
-        'rtf' => 'application/rtf',
-        'xls' => 'application/vnd.ms-excel',
-        'ppt' => 'application/vnd.ms-powerpoint',
-
-        // open office
-        'odt' => 'application/vnd.oasis.opendocument.text',
-        'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-    );
-
-    $ext = strtolower(array_pop(explode('.',$filename)));
-    if (array_key_exists($ext, $mime_types)) {
-        return $mime_types[$ext];
-    }
-    elseif (function_exists('finfo_open')) {
-        $finfo = finfo_open(FILEINFO_MIME);
-        $mimetype = finfo_file($finfo, $filename);
-        finfo_close($finfo);
-        return $mimetype;
-    }
-    else {
-        return 'application/octet-stream';
-    }
+    
+    return NULL;
 }

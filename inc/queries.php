@@ -81,52 +81,85 @@ function checkCategoryByID($conn, $categoryID) {
     return mysqli_fetch_assoc($result);
 }
 
-/* Запрос добави новый лот */
+/* Проверка существования email */
 
-function addItem($conn, $item) {
-
-    $category_id = $item['category_id'];
-    $user_id = $item['user_id'];
-    $name = $item['name'];
-    $description = $item['description'];
-    $img_url = $item['img_url'];
-    $price = $item['price'];
-    $step = $item['step'];
-    // $ts_add = $item['ts_add'];
-    $ts_end = $item['ts_end'];
-
-    $sql = "INSERT INTO items 
-        (
-            category_id, 
-            user_id, 
-            name,
-            description,
-            img_url,
-            price,
-            step,
-         -- ts_add, 
-            ts_end
-        )
-            VALUES
-        (  
-            '$category_id',
-            '$user_id',
-            '$name',
-            '$description',
-            '$img_url',
-            '$price',
-            '$step',
-        -- '$ts_add',
-            '$ts_end'
-        )
+function checkUserByEmail($conn, $email) {
+    $sql = "SELECT id FROM users 
+        WHERE email='$email'
     ";
+    $result = mysqli_query($conn, $sql);
+    if (!$result) {
+        print("Ошибка MySQL: " . mysqli_error($conn)); 
+    }
+    return mysqli_fetch_assoc($result);
+}
+
+/* Запрос добавить новый лот */
+
+function insertNewItem($conn, $item) {
+
+    $sql = sprintf("INSERT INTO items 
+    (
+    category_id, 
+    user_id, 
+    name,
+    description,
+    img_url,
+    price,
+    step,
+    -- ts_add, -- автозаполнение
+    ts_end
+    )
+    VALUES
+    ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",  
+    $item['category_id'],
+    $item['user_id'],
+    $item['name'],
+    $item['description'],
+    $item['img_url'],
+    $item['price'],
+    $item['step'],
+    // $item['ts_add'],
+    $item['ts_end']
+    );
 
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
 
-    return $result;
+    return $result; // Возвращает тру или ошибка
+}
+
+/* Запрос добавить нового пользователя */
+
+function insertNewUser($conn, $user) {
+echo 22222;
+    $sql = sprintf("INSERT INTO users 
+    (
+        email, 
+        password, 
+        name, 
+        contacts,
+        avatar_url -- не требуется по заданию, но не может быть пусто
+        -- ts_created -- автозаполнение
+    )
+    VALUES
+    ('%s', '%s', '%s', '%s', '%s')",  
+        $user['email'], 
+        $user['password'], 
+        $user['name'], 
+        $user['contacts'],
+        '/img/user.png' // не требуется по заданию, но не может быть пусто
+        // ts_created // автозаполнение
+    );
+
+    $result = mysqli_query($conn, $sql);
+    if (!$result) {
+        print("Ошибка MySQL: " . mysqli_error($conn)); 
+    }
+
+    return $result; // Возвращает тру или ошибка
 }
 
 /* Главная стр. Запрос показать активные лоты (врямя окончания не вышло), сортировать от последнего добавленного, не более 9 */
@@ -144,11 +177,12 @@ function getItems($conn) {
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
+
+    $items = [];
     if(mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
-    } else {$items = 0;} // Число
-
+    }
     return  $items;
 }
 
@@ -165,14 +199,15 @@ function getItemByID($conn, $itemID) {
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
+
+    $item = []; 
     if(mysqli_num_rows($result)) {
         $item = mysqli_fetch_assoc($result); // Ассоциативный массив 
         if(!$item['l_price']) {
             $item['l_price'] = $item['price']; // Последняя ставка или стартовая цена
         }
         $item['min_bet'] = $item['l_price'] + $item['step']; // Добавление поля - Мин ставка
-    } else {$item = 0;} // Число
-
+    } 
     return $item;
 }
 
@@ -191,11 +226,10 @@ function getItemsByCategory($conn, $categoryID) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
     }
 
+    $items = [];
     if(mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
     } 
-    else {$items = 0;} // Число
-
     return $items;
 }

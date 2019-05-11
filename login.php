@@ -37,18 +37,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $saveEmail = mysqli_real_escape_string($conn, $formVals['email']);
     $user = empty($errors['email']) ? checkUserByEmail($conn, $saveEmail) : '';
 
-    if (!count($errors)) {
-        if (empty($user)) {
-            $errors['email'] = 'Такой пользователь не найден';
-            $errors['password'] = 'Вы ввели неверный пароль';
-        } else {
-            if (password_verify($formVals['password'], $user['password'])) {
-                $_SESSION['user'] = $user;
-            } else {
-                $errors['password'] = 'Вы ввели неверный пароль';
-            }
-        } 
+    if (count($errors)) {
+        $errors['password'] = 'Неверная пара пользователь/пароль';
     }
+
+    if (empty($user) && empty($errors['email'])) {
+        $errors['email'] = 'Такой пользователь не найден';
+        $errors['password'] = 'Неверная пара пользователь/пароль';
+    } 
+        
+    if (!count($errors)) {
+        if (password_verify($formVals['password'], $user['password'])) {
+            $_SESSION['user'] = $user;
+        } else {
+            $errors['password'] = 'Вы ввели неверный пароль';
+        }
+    } 
+
 
     /* Страница с ошибками */
 

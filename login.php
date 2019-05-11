@@ -37,16 +37,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $saveEmail = mysqli_real_escape_string($conn, $formVals['email']);
     $user = empty($errors['email']) ? checkUserByEmail($conn, $saveEmail) : '';
 
-    if (empty($user)) {
-        $errors['email'] = 'Такой пользователь не найден';
-    }
-    elseif (!count($errors) && $user) {
-        if (password_verify($formVals['password'], $user['password'])) {
-            $_SESSION['user'] = $user;
-        } else {
+    if (!count($errors)) {
+        if (empty($user)) {
+            $errors['email'] = 'Такой пользователь не найден';
             $errors['password'] = 'Вы ввели неверный пароль';
-        }
-    } 
+        } else {
+            if (password_verify($formVals['password'], $user['password'])) {
+                $_SESSION['user'] = $user;
+            } else {
+                $errors['password'] = 'Вы ввели неверный пароль';
+            }
+        } 
+    }
 
     /* Страница с ошибками */
 
@@ -65,12 +67,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    /* Страница входа обычная */
+    /* Страница входа после входа */
 
-    $page_content = include_template('login.php', [
-        'user_name' => $user_name,
-        'categories' => $categories
-    ]);
+    if (isset($_SESSION['user'])) {
+        $page_content = '<div class="container"><h3>Добро пожаловать, ' . $user_name . '<h3></div>';
+    } else {
+
+        /* Страница входа обычная */
+
+        $page_content = include_template('login.php', [
+            'user_name' => $user_name,
+            'categories' => $categories
+        ]);
+    }
 }
 
     /* подложка */

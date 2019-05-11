@@ -28,6 +28,8 @@
           <p class="lot-item__description"><?= htmlspecialchars($item['description']) ?></p>
         </div>
         <div class="lot-item__right">
+
+        <?php if (isset($_SESSION['user'])) : ?>
           <div class="lot-item__state">
             <?php $Timer = makeTimer(htmlspecialchars($item['ts_end'])); /* функция таймер */ ?>
             <div class="lot-item__timer timer <?= $Timer['style']; ?>">
@@ -43,6 +45,7 @@
               </div>
             </div>
           </div>
+        <?php endif ?>
         </div>
       </div>
     </section>

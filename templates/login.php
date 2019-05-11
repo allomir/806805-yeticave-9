@@ -4,14 +4,6 @@
   </div>
 <?php endif; ?>
 
-<?php if ($user_name): ?>
-<div class="content__main-col">
-    <header class="content__header content__header--left-pad">
-        <h2 class="content__header-text">Добро пожаловать, <?=$user_name;?></h2>
-    </header>
-</div>
-<?php else: ?>
-
 <nav class="nav">
       <ul class="nav__list container">
       <?php /* Главное меню - все страницы кроме главной */
@@ -51,5 +43,3 @@
       </div>
       <button type="submit" class="button">Войти</button>
     </form>
-
-    <?php endif; ?>

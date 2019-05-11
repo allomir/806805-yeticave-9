@@ -6,6 +6,7 @@ require('inc/helpers.php'); // шаблонизатор
 $response_code = '';
 
 session_start();
+$user = $_SESSION['user'] ?? [];
 $user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : 0;
 
 $conn = getConn(); // Подключение к БД
@@ -177,7 +178,7 @@ if (isset($_POST['add_lot']) && $number_err == 0) {
     // Параметры лота
     $item = [
         'category_id' => $formData['category'],
-        'user_id' => $user_id,
+        'user_id' => $user['id'],
         'name' => $formData['lot-name'],
         'description' => $formData['message'],
         'img_url' => $imgData['img_url'],
@@ -211,6 +212,8 @@ mysqli_close($conn);
 
 $page_name = 'Добавление лота';
 
+// Страница для зарегистрированных или ошибка доступа
+
 if (isset($_SESSION['user'])) {
     $page_content = include_template('add-lot.php', [
         'categories' => $categories, 
@@ -221,10 +224,10 @@ if (isset($_SESSION['user'])) {
     ]);
 } else {
     $response_code = http_response_code(403);
-    $page_content = 'Для просмотра Зарегистрируйтесь' ;
+    $page_content = '<div class="container"><h3>Ошибка доступа 403<h3></div>' ;
 }
 
-
+/* Подложка */
 
 $layout_content = include_template('layout.php', [
     'user_name' => $user_name, 

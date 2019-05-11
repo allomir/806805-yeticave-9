@@ -58,7 +58,8 @@ function addErrorStyle($errors) {
         if (!empty($errors)) {
             return $formErrStyle[1];
         }
-    } else { // Если массив
+    } else {
+        // Если массив
         $number_err = 0;
         foreach ($errors as $error) {
             if (!empty($error)) {

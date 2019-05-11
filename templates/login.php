@@ -4,7 +4,7 @@
   </div>
 <?php endif; ?>
 
-<nav class="nav">
+    <nav class="nav">
       <ul class="nav__list container">
       <?php /* Главное меню - все страницы кроме главной */
         foreach ($categories as $category): ?>
@@ -14,12 +14,8 @@
         <?php endforeach; ?>
       </ul>
     </nav>
-    <?php 
-    if (isset($errors)) {
-      $classNameForm = count($errors) ? 'form--invalid' : '';
-    }
-    ?>
-    <form class="form container <?= $classNameForm; ?>" action="/login.php" method="post">
+
+    <form class="form container <?php if (isset($errors)) { $classNameForm = count($errors) ? 'form--invalid' : ''; print($classNameForm); } ?>" action="/login.php" method="post">
       <h2>Вход</h2>
       <?php 
       $className = isset($errors['email']) ? 'form__item--invalid' : '';

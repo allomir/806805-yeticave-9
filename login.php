@@ -13,12 +13,12 @@ $categories = getCategories($conn); // Запрос Показать Табли�
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $valForms = $_POST;
+    $formVals = $_POST;
     $params = ['email', 'password'];
     $errors = []; 
 
     foreach ($params as $param) {
-        if (empty($valForms[$param])) {
+        if (empty($formVals[$param])) {
             if ($param == 'email') {
                 $errors[$param] = 'Введите e-mail';
             }
@@ -28,25 +28,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }        
     }
 
-    $saveEmail = mysqli_real_escape_string($conn, $valForms['email']);
-    $user = checkUserByEmail($conn, $saveEmail);
+    if (empty($errors['email'])) {
+        if (!filter_var($formVals['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'Email должен быть корректным';
+        }
+    }
 
-    if (!count($errors) && $user) {
-        if (password_verify($valForms['password'], $user['password'])) {
+    $saveEmail = mysqli_real_escape_string($conn, $formVals['email']);
+    $user = empty($errors['email']) ? checkUserByEmail($conn, $saveEmail) : '';
+
+    if (empty($user)) {
+        $errors['email'] = 'Такой пользователь не найден';
+    }
+    elseif (!count($errors) && $user) {
+        if (password_verify($formVals['password'], $user['password'])) {
             $_SESSION['user'] = $user;
         } else {
             $errors['password'] = 'Вы ввели неверный пароль';
         }
-    } else {
-        $errors['email'] = 'Такой пользователь не найден';
-    }
+    } 
+
+    /* Страница с ошибками */
 
     if (count($errors)) {
         $page_name = 'Вход на сайт';
         $page_content = include_template('login.php', [
             'user_name' => $user_name,
             'categories' => $categories,
-            'valForms' => $valForms,
+            'formVals' => $formVals,
             'errors' => $errors
         ]);
     } else {
@@ -56,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    /* Страница входа */
+    /* Страница входа обычная */
 
     $page_content = include_template('login.php', [
         'user_name' => $user_name,

@@ -85,7 +85,7 @@ function checkCategoryByID($conn, $categoryID) {
 
 function checkUserByEmail($conn, $email) {
     $sql = "SELECT * FROM users 
-        WHERE email='$email'
+        WHERE email = '$email'
     ";
     $result = mysqli_query($conn, $sql);
     if (!$result) {

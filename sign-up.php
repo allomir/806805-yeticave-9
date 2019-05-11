@@ -32,8 +32,6 @@ foreach ($params as $param => $errors) {
     $formErrors[$param] = '';
 }
 
-$number_err = 0;
-
 /********************************** Форма отправлена *************************************/
 
 // Событие нажатие кнопки
@@ -61,7 +59,7 @@ if (isset($_POST['sign-up'])) {
     /* 2часть. Проверки поля email - экранирование */
 
     // Защита email от SQL-инъекции
-    $saveEmail = mysqli_real_escape_string($formData['email']);
+    $saveEmail = mysqli_real_escape_string($conn, $formData['email']);
 
     if(empty($formErrors['email'])) {
         // проверка валидность
@@ -69,10 +67,12 @@ if (isset($_POST['sign-up'])) {
             $formErrors['email'] = 'Email должен быть корректным';
         }
         // проверка на уникальность
-        elseif (!empty(checkUserByEmail($conn, $saveEmail))) {
+        elseif (empty(checkUserByEmail($conn, $saveEmail))) {
             $formErrors['email'] = 'email занят';
         }
     }
+
+    echo checkUserByEmail($conn, $saveEmail); echo 33333;
 
     /* 3 часть. Поле пароль обработать встроенной функцией password_hash */
     if (empty($formErrors['password'])) {
@@ -83,6 +83,7 @@ if (isset($_POST['sign-up'])) {
 
     // Результат - Cчитаем колво ошибок после нажатия кнопки и проверок
 
+    $number_err = 0;
     foreach ($formErrors as $error) {
         if (!empty($error)) {
             $number_err++;

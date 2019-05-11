@@ -53,21 +53,22 @@ function makeTimer($TS_end) {
 function addErrorStyle($errors) {
     // Виды стилей CLASS при заполнении полей или формы
     $formErrStyle = ['form--invalid', 'form__item--invalid']; 
-
+ 
     if (is_string($errors)) {
         if (!empty($errors)) {
             return $formErrStyle[1];
         }
-    }
-    // Если массив
-    $number_err = 0;
-    foreach ($errors as $error) {
-        if (!empty($error)) {
-            $number_err++;
+    } else { // Если массив
+        $number_err = 0;
+        foreach ($errors as $error) {
+            if (!empty($error)) {
+                $number_err++;
+            }
+        }
+        if ($number_err) {
+            return $formErrStyle[0];
         }
     }
-    if ($number_err) {
-        return $formErrStyle[0];
-    }
-    return '';
+    
+    return NULL;
 }

@@ -14,11 +14,10 @@
         <?php endforeach; ?>
       </ul>
     </nav>
-    <?php 
+    <?php $classNameForm = '';
     if (isset($errors)) {
       $classNameForm = count($errors) ? 'form--invalid' : '';
-    }
-    ?>
+    } ?>
     <form class="form container <?= $classNameForm; ?>" action="/login.php" method="post">
       <h2>Вход</h2>
       <?php 

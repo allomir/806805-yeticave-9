@@ -1,8 +1,13 @@
 <?php
 
-require('inc/function.php'); // функции, response_code, is_auth
+require('inc/function.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
-require('helpers.php'); // шаблонизатор
+require('inc/helpers.php'); // шаблонизатор
+$response_code = '';
+
+session_start();
+$user = $_SESSION['user'] ?? [];
+$user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : 0;
 
 $conn = getConn(); // Подключение к БД
 $categories = getCategories($conn); // Запрос Показать Таблицу Категории
@@ -173,7 +178,7 @@ if (isset($_POST['add_lot']) && $number_err == 0) {
     // Параметры лота
     $item = [
         'category_id' => $formData['category'],
-        'user_id' => '1',
+        'user_id' => $user['id'],
         'name' => $formData['lot-name'],
         'description' => $formData['message'],
         'img_url' => $imgData['img_url'],
@@ -196,26 +201,35 @@ if (isset($_POST['add_lot']) && $number_err == 0) {
         $last_id = mysqli_insert_id($conn);
         mysqli_close($conn);
 
-        // Перенаправление на страницу добавленного лота, если ПОСТ
+        // Перенаправление на страницу добавленного лота
         header("Location: lot.php?success=true&itemID=" . $last_id);
     }
 }
 
+mysqli_close($conn);
 
 /* Шаблонизатор */
 
 $page_name = 'Добавление лота';
 
-$page_content = include_template('add-lot.php', [
-    'categories' => $categories, 
-    'formData' => $formData,
-    'formErrors' => $formErrors,
-    'imgData' => $imgData
-    
-]);
+// Страница для зарегистрированных или ошибка доступа
+
+if (isset($_SESSION['user'])) {
+    $page_content = include_template('add-lot.php', [
+        'categories' => $categories, 
+        'formData' => $formData,
+        'formErrors' => $formErrors,
+        'imgData' => $imgData
+        
+    ]);
+} else {
+    $response_code = http_response_code(403);
+    $page_content = '<div class="container"><h3>Ошибка доступа 403<h3></div>' ;
+}
+
+/* Подложка */
 
 $layout_content = include_template('layout.php', [
-    'is_auth' => $is_auth,
     'user_name' => $user_name, 
     'categories' => $categories, 
     'content' => $page_content, 
@@ -223,4 +237,5 @@ $layout_content = include_template('layout.php', [
     'page_style_main' => ''
 ]);
 
+$response_code;
 print($layout_content);

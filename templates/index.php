@@ -1,4 +1,9 @@
-    
+<?php if (isset($_GET['welcome'])): ?>
+  <div class="alert alert-success">
+    <p>Добро пожаловать !</p>
+  </div>
+<?php endif; ?>
+
     <section class="promo">
         <h2 class="promo__title">Нужен стафф для катки?</h2>
         <p class="promo__text">На нашем интернет-аукционе ты найдёшь самое эксклюзивное сноубордическое и горнолыжное снаряжение.</p>

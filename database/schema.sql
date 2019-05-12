@@ -7,7 +7,7 @@ USE yeticave;
 CREATE TABLE categories (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   symbol CHAR(64) NOT NULL UNIQUE,
-  name CHAR(64) NOT NULL UNIQUE
+  name CHAR(64) NOT NULL 
 );
 
 CREATE TABLE items (
@@ -25,7 +25,7 @@ CREATE TABLE items (
 
 CREATE TABLE users (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  email CHAR(64) NOT NULL UNIQUE,
+  email CHAR(64) NOT NULL,
   password CHAR(64) NOT NULL,
   name CHAR(64) NOT NULL,
   contacts CHAR(255) NOT NULL,
@@ -46,6 +46,7 @@ CREATE UNIQUE INDEX ctg ON categories(name);
 CREATE UNIQUE INDEX eml ON users(email);
 CREATE INDEX usr ON users(name);
 CREATE INDEX itm ON items(name);
+CREATE FULLTEXT INDEX desc ON items(description);
 CREATE INDEX f_prc ON items(price);
 CREATE INDEX wnr ON bets(winner_id);
 CREATE INDEX b_ts ON bets(ts_betted);

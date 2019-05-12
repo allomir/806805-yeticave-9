@@ -1,4 +1,4 @@
-<?php if (isset($_GET['success'])): ?>
+<?php if (isset($_GET['congratulation'])): ?>
   <div class="alert alert-success">
     <p>Поздравляем, регистрация пройдена!</p>
   </div>
@@ -14,17 +14,32 @@
         <?php endforeach; ?>
       </ul>
     </nav>
-    <form class="form container" action="https://echo.htmlacademy.ru" method="post"> <!-- form--invalid -->
+    <?php 
+    if (isset($errors)) {
+      $classNameForm = count($errors) ? 'form--invalid' : '';
+    }
+    ?>
+    <form class="form container <?= $classNameForm; ?>" action="/login.php" method="post">
       <h2>Вход</h2>
-      <div class="form__item"> <!-- form__item--invalid -->
+      <?php 
+      $className = isset($errors['email']) ? 'form__item--invalid' : '';
+      $value = $formVals['email'] ?? '';
+      $error = $errors['email'] ?? '';
+      ?>
+      <div class="form__item <?= $className; ?>"> 
         <label for="email">E-mail <sup>*</sup></label>
-        <input id="email" type="text" name="email" placeholder="Введите e-mail">
-        <span class="form__error">Введите e-mail</span>
+        <input id="email" type="text" name="email" placeholder="Введите e-mail" value="<?= $value; ?>">
+        <span class="form__error"><?= $error; ?></span>
       </div>
-      <div class="form__item form__item--last">
+      <?php 
+      $className = isset($errors['password']) ? 'form__item--invalid' : '';
+      $value = $formVals['password'] ?? '';
+      $error = $errors['password'] ?? '';
+      ?>
+      <div class="form__item form__item--last <?= $className; ?>">
         <label for="password">Пароль <sup>*</sup></label>
-        <input id="password" type="password" name="password" placeholder="Введите пароль">
-        <span class="form__error">Введите пароль</span>
+        <input id="password" type="password" name="password" placeholder="Введите пароль" value="<?= $value; ?>">
+        <span class="form__error"><?= $error; ?></span>
       </div>
       <button type="submit" class="button">Войти</button>
     </form>

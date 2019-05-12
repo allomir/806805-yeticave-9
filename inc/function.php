@@ -1,8 +1,6 @@
 <?php
 
 // faq.php - удаленные промежуточные данные заданий.
-$is_auth = 0;
-$user_name = 'Михаил Лебедев';
 
 function deffXSS($value) {
     return htmlspecialchars($value, ENT_QUOTES,'UTF-8', true);

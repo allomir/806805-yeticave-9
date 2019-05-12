@@ -71,7 +71,7 @@ function getCategories($conn) {
 /* Проверка существования категории */
 
 function checkCategoryByID($conn, $categoryID) {
-    $sql = "SELECT id, name FROM categories
+    $sql = "SELECT * FROM categories
         WHERE categories.id = '$categoryID'
     "; 
     $result = mysqli_query($conn, $sql);
@@ -84,8 +84,8 @@ function checkCategoryByID($conn, $categoryID) {
 /* Проверка существования email */
 
 function checkUserByEmail($conn, $email) {
-    $sql = "SELECT id FROM users 
-        WHERE email='$email'
+    $sql = "SELECT * FROM users 
+        WHERE email = '$email'
     ";
     $result = mysqli_query($conn, $sql);
     if (!$result) {
@@ -134,7 +134,7 @@ function insertNewItem($conn, $item) {
 /* Запрос добавить нового пользователя */
 
 function insertNewUser($conn, $user) {
-echo 22222;
+
     $sql = sprintf("INSERT INTO users 
     (
         email, 
@@ -150,7 +150,7 @@ echo 22222;
         $user['password'], 
         $user['name'], 
         $user['contacts'],
-        '/img/user.png' // не требуется по заданию, но не может быть пусто
+        $user['avatar_url'] // не требуется по заданию, но не может быть пусто
         // ts_created // автозаполнение
     );
 

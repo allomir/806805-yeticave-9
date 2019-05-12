@@ -1,8 +1,12 @@
 <?php
 
-require('inc/function.php'); // функции, response_code, is_auth
+require('inc/function.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
-require('helpers.php'); // шаблонизатор
+require('inc/helpers.php'); // шаблонизатор
+$response_code = '';
+
+session_start();
+$user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : 0;
 
 $conn = getConn(); // Подключение к БД
 $categories = getCategories($conn); // Запрос Показать Таблицу Категории
@@ -28,8 +32,6 @@ foreach ($params as $param => $errors) {
     $formErrors[$param] = '';
 }
 
-$number_err = 0;
-
 /********************************** Форма отправлена *************************************/
 
 // Событие нажатие кнопки
@@ -54,7 +56,10 @@ if (isset($_POST['sign-up'])) {
         }
     }
 
-    /* 2часть. Проверки поля email */
+    /* 2часть. Проверки поля email - экранирование */
+
+    // Защита email от SQL-инъекции
+    $saveEmail = mysqli_real_escape_string($conn, $formData['email']);
 
     if(empty($formErrors['email'])) {
         // проверка валидность
@@ -62,20 +67,15 @@ if (isset($_POST['sign-up'])) {
             $formErrors['email'] = 'Email должен быть корректным';
         }
         // проверка на уникальность
-        elseif (!empty(checkUserByEmail($conn, $formData['email']))) {
+        elseif (!empty(checkUserByEmail($conn, $saveEmail))) {
             $formErrors['email'] = 'email занят';
         }
     }
 
-    /* 3 часть. Поле пароль обработать встроенной функцией password_hash */
-    if (empty($formErrors['password'])) {
-        $passwordHash = password_hash($formData['password'], PASSWORD_DEFAULT);
-    }
-    
-    /* 4 часть. Колво ошибок */
+    /* 3 часть. Колво ошибок */
 
     // Результат - Cчитаем колво ошибок после нажатия кнопки и проверок
-
+    $number_err = 0;
     foreach ($formErrors as $error) {
         if (!empty($error)) {
             $number_err++;
@@ -85,22 +85,27 @@ if (isset($_POST['sign-up'])) {
 
 /****************************************** Переадресация *****************************************/
 
-// После нажатия кнопки и Колво ошибок 0 
-if (isset($_POST['sign-up']) && $number_err === 0) {
+// После нажатия кнопки и колво ошибок 0 
+if (isset($_POST['sign-up']) && empty($number_err)) {
+
+    // Пароль обработать встроенной функцией password_hash 
+    $passwordHash = password_hash($formData['password'], PASSWORD_DEFAULT);
+
 
     // Параметры пользователя для инсерта
     $user = [
         'email' => $formData['email'], 
         'password' => $passwordHash, 
         'name' => $formData['name'], 
-        'contacts' => $formData['message']
-        // avatar_url, // не требуется по заданию
+        'contacts' => $formData['message'],
+        'avatar_url' => '/img/user.png' // ставим по умолчанию, не требуется по заданию
         // ts_created // автозаполнение
     ];
 
+
     // Защита от SQL-инъкция - экранирование
     foreach ($user as $key => $value) {
-        $saveValue = mysqli_real_escape_string($conn, $value); 
+        $saveValue = mysqli_real_escape_string($conn, $value);
         $saveUser[$key] = $saveValue;
     }
 
@@ -111,9 +116,11 @@ if (isset($_POST['sign-up']) && $number_err === 0) {
         mysqli_close($conn);
 
         // Перенаправление на страницу входа
-        header("Location: login.php/?success=true");
+        header("Location: /login.php/?congratulation=true");
     }
 }
+
+mysqli_close($conn);
 
 /* Шаблонизатор */
 
@@ -126,7 +133,6 @@ $page_content = include_template('sign-up.php', [
 ]);
 
 $layout_content = include_template('layout.php', [
-    'is_auth' => $is_auth,
     'user_name' => $user_name, 
     'categories' => $categories, 
     'content' => $page_content, 

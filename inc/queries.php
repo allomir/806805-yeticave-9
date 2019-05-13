@@ -162,6 +162,29 @@ function insertNewUser($conn, $user) {
     return $result; // Возвращает тру или ошибка
 }
 
+function insertNewBet($conn, $bet) {
+
+    $sql = sprintf("INSERT INTO bets
+    (
+        item_id,
+        user_id,
+        bet_price
+    ) 
+    VALUES
+    ('%s', '%s', '%s')",
+        $bet['item_id'],
+        $bet['user_id'],
+        $bet['bet_price']
+    );
+
+    $result = mysqli_query($conn, $sql);
+    if (!$result) {
+        print("Ошибка MySQL: " . mysqli_error($conn)); 
+    }
+
+    return $result; // Возвращает тру или ошибка
+}
+
 /* Главная стр. Запрос показать активные лоты (врямя окончания не вышло), сортировать от последнего добавленного, не более 9 */
 
 function getItems($conn) {

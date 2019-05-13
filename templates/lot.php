@@ -1,7 +1,13 @@
 
-<?php if (isset($_GET['success'])): ?>
+<?php if (isset($_GET['lot_success'])): ?>
   <div class="alert alert-success">
     <p>Лот успешно добавлен!</p>
+  </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['bet_success'])): ?>
+  <div class="alert alert-success">
+    <p>Ставка принята!</p>
   </div>
 <?php endif; ?>
 

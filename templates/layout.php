@@ -24,10 +24,10 @@
         <a class="main-header__add-lot button" href="/add.php">Добавить лот</a>
         <nav class="user-menu">
 
-            <?php if ($user_name) : ?>
+            <?php if (isset($_SESSION['user'])) : ?>
             <div class="user-menu__logged">
 
-                <p><?= deffXSS($user_name); ?></p> 
+                <p><?= deffXSS($_SESSION['user']['name']); ?></p> 
                 <a class="user-menu__bets" href="/my-bets.php">Мои ставки</a>
                 <a class="user-menu__logout" href="/logout.php">Выход</a>
             </div>

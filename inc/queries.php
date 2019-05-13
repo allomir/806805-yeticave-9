@@ -173,6 +173,7 @@ function getItems($conn) {
         ORDER BY ts_add DESC 
         LIMIT 9
     "; 
+
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
@@ -183,18 +184,20 @@ function getItems($conn) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
     }
+
     return  $items;
 }
 
-/* Страница Лот. Запрос показать данные одного лота по id или вернуть 0 */
+/* Страница Лот. Запрос показать данные одного лота по id или вернуть [] */
 
 function getItemByID($conn, $itemID) {
     $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
         JOIN categories ON items.category_id = categories.id
         LEFT JOIN bets ON items.id = bets.item_id
-        WHERE items.id = '$itemID' -- AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
+        WHERE items.id = '$itemID' AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
         GROUP BY items.id DESC
     ";
+
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
@@ -208,7 +211,27 @@ function getItemByID($conn, $itemID) {
         }
         $item['min_bet'] = $item['l_price'] + $item['step']; // Добавление поля - Мин ставка
     } 
+
     return $item;
+}
+
+function getBetsByItemID($conn, $itemID) {
+    $sql = "SELECT bets.*, users.name AS user_name FROM bets
+        JOIN users ON bets.user_id = users.id
+        WHERE item_id = '$itemID' 
+    ";
+
+    $result = mysqli_query($conn, $sql);
+    if(!$result) {
+        print('Ошибка MySQL:' . mysqli_error($conn));
+    }
+
+    $itemBets = [];
+    if(mysqli_num_rows($result)) {
+        $itemBets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    return $itemBets;
 }
 
 /* Страница категории. Запрос лотов активных в выбранной категории */
@@ -217,10 +240,11 @@ function getItemsByCategory($conn, $categoryID) {
     $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
     JOIN categories ON items.category_id = categories.id
     LEFT JOIN bets ON items.id = bets.item_id
-    WHERE categories.id = '$categoryID' -- AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
+    WHERE categories.id = '$categoryID' AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
     GROUP BY items.id DESC
     ORDER BY ts_add DESC
     "; 
+
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn)); 
@@ -231,5 +255,6 @@ function getItemsByCategory($conn, $categoryID) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
     } 
+
     return $items;
 }

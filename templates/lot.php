@@ -11,7 +11,7 @@
         <?php /* Главное меню - все страницы кроме главной */
         foreach ($categories as $category): ?>
           <li class="nav__item">
-            <a href="all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
+            <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
           </li>
         <?php endforeach; ?>
 
@@ -44,6 +44,33 @@
                 Мин. ставка <span><?= makePriceFormat($item['min_bet']); ?> р</span>
               </div>
             </div>
+
+            <?php 
+            $classErr = isset($formErr) ? 'form__item--invalid' : '';
+            $error = $formErr['cost'] ?? '';
+            $value = $formVal['cost'] ?? '';
+            ?>
+
+            <form class="lot-item__form <?= $classErr ?>" action="/lot.php?itemID=<?= $item['id'] ?>" method="post" autocomplete="off">
+              <p class="lot-item__form-item form__item <?= $classErr ?>">
+                <label for="cost">Ваша ставка</label>
+                <input id="cost" type="text" name="cost" placeholder="<?= makePriceFormat($item['min_bet']); ?>" value="<?= $value ?>">
+                <span class="form__error"><?= $error ?></span>
+              </p>
+              <button type="submit" class="button">Сделать ставку</button>
+            </form>
+          </div>
+          <div class="history">
+            <h3>История ставок (<span><?= $item['number_bets']; ?></span>)</h3>
+            <table class="history__list">
+              <?php foreach ($itemBets as $bet) : ?>
+              <tr class="history__item">
+                <td class="history__name"><?= $bet['user_name']; ?></td>
+                <td class="history__price"><?= $bet['bet_price']; ?> р</td>
+                <td class="history__time">5 минут назад</td>
+              </tr>
+              <?php endforeach; ?>
+            </table>
           </div>
         <?php endif ?>
         </div>

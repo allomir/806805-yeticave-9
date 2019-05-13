@@ -5,7 +5,7 @@
       <?php /* Главное меню - все страницы кроме главной */
         foreach ($categories as $category): ?>
           <li class="nav__item">
-            <a href="all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
+            <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
           </li>
         <?php endforeach; ?>
 
@@ -29,7 +29,7 @@
                 </div>
                 <div class="lot__info">
                     <span class="lot__category"><?= deffXSS($item['category']); ?></span>
-                    <h3 class="lot__title"><a class="text-link" href="lot.php?itemID=<?= $item['id']; ?>"><?= deffXSS($item['name']); ?></a></h3>
+                    <h3 class="lot__title"><a class="text-link" href="/lot.php?itemID=<?= $item['id']; ?>"><?= deffXSS($item['name']); ?></a></h3>
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount"><?= $item['number_bets'] ?></span>

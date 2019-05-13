@@ -73,7 +73,7 @@
               <tr class="history__item">
                 <td class="history__name"><?= $bet['user_name']; ?></td>
                 <td class="history__price"><?= $bet['bet_price']; ?> р</td>
-                <td class="history__time">5 минут назад</td>
+                <td class="history__time"><?= makeBacktime($bet['ts_betted']); ?></td>
               </tr>
               <?php endforeach; ?>
             </table>

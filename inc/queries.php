@@ -2,30 +2,6 @@
 
 /* Внутренние функции для БД */
 
-// Определение окончания
-
-function getEndingWord($number) {
-    
-    $mod10 = $number % 10;
-    $mod100 = $number % 100;
-            
-    if ($mod100 >= 11 && $mod100 <= 20) {
-        $word = 'ставок';
-    }
-    elseif ($mod10 > 5) {
-        $word = 'ставок';
-    }
-    elseif ($mod10 == 1) {
-        $word = 'ставка'; 
-    }
-    elseif ($mod10 >= 2 && $mod10 <= 4){
-        $word = 'ставки';
-    }
-    else {$word = 'ставок';}
-
-    return $word;
-}
-
 // Определение проследней цены, добавление в массив мин ставки
 
 function addPricesBets($items) {

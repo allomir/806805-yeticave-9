@@ -2,6 +2,11 @@
 
 /* Заметки */
 
+/* Дней осталось
+$days = floor($TS_diff / 86400);
+$hours = floor(($TS_diff % 86400) / 3600); 
+*/
+
 // печать ошибок в добавлении лота
 $i = 0;
   foreach ($formErrors as $value) {

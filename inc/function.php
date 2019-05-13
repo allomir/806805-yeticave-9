@@ -54,7 +54,6 @@ function makeTimer($TS_end) {
     $timer_style = '';
 
     // Создаем таймер День : Час : Мин
-
     $days = floor($TS_diff / 86400);
     $hours = floor(($TS_diff % 86400) / 3600); 
     $minutes = floor(($TS_diff % 3600) / 60);

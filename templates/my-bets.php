@@ -55,7 +55,7 @@
           </td>
         </tr>
         <?php endforeach; ?>
-
+<!--
         <tr class="rates__item rates__item--win">
           <td class="rates__info">
             <div class="rates__img">
@@ -100,6 +100,6 @@
             Вчера, в 21:30
           </td>
         </tr>
-
+    -->
       </table>
     </section>

@@ -12,8 +12,8 @@ CREATE TABLE categories (
 
 CREATE TABLE items (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  category_id CHAR(64) NOT NULL,
   user_id INT UNSIGNED NOT NULL,
+  category_id CHAR(64) NOT NULL,
   name CHAR(255) NOT NULL,
   description TEXT(1024) NOT NULL,
   img_url CHAR(255) NOT NULL,

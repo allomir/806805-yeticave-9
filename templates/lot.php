@@ -71,9 +71,9 @@
             <table class="history__list">
               <?php foreach ($itemBets as $bet) : ?>
               <tr class="history__item">
-                <td class="history__name"><?= $bet['user_name']; ?></td>
-                <td class="history__price"><?= $bet['bet_price']; ?> р</td>
-                <td class="history__time"><?= makeBacktime($bet['ts_betted']); ?></td>
+                <td class="history__name"><?= htmlspecialchars($bet['user_name']); ?></td>
+                <td class="history__price"><?= htmlspecialchars($bet['bet_price']); ?> р</td>
+                <td class="history__time"><?= makeBacktime(htmlspecialchars($bet['ts_betted'])); ?></td>
               </tr>
               <?php endforeach; ?>
             </table>

@@ -214,6 +214,8 @@ function getItemByID($conn, $itemID) {
     return $item;
 }
 
+/* Запрос выбрать ставки по id лота  */
+
 function getBetsByItemID($conn, $itemID) {
     $sql = "SELECT bets.*, users.name AS user_name FROM bets
         JOIN users ON bets.user_id = users.id
@@ -231,6 +233,29 @@ function getBetsByItemID($conn, $itemID) {
     }
 
     return $itemBets;
+}
+
+/* Запрос выбрать ставки по id юзера  */
+
+function getBetsByUserID($conn, $userID) {
+    $sql = "SELECT bets.*, items.name AS item_name, items.img_url, ts_end, categories.name AS category, users.contacts FROM bets
+        JOIN items ON bets.item_id = items.id
+        JOIN categories ON items.category_id = categories.id
+        JOIN users ON items.user_id = users.id
+        WHERE bets.user_id = '$userID' 
+    ";
+
+    $result = mysqli_query($conn, $sql);
+    if(!$result) {
+        print('Ошибка MySQL:' . mysqli_error($conn));
+    }
+
+    $iBets = [];
+    if(mysqli_num_rows($result)) {
+        $Bets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+
+    return $Bets;
 }
 
 /* Страница категории. Запрос лотов активных в выбранной категории */

@@ -50,39 +50,35 @@ function makePriceFormat($price) {
 function makeTimer($TS_end) {
     date_default_timezone_set("Europe/Moscow");
     $TS_diff = strtotime($TS_end) - time(); // Осталось до конца ставки
+    $timer = '00:00';
     $timer_style = '';
-    
+
     // Создаем таймер День : Час : Мин
-    if ($TS_diff > 0) {
 
-        $hours = floor($TS_diff / 3600);
+    $days = floor($TS_diff / 86400);
+    $hours = floor(($TS_diff % 86400) / 3600); 
+    $minutes = floor(($TS_diff % 3600) / 60);
 
-        if ($hours >= 99) {
-            $hours = '99';
-        }
-        elseif ($hours < 10) {
-            $hours = '0' . $hours;
-        }
-
-        $minutes = floor(($TS_diff % 3600) / 60);
-
-        if ($hours >= 99) {
-            $minutes = '00';
-        }
-        elseif ($hours < 99 && $minutes < 10) {
-            $minutes = '0' . $minutes;
-        }
-
-        $timer = /* $days . ":" . */$hours . ":" . $minutes;
-        
-        if ($TS_diff <= 3600) {
-            $timer_style = 'timer--finishing';
-        }
+    if ($hours < 10) {
+        $hours = '0' . $hours;
     }
-    else {
-        $timer = '00:00';
-    } 
-    return $timer = ['DDHHMM' => $timer, 'style' => $timer_style];
+    
+    if ($minutes < 10) {
+        $minutes = '0' . $minutes;
+    }
+    
+    if ($TS_diff <= 3600) {
+        $timer_style = 'timer--finishing';
+    }
+
+    if ($TS_diff > 86400) {
+        $timer =  $days . ":" . $hours . ":" . $minutes;
+    }
+    elseif ($TS_diff > 0) {
+        $timer =  $hours . ":" . $minutes;
+    }
+
+    return ['DDHHMM' => $timer, 'style' => $timer_style];
 }
 
 /* Время ставки */
@@ -93,7 +89,7 @@ function makeBacktime($value) {
     
     // Осталось часов
     $hour = floor($TS_diff / 3600);
-    $minute = floor($TS_diff % 3600) / 60;
+    $minute = floor(($TS_diff % 3600) / 60);
 
     if ($hour > 24) {
         $backTime = date('y.m.d \в H:i', strtotime($value));

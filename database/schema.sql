@@ -46,7 +46,7 @@ CREATE UNIQUE INDEX ctg ON categories(name);
 CREATE UNIQUE INDEX eml ON users(email);
 CREATE INDEX usr ON users(name);
 CREATE INDEX itm ON items(name);
-CREATE FULLTEXT INDEX desc ON items(name, description);
+CREATE FULLTEXT INDEX itm_search ON items(name, description);
 CREATE INDEX f_prc ON items(price);
 CREATE INDEX wnr ON bets(winner_id);
 CREATE INDEX b_ts ON bets(ts_betted);

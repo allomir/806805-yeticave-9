@@ -193,7 +193,7 @@ function getItemByID($conn, $itemID) {
     $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
         JOIN categories ON items.category_id = categories.id
         LEFT JOIN bets ON items.id = bets.item_id
-        WHERE items.id = '$itemID' AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
+        WHERE items.id = '$itemID' -- AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
         GROUP BY items.id DESC
     ";
 
@@ -250,7 +250,7 @@ function getBetsByUserID($conn, $userID) {
         print('Ошибка MySQL:' . mysqli_error($conn));
     }
 
-    $iBets = [];
+    $Bets = [];
     if(mysqli_num_rows($result)) {
         $Bets = mysqli_fetch_all($result, MYSQLI_ASSOC);
     }

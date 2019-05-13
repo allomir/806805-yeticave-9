@@ -1,4 +1,3 @@
-/* 1часть. Наполнение таблиц информацией  */
 
 USE yeticave;
 
@@ -13,12 +12,15 @@ VALUES
     ('other','Разное')
 ;
 
+/* !!!      Стандартный пользователь Логин user@mail.ru Пароль 1234     !!! */
+
 INSERT INTO users
     (email, password, name, contacts, avatar_url, ts_created)
 VALUES 
-    ('elon@gmail.com','$2y$10$JM0EyD.1YIp0eykVXI.vZ.vZxMO1MttUUY56a7rqJwufdMP0WVMuS','Elon Musk','USA, California DC, Gigafactory-1','fotox00777.png',DEFAULT),
-    ('bill@hotmail.com','$2y$10$JM0EyD.1YIp0eykVXI.vZ.vZxMO1MttUUY56a7rqJwufdMP0WVMuS','Bill Gates','Paolo Alto, USA','foto01010.jpg',DEFAULT),
-    ('rasmus@yahoo.com','$2y$10$JM0EyD.1YIp0eykVXI.vZ.vZxMO1MttUUY56a7rqJwufdMP0WVMuS','Rasmus Lerdorf','Canada','foto999.png',DEFAULT)
+    ('elon@gmail.com','$2y$10$JM0EyD.1YIp0eykVXI.vZ.vZxMO1MttUUY56a7rqJwufdMP0WVMuS','Elon Musk','USA, California DC, Gigafactory-1, Phone: 1.800.303.1282','fotox00777.png',DEFAULT),
+    ('bill@hotmail.com','$2y$10$JM0EyD.1YIp0eykVXI.vZ.vZxMO1MttUUY56a7rqJwufdMP0WVMuS','Bill Gates','Paolo Alto, USA, Phone: 1.800.303.1282','foto01010.jpg',DEFAULT),
+    ('rasmus@yahoo.com','$2y$10$JM0EyD.1YIp0eykVXI.vZ.vZxMO1MttUUY56a7rqJwufdMP0WVMuS','Rasmus Lerdorf','Canada, Phone: 1.800.303.1282','foto999.png',DEFAULT),
+    ('user@mail.ru','$2y$10$JM0EyD.1YIp0eykVXI.vZ.vZxMO1MttUUY56a7rqJwufdMP0WVMuS','Иван Иванов','Нижний Новгород, Phone: 1.800.303.1282','/img/user.png',DEFAULT)
 ;
 
 INSERT INTO items

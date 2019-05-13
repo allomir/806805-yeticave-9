@@ -18,35 +18,39 @@
         $timer_style = $timer['style'];
         $timer = $timer['DDHHMM'];
         $class_bet = '';
+        $user_contacts = '';
 
         if (strtotime($bet['ts_end']) < time()) {
-            if(empty($bet['winner_id'])) {
+            if(!empty($bet['winner_id'])) {
                 $class_bet = 'rates__item--win';
                 $timer_style = 'timer--win';
                 $timer = 'Ставка выиграла';
+                $user_contacts = '<p>' . $bet['contacts'] . '</p>';
             }
             else {
-                $class_tr = 'rates__item--end';
+                $class_bet = 'rates__item--end';
                 $timer_style = 'timer--end';
                 $timer = 'Торги окончены';
             }
         }
         ?>
 
-        <tr class="rates__item $class_bet">
+        <tr class="rates__item <?= $class_bet; ?>">
           <td class="rates__info">
             <div class="rates__img">
               <img src="<?= $bet['img_url']; ?>" width="54" height="40" alt="<?= $bet['item_name']; ?>">
             </div>
+            <div>
             <h3 class="rates__title"><a href="/lot.php?itemID=<?= $bet['item_id']; ?>"><?= $bet['item_name']; ?></a></h3>
+            <p><?= $user_contacts; ?></p>
+            </div>
           </td>
           <td class="rates__category">
           <?= $bet['category']; ?>
           </td>
-          <td class="rates__timer <?= $timer_style; ?>">
-            <div class="timer"><?= $timer; ?></div>
+          <td class="rates__timer">
+            <div class="timer <?= $timer_style; ?>"><?= $timer; ?></div>
           </td>
-
           <td class="rates__price">
             <?= makePriceFormat(htmlspecialchars($bet['bet_price'])); ?> р
           </td>
@@ -55,7 +59,7 @@
           </td>
         </tr>
         <?php endforeach; ?>
-<!--
+
         <tr class="rates__item rates__item--win">
           <td class="rates__info">
             <div class="rates__img">
@@ -100,6 +104,6 @@
             Вчера, в 21:30
           </td>
         </tr>
-    -->
+
       </table>
     </section>

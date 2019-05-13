@@ -36,4 +36,5 @@ $layout_content = include_template('layout.php', [
     'page_style_main' => ''
 ]);
 
+$response_code;
 print($layout_content);

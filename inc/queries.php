@@ -138,6 +138,8 @@ function insertNewUser($conn, $user) {
     return $result; // Возвращает тру или ошибка
 }
 
+/* Запрос сделать ставку */
+
 function insertNewBet($conn, $bet) {
 
     $sql = sprintf("INSERT INTO bets
@@ -281,4 +283,45 @@ function getItemsByCategory($conn, $categoryID) {
     } 
 
     return $items;
+}
+
+/* Полнотекстовый поиск по items(name,description) */
+
+function findItemsByFText($conn, $search, $page = 1, $limit = 6) {
+
+    $offset = ($page - 1) * $limit;
+
+    if ($page) {
+        $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
+            JOIN categories ON items.category_id = categories.id 
+            LEFT JOIN bets ON items.id = bets.item_id 
+            WHERE MATCH (items.name,description) AGAINST ('$search' IN BOOLEAN MODE) 
+            GROUP BY items.id DESC 
+            ORDER BY ts_add DESC 
+            LIMIT $limit 
+            OFFSET $offset 
+        ";
+    }
+    // Если $page = 0 - то выражение без лимита и возвращает количество строк
+    else {
+        $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
+            JOIN categories ON items.category_id = categories.id 
+            LEFT JOIN bets ON items.id = bets.item_id 
+            WHERE MATCH (items.name,description) AGAINST ('$search' IN BOOLEAN MODE) 
+            GROUP BY items.id DESC 
+    ";
+    }
+
+    $result = mysqli_query($conn, $sql);
+    if (!$result) {
+        print('Ошибка MySQL: ' . mysqli_error($conn));
+    }
+
+    if(mysqli_num_rows($result) && !empty($page)) {
+        $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $items = addPricesBets($items); // Добавление последняя цена, мин ставка
+        return $items; // если $page > 0 вернется 6 строк или число строк 0
+    }
+
+    return mysqli_num_rows($result); // При $page = 0 вернет количество строк
 }

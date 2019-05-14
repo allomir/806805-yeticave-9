@@ -7,7 +7,6 @@ $response_code = '';
 
 session_start();
 $user = $_SESSION['user'] ?? [];
-$user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : 0;
 
 $conn = getConn(); // Подключение к БД
 $categories = getCategories($conn); // Запрос Показать Таблицу Категории
@@ -47,7 +46,7 @@ $imgData['maxlen'] = '64'; // Ограничим название файла д�
 $imgData['accept_type'] = ['image/gif', 'image/jpeg', 'image/png']; // особый параметр файла - типы файла изображений
 $imgData['maxsize'] = 1048576; // особый параметр - максимальный размер в кб (подсчет в Мб в сообщении)
 
-$item = []; // Параметры лота для инсерта
+$item = []; // Параметры лота, взятые из формы 
 $number_err = 0; // Колво ошибок
 /********************************** Форма отправлена *************************************/
 
@@ -199,10 +198,10 @@ if (isset($_POST['add_lot']) && $number_err == 0) {
         
         // Запрос последнего добавленного ID
         $last_id = mysqli_insert_id($conn);
-        mysqli_close($conn);
 
         // Перенаправление на страницу добавленного лота
-        header("Location: lot.php?success=true&itemID=" . $last_id);
+        header("Location: lot.php?lot_success=true&itemID=" . $last_id);
+        exit();
     }
 }
 
@@ -230,7 +229,6 @@ if (isset($_SESSION['user'])) {
 /* Подложка */
 
 $layout_content = include_template('layout.php', [
-    'user_name' => $user_name, 
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => $page_name,

@@ -6,7 +6,6 @@ require('inc/helpers.php'); // шаблонизатор
 $response_code = '';
 
 session_start();
-$user_name = isset($_SESSION['user']) ? $_SESSION['user']['name'] : 0;
 
 $conn = getConn(); // Подключение к БД
 $categories = getCategories($conn); // Запрос Показать Таблицу Категории
@@ -60,7 +59,6 @@ else {
 /* Шаблонизация - подключение подложики */
 
 $layout_content = include_template('layout.php', [
-    'user_name' => $user_name, 
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => $page_name,

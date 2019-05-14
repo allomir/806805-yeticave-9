@@ -12,8 +12,8 @@ CREATE TABLE categories (
 
 CREATE TABLE items (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  category_id CHAR(64) NOT NULL,
   user_id INT UNSIGNED NOT NULL,
+  category_id CHAR(64) NOT NULL,
   name CHAR(255) NOT NULL,
   description TEXT(1024) NOT NULL,
   img_url CHAR(255) NOT NULL,
@@ -46,7 +46,7 @@ CREATE UNIQUE INDEX ctg ON categories(name);
 CREATE UNIQUE INDEX eml ON users(email);
 CREATE INDEX usr ON users(name);
 CREATE INDEX itm ON items(name);
-CREATE FULLTEXT INDEX desc ON items(description);
+CREATE FULLTEXT INDEX itm_search ON items(name, description);
 CREATE INDEX f_prc ON items(price);
 CREATE INDEX wnr ON bets(winner_id);
 CREATE INDEX b_ts ON bets(ts_betted);

@@ -2,6 +2,50 @@
 
 /* Заметки */
 
+/* Дней осталось
+$days = floor($TS_diff / 86400);
+$hours = floor(($TS_diff % 86400) / 3600); 
+*/
+/* функция таймер */
+
+function makeTimer($TS_end) {
+    date_default_timezone_set("Europe/Moscow");
+    $TS_diff = strtotime($TS_end) - time(); // Осталось до конца ставки
+    $timer_style = '';
+
+    // Создаем таймер День : Час : Мин
+    if ($TS_diff > 0) {
+
+        $hours = floor($TS_diff / 3600);
+
+        if ($hours >= 99) {
+            $hours = '99';
+        }
+        elseif ($hours < 10) {
+            $hours = '0' . $hours;
+        }
+
+        $minutes = floor(($TS_diff % 3600) / 60);
+
+        if ($hours >= 99) {
+            $minutes = '00';
+        }
+        elseif ($hours < 99 && $minutes < 10) {
+            $minutes = '0' . $minutes;
+        }
+
+        $timer = $hours . ":" . $minutes;
+        
+        if ($TS_diff <= 3600) {
+            $timer_style = 'timer--finishing';
+        }
+    }
+    else {
+        $timer = '00:00';
+    } 
+    return $timer = ['HHMM' => $timer, 'style' => $timer_style];
+}
+
 // печать ошибок в добавлении лота
 $i = 0;
   foreach ($formErrors as $value) {
@@ -26,7 +70,7 @@ $response_code = '';
 // <!-- Горизонтальное простое меню - для всех страниц кроме главной -->
             <?php foreach ($categories as $category): ?>
             <li class="nav__item">
-                <a href="all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
+                <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
             </li>
             <?php endforeach; ?>
 

@@ -6,6 +6,35 @@ function deffXSS($value) {
     return htmlspecialchars($value, ENT_QUOTES,'UTF-8', true);
 }
 
+// Определение окончания
+
+function getEndingWord($number, $word = 'ставка')  {
+    $list = [
+        'ставка' => ['ставка', 'ставки', 'ставок'],
+        'час' => ['час', 'часа', 'часов'],
+        'минута' => ['минута', 'минуты', 'минут']
+    ];
+
+    $mod10 = $number % 10;
+    $mod100 = $number % 100;
+            
+    if ($mod100 >= 11 && $mod100 <= 20) {
+        $wordEnd = $list[$word][2];
+    }
+    elseif ($mod10 > 5) {
+        $wordEnd = $list[$word][2];
+    }
+    elseif ($mod10 == 1) {
+        $wordEnd = $list[$word][0]; 
+    }
+    elseif ($mod10 >= 2 && $mod10 <= 4){
+        $wordEnd = $list[$word][1];
+    }
+    else {$wordEnd = $list[$word][2];}
+
+    return $wordEnd;
+}
+
 /* функция формат цены */
 
 function makePriceFormat($price) {
@@ -21,31 +50,60 @@ function makePriceFormat($price) {
 function makeTimer($TS_end) {
     date_default_timezone_set("Europe/Moscow");
     $TS_diff = strtotime($TS_end) - time(); // Осталось до конца ставки
+    $timer = '00:00';
     $timer_style = '';
+
     // Создаем таймер День : Час : Мин
-    if ($TS_diff > 0) {
-        /* Дней осталось
-        $days = floor($TS_diff / 86400);
-        $hours = floor(($TS_diff % 86400) / 3600);*/
+    $days = floor($TS_diff / 86400);
+    $hours = floor(($TS_diff % 86400) / 3600); 
+    $minutes = floor(($TS_diff % 3600) / 60);
 
-        $hours = floor($TS_diff / 3600);
-        if ($hours >= 99) {$hours = '99';}
-        elseif($hours < 10) {$hours = '0' . $hours;}
+    if ($hours < 10) {
+        $hours = '0' . $hours;
+    }
+    
+    if ($minutes < 10) {
+        $minutes = '0' . $minutes;
+    }
+    
+    if ($TS_diff <= 3600) {
+        $timer_style = 'timer--finishing';
+    }
 
-        $minutes = floor(($TS_diff % 3600) / 60);
-        if ($hours >= 99) {$minutes = '00';}
-        elseif($hours < 99 && $minutes < 10) {$minutes = '0' . $minutes;}
+    if ($TS_diff > 86400) {
+        $timer =  $days . ":" . $hours . ":" . $minutes;
+    }
+    elseif ($TS_diff > 0) {
+        $timer =  $hours . ":" . $minutes;
+    }
 
-        $timer = /* $days . ":" . */$hours . ":" . $minutes;
-        
-        if ($TS_diff <= 3600) {
-            $timer_style = 'timer--finishing';
-        }
+    return ['DDHHMM' => $timer, 'style' => $timer_style];
+}
+
+/* Время ставки */
+
+function makeBacktime($value) {
+    date_default_timezone_set("Europe/Moscow");
+    $TS_diff = time()- strtotime($value);
+    
+    // Осталось часов
+    $hour = floor($TS_diff / 3600);
+    $minute = floor(($TS_diff % 3600) / 60);
+
+    if ($hour > 24) {
+        $backTime = date('y.m.d \в H:i', strtotime($value));
+    }
+    elseif ($hour >= 1) {
+        $backTime = $hour . ' ' . getEndingWord($hour, 'час') . ' назад';
+    }
+    elseif ($TS_diff < 120) {
+        $backTime = 'минуту назад';
     }
     else {
-        $timer = '00:00';
-    } 
-    return $timer = ['DDHHMM' => $timer, 'style' => $timer_style];
+        $backTime = $minute . ' ' . getEndingWord($minute, 'минута') . ' назад';
+    }
+
+    return $backTime;
 }
 
 /* Функция - Вставить класс ошибки, стр добавление лота */

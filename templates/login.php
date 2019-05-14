@@ -9,16 +9,15 @@
       <?php /* Главное меню - все страницы кроме главной */
         foreach ($categories as $category): ?>
           <li class="nav__item">
-            <a href="all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
+            <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
           </li>
         <?php endforeach; ?>
       </ul>
     </nav>
-    <?php 
+    <?php $classNameForm = '';
     if (isset($errors)) {
       $classNameForm = count($errors) ? 'form--invalid' : '';
-    }
-    ?>
+    } ?>
     <form class="form container <?= $classNameForm; ?>" action="/login.php" method="post">
       <h2>Вход</h2>
       <?php 

@@ -14,6 +14,7 @@
       <section class="lots">
         <?php $whatIsThis = empty($items) ? 'Ничего не найдено по вашему запросу' : 'Результаты поиска по запросу: '; ?>
         <h2><?= $whatIsThis ?> <?= !empty($search) ? '«<span>' . $search . '</span>»' : ''; ?></h2>
+        <?php if (!empty($items)) : ?>
         <ul class="lots__list">
         <?php 
         /* Блоки с лотами */
@@ -41,10 +42,10 @@
             </li>
         <?php endforeach; ?>
         </ul>
+        <?php endif; ?>
       </section>
+      <?php if ($num_pages) : ?>
       <ul class="pagination-list">
-
-    <?php if ($num_pages) : ?>
         <?php /* Пагинация */
         $params = $_GET ?? []; 
         if ($num_pages >= 2) : 
@@ -58,18 +59,19 @@
         <?php endif;
         $i=1; 
         $params = $_GET ?? [];
-        $current_page = $params['page'] ?? '';
+        $current_page = $params['page'] ?? 'начало';
 
         while ($i <= $num_pages) : 
             $class_active = '';
-            if ($current_page == $i OR empty($current_page)) {
-                $class_active = 'pagination-item-active';
+            if ($current_page == $i OR $current_page == 'начало') {
+                $class_active = 'pagination-item-active'; 
+                $current_page = '';
             }
             $params['page'] = $i; $row_get = http_build_query($params); 
         ?>
         <li class="pagination-item <?= $class_active; ?>"><a href="/search.php?<?= $row_get; ?>"><?= $i; ?></a></li>
         <?php 
-        $i++;  endwhile; 
+        $i++; endwhile; 
 
         if ($num_pages >= 2) : 
             $params = $_GET ?? [];
@@ -80,7 +82,6 @@
             $row_get = http_build_query($params); ?>
         <li class="pagination-item pagination-item-next"><a href="/search.php?<?= $row_get; ?>">Вперед</a></li>
         <?php endif; ?>
-    <?php endif; ?>
-
       </ul>
+      <?php endif; ?>
     </div>

@@ -320,7 +320,7 @@ function findItemsByFText($conn, $search, $page = 1, $limit = 6) {
     if(mysqli_num_rows($result) && !empty($page)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
-        return $items; // если $page > 0 вернется 6 строк
+        return $items; // если $page > 0 вернется 6 строк или число строк 0
     }
 
     return mysqli_num_rows($result); // При $page = 0 вернет количество строк

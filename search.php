@@ -17,7 +17,7 @@ $page = $_GET['page'] ?? 1;
 $limit = $_GET['limit'] ?? 6; 
 $num_items = findItemsByFText($conn, $saveSearch, 0); // вернет общее число строк
 $num_pages = ceil($num_items / $limit);
-$items = findItemsByFText($conn, $saveSearch, $page, $limit); // вернет 6 строк (по лимиту)
+$items = findItemsByFText($conn, $saveSearch, $page, $limit); // вернет 6 строк (по лимиту) или 0 строк по запросу
 
 $page_name = 'Поиск информации о лотах';
 
@@ -27,6 +27,7 @@ $page_content = include_template('search.php', [
     'num_pages' => $num_pages,
     'search' => $search
 ]);
+
 
 $layout_content = include_template('layout.php', [
     'categories' => $categories,

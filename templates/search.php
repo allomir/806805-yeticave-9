@@ -44,7 +44,7 @@
         </ul>
         <?php endif; ?>
       </section>
-      <?php if ($num_pages) : ?>
+      <?php if (!empty($num_pages)) : ?>
       <ul class="pagination-list">
         <?php /* Пагинация */
         $params = $_GET ?? []; 

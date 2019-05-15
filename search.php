@@ -1,9 +1,10 @@
 <?php
 
-require('inc/general.php');
-require('inc/functions.php');
-require('inc/queries.php');
-require('inc/helpers.php');
+require('inc/functions.php'); // функции
+require('inc/queries.php'); // Запросы и подключение
+require('inc/helpers.php'); // шаблонизатор
+
+require('inc/general.php'); // Общие сценарии всех страниц 
 
 if (isset($_GET['search'])) {
 

@@ -1,0 +1,12 @@
+{
+    "name": "vendor/yeticave",
+    "require": {
+        "swiftmailer/swiftmailer": "v6.2.1"
+    },
+    "authors": [
+        {
+            "name": "allomir",
+            "email": "49421075+allomir@users.noreply.github.com"
+        }
+    ]
+}

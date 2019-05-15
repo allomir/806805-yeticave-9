@@ -3,13 +3,10 @@
 require('inc/functions.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('inc/helpers.php'); // шаблонизатор
-$response_code = '';
 
-session_start();
-$user = $_SESSION['user'] ?? [];
+require('inc/general.php'); // Общие сценарии всех страниц 
 
-$conn = getConn(); // Подключение к БД
-$categories = getCategories($conn); // Запрос Показать Таблицу Категории
+$user = $_SESSION['user'] ?? []; // Аунтификация пользователя
 
 // параметры - название полей, кроме изображения, и название ошибок, если поле не заполнено
 $params = [
@@ -209,8 +206,6 @@ mysqli_close($conn);
 
 /* Шаблонизатор */
 
-$page_name = 'Добавление лота';
-
 // Страница для зарегистрированных или ошибка доступа
 
 if (isset($_SESSION['user'])) {
@@ -231,7 +226,7 @@ if (isset($_SESSION['user'])) {
 $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => $page_name,
+    'title' => 'Добавление лота',
     'page_style_main' => ''
 ]);
 

@@ -3,14 +3,10 @@
 require('inc/functions.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('inc/helpers.php'); // шаблонизатор
-$response_code = '';
 
-session_start();
+require('inc/general.php'); // Общие сценарии всех страниц 
 
-$conn = getConn(); // Подключение к БД
-$categories = getCategories($conn); // Запрос Показать Таблицу Категории
-
-/* Страница категорий. Получение id категории */
+/* Страница категорий */
 
 $items = []; // массив с данными лотов.
 $checkCategory = []; // массив с данными выбранной категории.

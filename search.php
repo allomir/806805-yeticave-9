@@ -1,9 +1,9 @@
 <?php
 
-require('inc/function.php');
+require('inc/general.php');
+require('inc/functions.php');
 require('inc/queries.php');
 require('inc/helpers.php');
-require('inc/main.php');
 
 if (isset($_GET['search'])) {
 

@@ -29,39 +29,38 @@ if (!$result1) {
 if (mysqli_num_rows($result1)) {
     $winBet = mysqli_fetch_assoc($result1);
 
-        $userID = $winBet['user_id'];
-        $ID = $winBet['id'];
+    $userID = $winBet['user_id'];
+    $ID = $winBet['id'];
 
-        $sql2 = "UPDATE bets 
-            SET winner_id = '$userID'
-            WHERE id = '$ID'
-        ";
+    $sql2 = "UPDATE bets 
+        SET winner_id = '$userID'
+        WHERE id = '$ID'
+    ";
 
-        $result2 = mysqli_query($conn, $sql2);
-        if (false) {
-            print('Ошибка MYSQL: ' . mysqli_error($conn));
-        }
-        // Отправка почты для каждого победителя
-        else {
-            
-            $winBet['winner_id'] = $userID;
-            $recipients = [];
-            $recipients[$winBet['email']] = $winBet['user_name'];
+    $result2 = mysqli_query($conn, $sql2);
+    if (false) {
+        print('Ошибка MYSQL: ' . mysqli_error($conn));
+    }
+    // Отправка почты для каждого победителя
+    else {
+        $winBet['winner_id'] = $userID;
+        $recipients = [];
+        $recipients[$winBet['email']] = $winBet['user_name'];
 
-            $email_content = include_template('email.php', [
-                'winBet' => $winBet
-            ]);
+        $email_content = include_template('email.php', [
+            'winBet' => $winBet
+        ]);
 
-            $message = new Swift_Message();
-            $message->setSubject("Ваша ставка победила!");
-            $message->setFrom(['keks@phpdemo.ru' => 'yeticave']);
-            $message->setBcc($recipients);
+        $message = new Swift_Message();
+        $message->setSubject("Ваша ставка победила!");
+        $message->setFrom(['keks@phpdemo.ru' => 'yeticave']);
+        $message->setBcc($recipients);
     
-            $msg_content = $email_content;
-            $message->setBody($msg_content, 'text/html');
+        $msg_content = $email_content;
+        $message->setBody($msg_content, 'text/html');
 
-            $result = $mailer->send($message);
+        $result = $mailer->send($message);
 
-        }
+    }
 }
 

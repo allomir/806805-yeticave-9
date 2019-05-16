@@ -1,14 +1,10 @@
 <?php
 
-require('inc/function.php'); // функции
+require('inc/functions.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('inc/helpers.php'); // шаблонизатор
-$response_code = '';
 
-session_start();
-
-$conn = getConn(); // Подключение к БД
-$categories = getCategories($conn); // Запрос Показать Таблицу Категории
+require('inc/general.php'); // Общие сценарии всех страниц 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -53,10 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } 
 
-    /* Страница с ошибками */
-
+    // Страница после отправки формы
     if (count($errors)) {
-        $page_name = 'Вход на сайт';
         $page_content = include_template('login.php', [
             'categories' => $categories,
             'formVals' => $formVals,
@@ -69,27 +63,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    /* Страница входа после входа */
-
+    // Страница входа после входа
     if (isset($_SESSION['user'])) {
-        $page_content = '<div class="container"><h3>Добро пожаловать, ' . $_SESSION['user']['name'] . '<h3></div>';
+        $page_content = include_template('error.php', [
+            'categories' => $categories,
+            'page_error' => 'login'
+        ]);
     } else {
-
-        /* Страница входа обычная */
-
+        // Страница входа обычная 
         $page_content = include_template('login.php', [
             'categories' => $categories
         ]);
     }
 }
 
-    /* подложка */
-
-$page_name = 'Вход на сайт';
+// Подложка
 $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => $page_name,
+    'title' => 'Вход на сайт',
     'page_style_main' => ''
 ]);
 

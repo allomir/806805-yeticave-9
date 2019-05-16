@@ -1,17 +1,12 @@
 <?php
 
-require('inc/function.php'); // функции
+require('inc/functions.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('inc/helpers.php'); // шаблонизатор
-$response_code = '';
 
-session_start();
-$user = $_SESSION['user'] ?? [];
+require('inc/general.php'); // Общие сценарии всех страниц 
 
-$conn = getConn(); // Подключение к БД
-$categories = getCategories($conn); // Запрос Показать Таблицу Категории
-
-/* Шаблонизация */
+$user = $_SESSION['user'] ?? []; // Аунтификация пользователя
 
 if (isset($_SESSION['user'])) {
     $bets = getBetsByUserID($conn, $user['id']);
@@ -23,16 +18,17 @@ if (isset($_SESSION['user'])) {
 }
 else {
     $response_code = http_response_code(403);
-    $page_content = '<div class="container"><h3>Ошибка доступа 403<h3></div>' ;
+    $page_content = include_template('error.php', [
+        'categories' => $categories,
+        'page_error' => '403'
+    ]);
 }
 
-/* подложка */
-
-$page_name = 'Вход на сайт';
+// Подложка
 $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => $page_name,
+    'title' => 'Вход на сайт',
     'page_style_main' => ''
 ]);
 

@@ -1,11 +1,10 @@
     <nav class="nav">
       <ul class="nav__list container">
 
-        <?php /* Главное меню - все страницы кроме главной */
-        foreach ($categories as $category) : ?>
-        <li class="nav__item">
-          <a href="/all-lots.php?categoryID=<?= $category['id'] ?>"><?= htmlspecialchars($category['name']); ?></a>
-        </li>
+        <?php foreach ($categories as $category) : ?>
+            <li class="nav__item">
+                <a href="/all-lots.php?categoryID=<?= $category['id'] ?>"><?= htmlspecialchars($category['name']); ?></a>
+            </li>
         <?php endforeach; ?>
 
       </ul>
@@ -13,15 +12,13 @@
     <div class="container">
       <section class="lots">
         <?php $whatIsThis = empty($items) ? 'Ничего не найдено по вашему запросу' : 'Результаты поиска по запросу: '; ?>
-        <h2><?= $whatIsThis ?> <?= !empty($search) ? '«<span>' . $search . '</span>»' : ''; ?></h2>
+        <h2><?= $whatIsThis ?> <?= !empty($search) ? '<span>«' . $search . '»</span>' : ''; ?></h2>
+
         <?php if (!empty($items)) : ?>
         <ul class="lots__list">
-        <?php 
-        /* Блоки с лотами */
-        foreach ($items as $item):
-        // функция таймер
-        $Timer = makeTimer(htmlspecialchars($item['ts_end'])); 
-        ?>
+
+        <?php foreach ($items as $item):
+        $Timer = makeTimer(htmlspecialchars($item['ts_end'])); ?>
             <li class="lots__item lot">
                 <div class="lot__image">
                     <img src="<?= htmlspecialchars($item['img_url']); ?>" width="350" height="260" alt="<?= htmlspecialchars($item['name']); ?>">
@@ -41,11 +38,15 @@
                 </div>
             </li>
         <?php endforeach; ?>
+
         </ul>
         <?php endif; ?>
+
       </section>
-      <?php if ($num_pages) : ?>
+
+      <?php if (!empty($num_pages)) : ?>
       <ul class="pagination-list">
+
         <?php /* Пагинация */
         $params = $_GET ?? []; 
         if ($num_pages >= 2) : 
@@ -82,6 +83,8 @@
             $row_get = http_build_query($params); ?>
         <li class="pagination-item pagination-item-next"><a href="/search.php?<?= $row_get; ?>">Вперед</a></li>
         <?php endif; ?>
+
       </ul>
       <?php endif; ?>
+
     </div>

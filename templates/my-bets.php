@@ -1,12 +1,13 @@
 
     <nav class="nav">
       <ul class="nav__list container">
-      <?php /* Главное меню - все страницы кроме главной */
-        foreach ($categories as $category): ?>
+
+        <?php foreach ($categories as $category): ?>
           <li class="nav__item">
-            <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
+            <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
           </li>
         <?php endforeach; ?>
+        
       </ul>
     </nav>
     <section class="rates container">
@@ -25,7 +26,7 @@
                 $class_bet = 'rates__item--win';
                 $timer_style = 'timer--win';
                 $timer = 'Ставка выиграла';
-                $user_contacts = '<p>' . $bet['contacts'] . '</p>';
+                $user_contacts = $bet['contacts'];
             }
             else {
                 $class_bet = 'rates__item--end';
@@ -55,7 +56,7 @@
             <?= makePriceFormat(htmlspecialchars($bet['bet_price'])); ?> р
           </td>
           <td class="rates__time">
-            <?= makeBacktime(htmlspecialchars($bet['ts_betted'])); ?>
+            <?= makeBacktime($bet['ts_betted']); ?>
           </td>
         </tr>
         <?php endforeach; ?>

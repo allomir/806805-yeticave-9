@@ -1,14 +1,10 @@
 <?php
 
-require('inc/function.php'); // функции
+require('inc/functions.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('inc/helpers.php'); // шаблонизатор
-$response_code = '';
 
-session_start();
-
-$conn = getConn(); // Подключение к БД
-$categories = getCategories($conn); // Запрос Показать Таблицу Категории
+require('inc/general.php'); // Общие сценарии всех страниц 
 
 // параметры - название полей, и название ошибок, если поле не заполнено
 $params = [
@@ -33,10 +29,7 @@ foreach ($params as $param => $errors) {
 
 /********************************** Форма отправлена *************************************/
 
-// Событие нажатие кнопки
 if (isset($_POST['sign-up'])) { 
-
-    /* 1часть. Проверки полей */
 
     foreach ($params as $param => $error) {
         // Проверка каждое поле на пусто 
@@ -55,8 +48,6 @@ if (isset($_POST['sign-up'])) {
         }
     }
 
-    /* 2часть. Проверки поля email - экранирование */
-
     // Защита email от SQL-инъекции
     $saveEmail = mysqli_real_escape_string($conn, $formData['email']);
 
@@ -70,8 +61,6 @@ if (isset($_POST['sign-up'])) {
             $formErrors['email'] = 'email занят';
         }
     }
-
-    /* 3 часть. Колво ошибок */
 
     // Результат - Cчитаем колво ошибок после нажатия кнопки и проверок
     $number_err = 0;
@@ -90,7 +79,6 @@ if (isset($_POST['sign-up']) && empty($number_err)) {
     // Пароль обработать встроенной функцией password_hash 
     $passwordHash = password_hash($formData['password'], PASSWORD_DEFAULT);
 
-
     // Параметры пользователя для инсерта
     $user = [
         'email' => $formData['email'], 
@@ -100,7 +88,6 @@ if (isset($_POST['sign-up']) && empty($number_err)) {
         'avatar_url' => '/img/user.png' // ставим по умолчанию, не требуется по заданию
         // ts_created // автозаполнение
     ];
-
 
     // Защита от SQL-инъкция - экранирование
     foreach ($user as $key => $value) {
@@ -112,18 +99,14 @@ if (isset($_POST['sign-up']) && empty($number_err)) {
     if(insertNewUser($conn, $saveUser)) {
         $last_id = mysqli_insert_id($conn);
 
-        mysqli_close($conn);
+        mysqli_close($conn); // закрыть подключение БД
 
         // Перенаправление на страницу входа
         header("Location: /login.php/?congratulation=true");
     }
 }
 
-mysqli_close($conn);
-
-/* Шаблонизатор */
-
-$page_name = 'Регистрация';
+mysqli_close($conn); // закрыть подключение БД
 
 $page_content = include_template('sign-up.php', [
     'categories' => $categories, 
@@ -131,10 +114,11 @@ $page_content = include_template('sign-up.php', [
     'formErrors' => $formErrors  
 ]);
 
+// Подложка
 $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => $page_name,
+    'title' => 'Регистрация',
     'page_style_main' => ''
 ]);
 

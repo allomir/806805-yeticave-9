@@ -24,12 +24,8 @@
         </div>
         <ul class="lots__list">
 
-        <?php 
-        /* Блоки с лотами */
-        foreach ($items as $item):
-        // функция таймер
-        $Timer = makeTimer(htmlspecialchars($item['ts_end'])); 
-        ?>
+        <?php foreach ($items as $item):
+        $Timer = makeTimer(htmlspecialchars($item['ts_end'])); ?>
             <li class="lots__item lot">
                 <div class="lot__image">
                     <img src="<?= htmlspecialchars($item['img_url']); ?>" width="350" height="260" alt="<?= htmlspecialchars($item['name']); ?>">

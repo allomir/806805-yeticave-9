@@ -1,16 +1,12 @@
 <?php
 
-require('inc/function.php'); // функции
+require('inc/functions.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('inc/helpers.php'); // шаблонизатор
-$response_code = '';
 
-session_start();
+require('inc/general.php'); // Общие сценарии всех страниц 
 
-$conn = getConn(); // Подключение к БД
-$categories = getCategories($conn); // Запрос Показать Таблицу Категории
-
-/* Страница категорий. Получение id категории */
+/* Страница категорий */
 
 $items = []; // массив с данными лотов.
 $checkCategory = []; // массив с данными выбранной категории.
@@ -33,8 +29,6 @@ if (empty($items) && !empty($checkCategory)) {
     $page_name = $checkCategory['name'];
     $page_content = include_template('all-lots.php', [
         'categories' => $categories,
-        'items' => $items,
-        'page_name' => $page_name
 ]);
 }
 // В категории есть лоты
@@ -42,8 +36,7 @@ elseif (!empty($items)) {
     $page_name = $items['0']['category'];
     $page_content = include_template('all-lots.php', [
         'categories' => $categories, 
-        'items' => $items,
-        'page_name' => $page_name
+        'items' => $items
     ]);
 }
 // Такого id категории нет или нет параметра запроса
@@ -51,7 +44,8 @@ else {
     $page_name = '404 Страница не найдена';
     $response_code = http_response_code(404);
     $page_content = include_template('error.php', [
-            'categories' => $categories
+        'categories' => $categories,
+        'page_error' => '404'
     ]);
 }
 

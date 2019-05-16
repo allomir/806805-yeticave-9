@@ -1,20 +1,16 @@
 <?php
 
-require('inc/function.php'); // функции
+require('inc/functions.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('inc/helpers.php'); // шаблонизатор
-$response_code = '';
 
-session_start();
+require('inc/general.php'); // Общие сценарии всех страниц 
 
-$conn = getConn(); // Подключение к БД
-$categories = getCategories($conn); // Запрос Показать Таблицу Категории
-$items = getItems($conn); // Главная стр показать активные лоты, до 9 шт
-mysqli_close($conn);
+require('vendor/autoload.php'); // composer - подключение SwiftMailer
 
-/* Шаблонизация */
+/* Главная страница */
 
-$page_name = 'Главная';
+$items = getItems($conn); // #1 Запрос - показать активные лоты, 9 шт
 
 $page_content = include_template('index.php', [
     'categories' => $categories, 
@@ -24,9 +20,11 @@ $page_content = include_template('index.php', [
 $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => $page_name,
+    'title' => 'Главная',
     'page_style_main' => 'container'
 
 ]);
 
 print($layout_content);
+
+require('inc/getwinner.php'); // специал. сценарий главной стр. - Определение победителя

@@ -1,15 +1,12 @@
 <?php
 
-require('inc/function.php'); // функции
+require('inc/functions.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('inc/helpers.php'); // шаблонизатор
-$response_code = '';
 
-session_start();
-$user = $_SESSION['user'] ?? [];
+require('inc/general.php'); // Общие сценарии всех страниц 
 
-$conn = getConn(); // Подключение к БД
-$categories = getCategories($conn); // Запрос Показать Таблицу Категории
+$user = $_SESSION['user'] ?? []; // Аунтификация пользователя
 
 // параметры - название полей, кроме изображения, и название ошибок, если поле не заполнено
 $params = [
@@ -183,7 +180,7 @@ if (isset($_POST['add_lot']) && $number_err == 0) {
         'img_url' => $imgData['img_url'],
         'price' => $formData['lot-rate'],
         'step' => $formData['lot-step'],
-        //'ts_add' => strtotime('now + 1 hour'), // ошибка - Incorrect datetime value: '1557159721' 
+        //'ts_add' => strtotime('now + 1 hour'), // автозаполнение
         'ts_end' => $formData['lot-date']
     ];
 
@@ -207,12 +204,7 @@ if (isset($_POST['add_lot']) && $number_err == 0) {
 
 mysqli_close($conn);
 
-/* Шаблонизатор */
-
-$page_name = 'Добавление лота';
-
 // Страница для зарегистрированных или ошибка доступа
-
 if (isset($_SESSION['user'])) {
     $page_content = include_template('add-lot.php', [
         'categories' => $categories, 
@@ -223,15 +215,17 @@ if (isset($_SESSION['user'])) {
     ]);
 } else {
     $response_code = http_response_code(403);
-    $page_content = '<div class="container"><h3>Ошибка доступа 403<h3></div>' ;
+    $page_content = include_template('error.php', [
+        'categories' => $categories,
+        'page_error' => '403'
+    ]);
 }
 
-/* Подложка */
-
+// Подложка
 $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => $page_name,
+    'title' => 'Добавление лота',
     'page_style_main' => ''
 ]);
 

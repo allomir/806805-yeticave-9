@@ -2,9 +2,9 @@
       <ul class="nav__list container">
 
         <?php foreach ($categories as $category) : ?>
-        <li class="nav__item">
-          <a href="/all-lots.php?categoryID=<?= $category['id'] ?>"><?= htmlspecialchars($category['name']); ?></a>
-        </li>
+            <li class="nav__item">
+                <a href="/all-lots.php?categoryID=<?= $category['id'] ?>"><?= htmlspecialchars($category['name']); ?></a>
+            </li>
         <?php endforeach; ?>
 
       </ul>
@@ -12,7 +12,7 @@
     <div class="container">
       <section class="lots">
         <?php $whatIsThis = empty($items) ? 'Ничего не найдено по вашему запросу' : 'Результаты поиска по запросу: '; ?>
-        <h2><?= $whatIsThis ?> <?= !empty($search) ? '«<span>' . $search . '</span>»' : ''; ?></h2>
+        <h2><?= $whatIsThis ?> <?= !empty($search) ? '<span>«' . $search . '»</span>' : ''; ?></h2>
 
         <?php if (!empty($items)) : ?>
         <ul class="lots__list">

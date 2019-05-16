@@ -2,8 +2,7 @@
     <nav class="nav">
       <ul class="nav__list container">
 
-        <?php /* Главное меню - все страницы кроме главной */
-        foreach ($categories as $category): ?>
+        <?php foreach ($categories as $category): ?>
           <li class="nav__item">
             <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
           </li>
@@ -11,7 +10,7 @@
 
       </ul>
     </nav>
-    <form class="form form--add-lot container <?= addErrorStyle($formErrors); ?>" action="add.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->
+    <form class="form form--add-lot container <?= addErrorStyle($formErrors); ?>" action="add.php" method="post" enctype="multipart/form-data">
       <h2>Добавление лота</h2>
       <div class="form__container-two">
         <div class="form__item <?= addErrorStyle($formErrors['lot-name']); ?>">

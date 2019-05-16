@@ -2,10 +2,9 @@
     <nav class="nav">
       <ul class="nav__list container">
 
-      <?php /* Главное меню - все страницы кроме главной */
-        foreach ($categories as $category): ?>
+        <?php foreach ($categories as $category): ?>
           <li class="nav__item">
-            <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
+            <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
           </li>
         <?php endforeach; ?>
 
@@ -13,16 +12,15 @@
     </nav>
     <div class="container">
       <section class="lots">
-        <h2>Все лоты в категории <span>«<?= $page_name ?>»</span></h2>
+      <?php $whatIsThis = empty($items) ? 'Лоты отсутствуют в категории' : 'Все лоты в категории '; 
+      $page_category = !empty($_GET['categoryID']) ? $categories[$_GET['categoryID'] - 1]['name'] : ''; ?>
+        <h2><?= $whatIsThis; ?><?= ' <span>«' . $page_category . '»</span>'; ?></h2>
+
+        <?php if (!empty($items)) : ?>
         <ul class="lots__list">
 
-          <?php 
-            /* Показ лотов по категории */
-            if ($items):
-            foreach ($items as $item):
-            // функция таймер 
-            $Timer = makeTimer(deffXSS($item['ts_end'])); 
-          ?>
+          <?php foreach ($items as $item):
+            $Timer = makeTimer(deffXSS($item['ts_end'])); ?>
             <li class="lots__item lot">
                 <div class="lot__image">
                     <img src="<?= deffXSS($item['img_url']); ?>" width="350" height="260" alt="<?= deffXSS($item['name']); ?>">
@@ -41,14 +39,13 @@
                     </div>
                 </div>
             </li>
-          <?php endforeach; 
-          else : print('В данный момент лоты отсутствуют'); endif; 
-          ?>
+          <?php endforeach; ?>
 
         </ul>
+        <?php endif; ?>
       </section>
 
-      <?php if ($items): ?>
+      <?php if (!empty($items)): ?>
       <ul class="pagination-list">
         <li class="pagination-item pagination-item-prev"><a>Назад</a></li>
         <li class="pagination-item pagination-item-active"><a>1</a></li>

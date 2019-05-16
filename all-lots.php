@@ -29,8 +29,6 @@ if (empty($items) && !empty($checkCategory)) {
     $page_name = $checkCategory['name'];
     $page_content = include_template('all-lots.php', [
         'categories' => $categories,
-        'items' => $items,
-        'page_name' => $page_name
 ]);
 }
 // В категории есть лоты
@@ -38,8 +36,7 @@ elseif (!empty($items)) {
     $page_name = $items['0']['category'];
     $page_content = include_template('all-lots.php', [
         'categories' => $categories, 
-        'items' => $items,
-        'page_name' => $page_name
+        'items' => $items
     ]);
 }
 // Такого id категории нет или нет параметра запроса

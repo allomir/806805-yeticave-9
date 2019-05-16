@@ -6,8 +6,8 @@ require('inc/helpers.php'); // шаблонизатор
 
 require('inc/general.php'); // Общие сценарии всех страниц 
 
-require('inc/getwinner.php'); // специал. сценарий главной стр. - Определение победителя
 require('vendor/autoload.php'); // composer - подключение SwiftMailer
+require('inc/getwinner.php'); // специал. сценарий главной стр. - Определение победителя
 
 /* Главная страница */
 

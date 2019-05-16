@@ -49,9 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } 
 
-    // Страница с ошибками 
+    // Страница после отправки формы
     if (count($errors)) {
-        $page_name = 'Вход на сайт';
         $page_content = include_template('login.php', [
             'categories' => $categories,
             'formVals' => $formVals,
@@ -79,11 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Подложка
-$page_name = 'Вход на сайт';
 $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => $page_name,
+    'title' => 'Вход на сайт',
     'page_style_main' => ''
 ]);
 

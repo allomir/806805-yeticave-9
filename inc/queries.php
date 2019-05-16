@@ -292,24 +292,23 @@ function findItemsByFText($conn, $search, $page = 1, $limit = 6) {
     $offset = ($page - 1) * $limit;
 
     if ($page) {
-        $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
-            JOIN categories ON items.category_id = categories.id 
-            LEFT JOIN bets ON items.id = bets.item_id 
-            WHERE MATCH (items.name,description) AGAINST ('$search' IN BOOLEAN MODE) 
-            GROUP BY items.id  
+        // Если $page > 1 выражение возвращает 6 строк, ищет по лимиту и оффсету
+        $sql = "SELECT i.id, i.name, img_url, ts_end, i.step, i.price, 
+            categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items i
+            JOIN categories ON i.category_id = categories.id 
+            LEFT JOIN bets ON i.id = bets.item_id 
+            WHERE MATCH (i.name, description) AGAINST ('$search' IN BOOLEAN MODE) 
+            GROUP BY i.id  
             ORDER BY ts_add DESC 
             LIMIT $limit 
             OFFSET $offset 
         ";
     }
-    // Если $page = 0 - то выражение без лимита и возвращает количество строк
+    // Если $page = 0 возвращает, общее количество строк
     else {
-        $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
-            JOIN categories ON items.category_id = categories.id 
-            LEFT JOIN bets ON items.id = bets.item_id 
-            WHERE MATCH (items.name,description) AGAINST ('$search' IN BOOLEAN MODE) 
-            GROUP BY items.id
-    ";
+        $sql = "SELECT items.id FROM items
+            WHERE MATCH (items.name, description) AGAINST ('$search' IN BOOLEAN MODE) 
+        ";
     }
 
     $result = mysqli_query($conn, $sql);
@@ -320,8 +319,8 @@ function findItemsByFText($conn, $search, $page = 1, $limit = 6) {
     if(mysqli_num_rows($result) && !empty($page)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
-        return $items; // если $page > 0 вернется 6 строк или число строк 0
+        return $items; // если $page > 0 вернется 6 строк или строк 0
     }
 
-    return mysqli_num_rows($result); // При $page = 0 вернет количество строк
+    return mysqli_num_rows($result); // При $page = 0 вернет количество строк или 0
 }

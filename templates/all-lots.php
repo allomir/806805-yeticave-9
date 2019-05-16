@@ -12,9 +12,9 @@
     </nav>
     <div class="container">
       <section class="lots">
-      <?php $whatIsThis = empty($items) ? 'Лоты отсутствуют в категории' : 'Все лоты в категории '; 
-      $page_category = !empty($_GET['categoryID']) ? $categories[$_GET['categoryID'] - 1]['name'] : ''; ?>
-        <h2><?= $whatIsThis; ?><?= ' <span>«' . $page_category . '»</span>'; ?></h2>
+      <?php $whatIsThis = empty($items) ? 'Лоты в категории ' : 'Все лоты в категории: '; 
+      $page_category = $categories[$_GET['categoryID'] - 1]['name']; ?>
+        <h2><?= $whatIsThis . ' <span>«' . $page_category . '»</span>'; ?><?= empty($items) ? ' отсутствуют' : '';?></h2>
 
         <?php if (!empty($items)) : ?>
         <ul class="lots__list">

@@ -6,9 +6,7 @@ require('inc/helpers.php'); // шаблонизатор
 
 require('inc/general.php'); // Общие сценарии всех страниц 
 
-$user = $_SESSION['user'] ?? [];
-
-/* Шаблонизация */
+$user = $_SESSION['user'] ?? []; // Аунтификация пользователя
 
 if (isset($_SESSION['user'])) {
     $bets = getBetsByUserID($conn, $user['id']);
@@ -20,16 +18,17 @@ if (isset($_SESSION['user'])) {
 }
 else {
     $response_code = http_response_code(403);
-    $page_content = '<div class="container"><h3>Ошибка доступа 403<h3></div>' ;
+    $page_content = include_template('error.php', [
+        'categories' => $categories,
+        'page_error' => '403'
+    ]);
 }
 
-/* подложка */
-
-$page_name = 'Вход на сайт';
+// Подложка
 $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => $page_name,
+    'title' => 'Вход на сайт',
     'page_style_main' => ''
 ]);
 

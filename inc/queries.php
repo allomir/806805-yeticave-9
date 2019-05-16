@@ -170,7 +170,7 @@ function getItems($conn) {
         JOIN categories ON items.category_id = categories.id
         LEFT JOIN bets ON items.id = bets.item_id
         WHERE ts_end > CURRENT_TIMESTAMP -- показывать только активные
-        GROUP BY items.id DESC
+        GROUP BY items.id 
         ORDER BY ts_add DESC 
         LIMIT 9
     "; 
@@ -252,12 +252,12 @@ function getBetsByUserID($conn, $userID) {
         print('Ошибка MySQL:' . mysqli_error($conn));
     }
 
-    $Bets = [];
+    $bets = [];
     if(mysqli_num_rows($result)) {
-        $Bets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $bets = mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
-    return $Bets;
+    return $bets;
 }
 
 /* Страница категории. Запрос лотов активных в выбранной категории */
@@ -267,7 +267,7 @@ function getItemsByCategory($conn, $categoryID) {
     JOIN categories ON items.category_id = categories.id
     LEFT JOIN bets ON items.id = bets.item_id
     WHERE categories.id = '$categoryID' AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
-    GROUP BY items.id DESC
+    GROUP BY items.id 
     ORDER BY ts_add DESC
     "; 
 
@@ -296,7 +296,7 @@ function findItemsByFText($conn, $search, $page = 1, $limit = 6) {
             JOIN categories ON items.category_id = categories.id 
             LEFT JOIN bets ON items.id = bets.item_id 
             WHERE MATCH (items.name,description) AGAINST ('$search' IN BOOLEAN MODE) 
-            GROUP BY items.id DESC 
+            GROUP BY items.id  
             ORDER BY ts_add DESC 
             LIMIT $limit 
             OFFSET $offset 
@@ -308,7 +308,7 @@ function findItemsByFText($conn, $search, $page = 1, $limit = 6) {
             JOIN categories ON items.category_id = categories.id 
             LEFT JOIN bets ON items.id = bets.item_id 
             WHERE MATCH (items.name,description) AGAINST ('$search' IN BOOLEAN MODE) 
-            GROUP BY items.id DESC 
+            GROUP BY items.id
     ";
     }
 

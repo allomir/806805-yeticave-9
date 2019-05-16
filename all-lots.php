@@ -47,7 +47,8 @@ else {
     $page_name = '404 Страница не найдена';
     $response_code = http_response_code(404);
     $page_content = include_template('error.php', [
-            'categories' => $categories
+        'categories' => $categories,
+        'page_error' => '404'
     ]);
 }
 

@@ -49,8 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } 
 
-    /* Страница с ошибками */
-
+    // Страница с ошибками 
     if (count($errors)) {
         $page_name = 'Вход на сайт';
         $page_content = include_template('login.php', [
@@ -65,22 +64,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 } else {
 
-    /* Страница входа после входа */
-
+    // Страница входа после входа
     if (isset($_SESSION['user'])) {
-        $page_content = '<div class="container"><h3>Добро пожаловать, ' . $_SESSION['user']['name'] . '<h3></div>';
+        $page_content = include_template('error.php', [
+            'categories' => $categories,
+            'page_error' => 'login'
+        ]);
     } else {
-
-        /* Страница входа обычная */
-
+        // Страница входа обычная 
         $page_content = include_template('login.php', [
             'categories' => $categories
         ]);
     }
 }
 
-    /* подложка */
-
+// Подложка
 $page_name = 'Вход на сайт';
 $layout_content = include_template('layout.php', [
     'categories' => $categories, 

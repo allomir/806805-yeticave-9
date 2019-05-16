@@ -25,7 +25,7 @@
                 $class_bet = 'rates__item--win';
                 $timer_style = 'timer--win';
                 $timer = 'Ставка выиграла';
-                $user_contacts = '<p>' . $bet['contacts'] . '</p>';
+                $user_contacts = $bet['contacts'];
             }
             else {
                 $class_bet = 'rates__item--end';
@@ -55,7 +55,7 @@
             <?= makePriceFormat(htmlspecialchars($bet['bet_price'])); ?> р
           </td>
           <td class="rates__time">
-            <?= makeBacktime(htmlspecialchars($bet['ts_betted'])); ?>
+            <?= makeBacktime($bet['ts_betted']); ?>
           </td>
         </tr>
         <?php endforeach; ?>

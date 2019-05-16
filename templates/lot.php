@@ -35,7 +35,7 @@
         </div>
         <div class="lot-item__right">
 
-        <?php if (isset($_SESSION['user'])) : ?>
+        <?php if (isset($_SESSION['user']) && strtotime($item['ts_end']) > time()) : ?>
           <div class="lot-item__state">
             <?php $Timer = makeTimer(htmlspecialchars($item['ts_end'])); /* функция таймер */ ?>
             <div class="lot-item__timer timer <?= $Timer['style']; ?>">

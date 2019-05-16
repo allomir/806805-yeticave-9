@@ -29,12 +29,11 @@ else {
     ]);
 }
 
-$page_name = 'Поиск информации о лотах';
-
+// Подложка
 $layout_content = include_template('layout.php', [
     'categories' => $categories,
     'content' => $page_content,
-    'title' => $page_name,
+    'title' => 'Поиск информации о лотах',
     'page_style_main' => ''
 ]);
 

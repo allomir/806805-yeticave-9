@@ -3,16 +3,15 @@
 require('inc/functions.php'); // функции
 require('inc/queries.php'); // Запросы и подключение
 require('inc/helpers.php'); // шаблонизатор
-$response_code = '';
 
-session_start();
+require('inc/general.php'); // Общие сценарии всех страниц 
+
 $user = $_SESSION['user'] ?? [];
 
 $conn = getConn(); // Подключение к БД
 $categories = getCategories($conn); // Запрос Показать Таблицу Категории
 
-/* Страница лота. Получение id лота из параметра запроса GET */
-
+// Страница лота. Получение id лота из параметра запроса GET 
 if (isset($_GET['itemID'])) {
     $saveItemID = mysqli_real_escape_string($conn, $_GET['itemID']); // Защита от SQL-инъкция - экранирование
     $item = getItemByID($conn, $saveItemID); // Запрос элемента из БД таблицы по id, массив или [] 
@@ -26,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $formErr = [];
     $specpar = ['maxlen' => 7, 'minbet' => $item['min_bet']];
 
+    $formVal[$param] = trim($formVal[$param]);
 
     if (empty($formVal[$param])) {
         $formErr[$param] = 'Введите ставку';
@@ -67,20 +67,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Закрытие подключения к БД
-mysqli_close($conn);
-
-/* Шаблонизация - подключение шаблонов */
+mysqli_close($conn); // Закрытие подключения к БД
 
 // Лот пуст (лота с таким id нет) или id лота нет (втч параметра запроса нет)
 if(empty($item) OR empty($_GET['itemID'])){
     $page_name = '404 Страница не найдена';
     $response_code = http_response_code(404);
     $page_content = include_template('error.php', [
-        'categories' => $categories
+        'categories' => $categories,
+        'page_error' => '404'
     ]);
 }
-// Если отправлена ставка
+// Если отправлена ставка, страница с ошибками и данынми
 elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $page_name = $item['name'];
     $page_content = include_template('lot.php', [
@@ -91,7 +89,7 @@ elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
         'formErr' => $formErr
     ]);
 }
-// Id Лота, существует и лот не пуст
+// По умолчанию - Id Лот существует и лот не пуст
 else {
     $page_name = $item['name'];
     $page_content = include_template('lot.php', [
@@ -100,11 +98,8 @@ else {
         'itemBets' => $itemBets
     ]);
 }
-/* Форма добавления ставки */
 
-
-/* Шаблонизация - подключение подложики */
-
+// Подложка
 $layout_content = include_template('layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 

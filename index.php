@@ -7,12 +7,10 @@ require('inc/helpers.php'); // шаблонизатор
 require('inc/general.php'); // Общие сценарии всех страниц 
 
 require('vendor/autoload.php'); // composer - подключение SwiftMailer
-require('inc/getwinner.php'); // специал. сценарий главной стр. - Определение победителя
 
 /* Главная страница */
 
 $items = getItems($conn); // #1 Запрос - показать активные лоты, 9 шт
-mysqli_close($conn); // закрыть подключение БД
 
 $page_content = include_template('index.php', [
     'categories' => $categories, 
@@ -28,3 +26,5 @@ $layout_content = include_template('layout.php', [
 ]);
 
 print($layout_content);
+
+require('inc/getwinner.php'); // специал. сценарий главной стр. - Определение победителя

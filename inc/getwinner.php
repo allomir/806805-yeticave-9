@@ -27,9 +27,7 @@ if (!$result1) {
 
 // Обновение поля winner_id - присвоение id последнего пользователя, сделавшего ставку
 if (mysqli_num_rows($result1)) {
-    $winBets = mysqli_fetch_all($result1, MYSQLI_ASSOC);
-
-    foreach ($winBets as $key => $winBet) {
+    $winBet = mysqli_fetch_assoc($result1);
 
         $userID = $winBet['user_id'];
         $ID = $winBet['id'];
@@ -65,6 +63,5 @@ if (mysqli_num_rows($result1)) {
             $result = $mailer->send($message);
 
         }
-    }
 }
 

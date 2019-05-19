@@ -2,7 +2,6 @@
 
 require 'inc/functions.php'; // функции и шаблонизатор
 require 'inc/queries.php'; // Запросы и подключение
-
 require 'inc/general.php'; // Общие сценарии всех страниц 
 
 $user = $_SESSION['user'] ?? [];

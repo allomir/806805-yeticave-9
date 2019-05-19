@@ -155,7 +155,7 @@ function makeTimer($TS_end)
 
 /* Время ставки */
 
-function makeBacktime($value)
+function showBetTime($value)
 {
     date_default_timezone_set("Europe/Moscow");
     $TS_diff = time()- strtotime($value);
@@ -165,19 +165,19 @@ function makeBacktime($value)
     $minute = floor(($TS_diff % 3600) / 60);
 
     if ($hour > 24) {
-        $backTime = date('y.m.d \в H:i', strtotime($value));
+        $betTime = date('y.m.d \в H:i', strtotime($value));
     }
     elseif ($hour >= 1) {
-        $backTime = $hour . ' ' . getEndingWord($hour, 'час') . ' назад';
+        $betTime = $hour . ' ' . getEndingWord($hour, 'час') . ' назад';
     }
     elseif ($TS_diff < 120) {
-        $backTime = 'минуту назад';
+        $betTime = 'минуту назад';
     }
     else {
-        $backTime = $minute . ' ' . getEndingWord($minute, 'минута') . ' назад';
+        $betTime = $minute . ' ' . getEndingWord($minute, 'минута') . ' назад';
     }
 
-    return $backTime;
+    return $betTime;
 }
 
 /* Функция - Вставить класс ошибки, стр добавление лота */

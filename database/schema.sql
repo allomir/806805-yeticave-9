@@ -42,13 +42,11 @@ CREATE TABLE bets (
   ts_betted TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE UNIQUE INDEX ctg ON categories(name);
-CREATE UNIQUE INDEX eml ON users(email);
-CREATE INDEX usr ON users(name);
-CREATE INDEX itm ON items(name);
-CREATE FULLTEXT INDEX itm_search ON items(name, description);
-CREATE INDEX f_prc ON items(price);
-CREATE INDEX wnr ON bets(winner_id);
-CREATE INDEX b_ts ON bets(ts_betted);
-CREATE INDEX b_prc ON bets(bet_price);
+CREATE UNIQUE INDEX category ON categories(name);
+CREATE UNIQUE INDEX email ON users(email);
+CREATE INDEX user_name ON users(name);
+CREATE INDEX item_name ON items(name);
+CREATE INDEX item_price ON items(price);
+CREATE FULLTEXT INDEX search_item ON items(name, description);
+CREATE INDEX bet_price ON bets(bet_price);
 

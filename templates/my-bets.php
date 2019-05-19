@@ -55,7 +55,7 @@
             <?= makePriceFormat(htmlspecialchars($bet['bet_price'])); ?> р
           </td>
           <td class="rates__time">
-            <?= makeBacktime($bet['ts_betted']); ?>
+            <?= showBetTime($bet['ts_betted']); ?>
           </td>
         </tr>
         <?php endforeach; ?>

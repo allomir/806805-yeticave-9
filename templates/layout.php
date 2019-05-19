@@ -27,7 +27,7 @@
             <?php if (isset($_SESSION['user'])) : ?>
             <div class="user-menu__logged">
 
-                <p><?= deffXSS($_SESSION['user']['name']); ?></p> 
+                <p><?= htmlspecialchars($_SESSION['user']['name']); ?></p> 
                 <a class="user-menu__bets" href="/my-bets.php">Мои ставки</a>
                 <a class="user-menu__logout" href="/logout.php">Выход</a>
             </div>
@@ -56,9 +56,9 @@
         <ul class="nav__list container">
 
         <?php foreach ($categories as $category) : ?>
-            <li class="nav__item">
-                <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
-            </li>
+          <li class="nav__item">
+            <a href="/all-lots.php?category_id=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
+          </li>
         <?php endforeach; ?>
             
         </ul>

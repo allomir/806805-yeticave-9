@@ -4,7 +4,7 @@
 
         <?php foreach ($categories as $category) : ?>
           <li class="nav__item">
-            <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
+            <a href="/all-lots.php?category_id=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
           </li>
         <?php endforeach; ?>
 
@@ -12,26 +12,26 @@
     </nav>
     <div class="container">
       <section class="lots">
-        <?php $whatIsThis = empty($items) ? 'Лоты в категории ' : 'Все лоты в категории: ';
-        $page_category = $categories[$_GET['categoryID'] - 1]['name']; ?>
-        <h2><?= $whatIsThis . ' <span>«' . $page_category . '»</span>'; ?><?= empty($items) ? ' отсутствуют' : '';?></h2>
+        <?php $category_name = $category_name ?? ''; ?>
+        <h2>Все лоты в категории: <span>«<?= $items[0]['category'] ?? $category_name ?>»</span></h2>
+        <?= empty($items) ? '<p>Активные лоты отсутствуют, проверьте позже</p>' : '' ?>
 
         <?php if (!empty($items)) : ?>
         <ul class="lots__list">
 
             <?php foreach ($items as $item) :
-                $Timer = makeTimer(deffXSS($item['ts_end'])); ?>
+                $Timer = makeTimer(htmlspecialchars($item['ts_end'])); ?>
             <li class="lots__item lot">
                 <div class="lot__image">
-                    <img src="<?= deffXSS($item['img_url']); ?>" width="350" height="260" alt="<?= deffXSS($item['name']); ?>">
+                    <img src="<?= htmlspecialchars($item['img_url']); ?>" width="350" height="260" alt="<?= htmlspecialchars($item['name']); ?>">
                 </div>
                 <div class="lot__info">
-                    <span class="lot__category"><?= deffXSS($item['category']); ?></span>
-                    <h3 class="lot__title"><a class="text-link" href="/lot.php?itemID=<?= $item['id']; ?>"><?= deffXSS($item['name']); ?></a></h3>
+                    <span class="lot__category"><?= htmlspecialchars($item['category']); ?></span>
+                    <h3 class="lot__title"><a class="text-link" href="/lot.php?itemID=<?= $item['id']; ?>"><?= htmlspecialchars($item['name']); ?></a></h3>
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount"><?= $item['number_bets'] ?></span>
-                            <span class="lot__cost"><?= makePriceFormat(deffXSS($item['l_price'])); ?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?= makePriceFormat(htmlspecialchars($item['l_price'])); ?><b class="rub">р</b></span>
                         </div>
                         <div class="lot__timer timer <?= $Timer['style']; ?>">
                             <?= $Timer['DDHHMM']; ?>

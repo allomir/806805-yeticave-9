@@ -1,8 +1,7 @@
 <?php
 
-require 'inc/functions.php'; // функции
+require 'inc/functions.php'; // функции и шаблонизатор
 require 'inc/queries.php'; // Запросы и подключение
-require 'inc/helpers.php'; // шаблонизатор
 
 require 'inc/general.php'; // Общие сценарии всех страниц
 

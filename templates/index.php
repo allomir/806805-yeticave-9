@@ -12,7 +12,7 @@
         <?php /* Главное меню - главная страница */
         foreach ($categories as $category) : ?>
             <li class="promo__item promo__item--<?= htmlspecialchars($category['symbol']); ?>">
-                <a class="promo__link" href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
+                <a class="promo__link" href="/all-lots.php?category_id=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
             </li>
         <?php endforeach; ?>
 

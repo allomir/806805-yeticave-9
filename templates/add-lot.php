@@ -2,9 +2,9 @@
     <nav class="nav">
       <ul class="nav__list container">
 
-        <?php foreach ($categories as $category) : ?>
+      <?php foreach ($categories as $category) : ?>
           <li class="nav__item">
-            <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
+            <a href="/all-lots.php?category_id=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
           </li>
         <?php endforeach; ?>
 
@@ -15,7 +15,7 @@
       <div class="form__container-two">
         <div class="form__item <?= addErrorStyle($formErrors['lot-name']); ?>">
           <label for="lot-name">Наименование <sup>*</sup></label>
-          <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота" value="<?= deffXSS($formData['lot-name']); ?>">
+          <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота" value="<?= htmlspecialchars($formData['lot-name']); ?>">
           <span class="form__error"><?= $formErrors['lot-name'] ?></span>
         </div>
         <div class="form__item <?= addErrorStyle($formErrors['category']); ?>">
@@ -25,12 +25,12 @@
 
             <?php
             foreach ($categories as $category) :
-                $selected = '';
-                if ($category['id'] == $formData['category']) {
-                    $selected = ' selected';
-                }
-                ?>
-              <option <?= $selected; ?> value="<?= $category['id']; ?>"> <?= deffXSS($category['name']); ?></option>
+              $selected = '';
+              if ($category['id'] == $formData['category']) {
+                $selected = ' selected';
+              }
+            ?>
+              <option <?= $selected; ?> value="<?= $category['id']; ?>"> <?= htmlspecialchars($category['name']); ?></option>
             <?php endforeach; ?>
 
           </select>
@@ -39,7 +39,7 @@
       </div>
       <div class="form__item form__item--wide <?= addErrorStyle($formErrors['message']); ?>">
         <label for="message">Описание <sup>*</sup></label>
-        <textarea id="message" name="message" placeholder="Напишите описание лота"><?= deffXSS($formData['message']); ?></textarea>
+        <textarea id="message" name="message" placeholder="Напишите описание лота"><?= htmlspecialchars($formData['message']); ?></textarea>
         <span class="form__error"><?= $formErrors['message'] ?></span>
       </div>
 
@@ -59,17 +59,17 @@
       <div class="form__container-three">
         <div class="form__item form__item--small <?= addErrorStyle($formErrors['lot-rate']); ?>">
           <label for="lot-rate">Начальная цена <sup>*</sup></label>
-          <input id="lot-rate" type="text" name="lot-rate" placeholder="0" value="<?= deffXSS($formData['lot-rate']); ?>">
+          <input id="lot-rate" type="text" name="lot-rate" placeholder="0" value="<?= htmlspecialchars($formData['lot-rate']); ?>">
           <span class="form__error"><?= $formErrors['lot-rate'] ?></span>
         </div>
         <div class="form__item form__item--small <?= addErrorStyle($formErrors['lot-step']); ?>">
           <label for="lot-step">Шаг ставки <sup>*</sup></label>
-          <input id="lot-step" type="text" name="lot-step" placeholder="0" value="<?= deffXSS($formData['lot-step']); ?>">
+          <input id="lot-step" type="text" name="lot-step" placeholder="0" value="<?= htmlspecialchars($formData['lot-step']); ?>">
           <span class="form__error"><?= $formErrors['lot-step'] ?></span>
         </div>
         <div class="form__item <?= addErrorStyle($formErrors['lot-date']); ?>">
           <label for="lot-date">Дата окончания торгов <sup>*</sup></label>
-          <input class="form__input-date" id="lot-date" type="date" name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?= deffXSS($formData['lot-date']); ?>">
+          <input class="form__input-date" id="lot-date" type="date" name="lot-date" placeholder="Введите дату в формате ГГГГ-ММ-ДД" value="<?= htmlspecialchars($formData['lot-date']); ?>">
           <span class="form__error"><?= $formErrors['lot-date'] ?></span>
         </div>
       </div>

@@ -1,19 +1,18 @@
 <?php
 
-require 'inc/functions.php'; // функции
+require 'inc/functions.php'; // функции и шаблонизатор
 require 'inc/queries.php'; // Запросы и подключение
-require 'inc/helpers.php'; // шаблонизатор
 
 require 'inc/general.php'; // Общие сценарии всех страниц 
 
 /* Страница категорий */
 
-if (isset($_GET['categoryID'])) {
-    $saveCategoryID = mysqli_real_escape_string($conn, $_GET['categoryID']); // Защита от SQL-инъкция - экранирование
-    // $saveCategoryID = intval($_GET['itemID']); // Защита от SQL-инъкция (вариант 2) - приведение к числу
+if (isset($_GET['category_id'])) {
+    $savecategory_id = mysqli_real_escape_string($conn, $_GET['category_id']); // Защита от SQL-инъкция - экранирование
+    // $savecategory_id = intval($_GET['itemID']); // Защита от SQL-инъкция (вариант 2) - приведение к числу
 
-    $items = getItemsByCategory($conn, $saveCategoryID);
-    $checkCategory = checkCategoryByID($conn, $saveCategoryID); // Проверка существ. Id, массив с категорией
+    $items = getItemsByCategory($conn, $savecategory_id);
+    $checkCategory = checkCategoryByID($conn, $savecategory_id); // Проверка существ. Id, массив с категорией
 }
 
 // Закрытие подключения к БД
@@ -23,10 +22,11 @@ mysqli_close($conn);
 
 // Категория есть, но в ней отсутствуют лоты
 if (empty($items) && !empty($checkCategory)) {
-    $page_name = $checkCategory['name'];
+    $page_name = $category_name = $checkCategory['name'];
     $page_content = include_template(
         'all-lots.php', [
         'categories' => $categories,
+        'category_name' => $category_name
         ]
     );
 }

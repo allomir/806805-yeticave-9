@@ -19,7 +19,8 @@ if (isset($_SESSION['user'])) {
 else {
     $response_code = http_response_code(403);
     $page_content = include_template(
-        'error.php', [
+        'error.php', 
+        [
         'categories' => $categories,
         'page_error' => '403'
         ]
@@ -28,11 +29,11 @@ else {
 
 // Подложка
 $layout_content = include_template(
-    'layout.php', [
+    'layout.php', 
+    [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => 'Вход на сайт',
-    'page_style_main' => ''
+    'title' => 'Вход на сайт'
     ]
 );
 

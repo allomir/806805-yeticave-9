@@ -11,14 +11,16 @@ require 'vendor/autoload.php'; // composer - подключение SwiftMailer
 $items = getItems($conn); // #1 Запрос - показать активные лоты, 9 шт
 
 $page_content = include_template(
-    'index.php', [
+    'index.php', 
+    [
     'categories' => $categories,
     'items' => $items
     ]
 );
 
 $layout_content = include_template(
-    'layout.php', [
+    'layout.php', 
+    [
     'categories' => $categories,
     'content' => $page_content,
     'title' => 'Главная',
@@ -28,4 +30,4 @@ $layout_content = include_template(
 
 print($layout_content);
 
-require 'inc/getwinner.php'; // специал. сценарий главной стр. - Определение победителя
+require 'inc/getwinner.php'; // специал. сценарий главной стр. - Определение победителя и отправка почты

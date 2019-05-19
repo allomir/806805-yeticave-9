@@ -10,106 +10,98 @@ $conn = getConn(); // Подключение к БД
 $categories = getCategories($conn); // Запрос Показать Таблицу Категории
 
 // Страница лота. Получение id лота из параметра запроса GET 
-if (isset($_GET['itemID'])) {
-    $saveItemID = mysqli_real_escape_string($conn, $_GET['itemID']); // Защита от SQL-инъкция - экранирование
-    $item = getItemByID($conn, $saveItemID); // Запрос элемента из БД таблицы по id, массив или [] 
-    $itemBets = !empty($item) ? getBetsByItemID($conn, $item['id']) : []; // Запрос показать ставки лота по его id, массив или [] 
+if (isset($_GET['item_id'])) {
+    $save_item_id = mysqli_real_escape_string($conn, $_GET['item_id']); // Защита от SQL-инъкция - экранирование
+    $item = getItemByID($conn, $save_item_id); // Запрос элемента из БД таблицы по id, массив или [] 
+    $item_bets = !empty($item) ? getBetsByItemID($conn, $item['id'], 'DESC') : []; // Запрос показать ставки лота по его id, массив или [] 
+    $last_item_bet = !empty($item_bets) ? getBetsByItemID($conn, $item['id'], 'DESC')[0] : []; // Последняя ставка при сортировке DESC
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     $param = 'cost';
-    $formVal = $_POST;
-    $formErr = [];
-    $specpar = ['maxlen' => 7, 'minbet' => $item['min_bet']];
+    $form_value[$param] = trim($_POST[$param]);
+    $form_error = [];
+    $options = ['max_length' => 7, 'min_bet' => $item['min_bet']];
 
-    $formVal[$param] = trim($formVal[$param]);
-
-    if (empty($formVal[$param])) {
-        $formErr[$param] = 'Введите ставку';
-    }
-    elseif (!is_numeric($formVal[$param])) {
-        $formErr[$param] = 'Введите число';
-    }
-    elseif (strlen($formVal[$param]) > $specpar['maxlen'] ) {
-        $formErr[$param] = 'Превышено значение';
-    }
-    elseif (!is_int($formVal[$param] * 1)) {
-        $formErr[$param] = 'Введите целое число'; 
-    }
-    elseif ($formVal[$param] < $specpar['minbet'] ) {
-        $formErr[$param] = 'Минимальная ставка ' . $specpar['minbet'];
-    }
-    elseif (strpos($formVal[$param], '0') === 0) {
-        $formErr[$param] = 'Слишком много нулей :)';
+    if (empty($form_value[$param])) {
+        $form_error[$param] = 'Введите ставку';
+    } elseif (!is_numeric($form_value[$param])) {
+        $form_error[$param] = 'Введите число';
+    } elseif (strlen($form_value[$param]) > $options['max_length'] ) {
+        $form_error[$param] = 'Превышено значение';
+    } elseif (!is_int($form_value[$param] * 1)) {
+        $form_error[$param] = 'Введите целое число'; 
+    } elseif ($form_value[$param] < $options['min_bet'] ) {
+        $form_error[$param] = 'Минимальная ставка ' . $options['min_bet'];
+    } elseif (strpos($form_value[$param], '0') === 0) {
+        $form_error[$param] = 'Слишком много нулей :)';
     }
 
-    // Запрет делать ставку повторно, если ставка юзера последняя
-    $last_user_id = count($itemBets) ? $itemBets[count($itemBets) - 1]['user_id'] : '';
-    if ($last_user_id == $user['id']) {
-        $formErr[$param] = 'Ваша ставка последняя';
+    // Pапрет делать ставку повторно, если ставка юзера последняя
+    if (!empty($item_bets) && $last_item_bet['user_id'] === $user['id']) {
+        $form_error[$param] = 'Ваша ставка последняя';
     }
 
-    if(empty($formErr)) {
-
+    if(empty($form_error)) {
         $bet = [
             'item_id' => $item['id'],
             'user_id' => $user['id'],
-            'bet_price' => mysqli_real_escape_string($conn, $formVal['cost'])
+            'bet_price' => mysqli_real_escape_string($conn, $form_value['cost'])
         ];
 
         if(insertNewBet($conn, $bet)) {
-            header("Location: /lot.php?bet_success&itemID=" . $item['id']);
+            header("Location: /lot.php?bet_success&item_id=" . $item['id']);
             exit();
         }
     }
 }
 
-mysqli_close($conn); // Закрытие подключения к БД
-
 // Лот пуст (лота с таким id нет) или id лота нет (втч параметра запроса нет)
-if(empty($item) OR empty($_GET['itemID'])) {
+if(empty($item) OR empty($_GET['item_id'])) {
     $page_name = '404 Страница не найдена';
     $response_code = http_response_code(404);
     $page_content = include_template(
-        'error.php', [
+        'error.php', 
+        [
         'categories' => $categories,
         'page_error' => '404'
         ]
     );
-}
-// Если отправлена ставка, страница с ошибками и данынми
-elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+} elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Если отправлена ставка, страница с ошибками и данынми
     $page_name = $item['name'];
     $page_content = include_template(
-        'lot.php', [
+        'lot.php', 
+        [
         'categories' => $categories, 
         'item' => $item,
-        'itemBets' => $itemBets,
-        'formVal' => $formVal,
-        'formErr' => $formErr
+        'item_bets' => $item_bets,
+        'form_value' => $form_value,
+        'form_error' => $form_error
         ]
     );
-}
-// По умолчанию - Id Лот существует и лот не пуст
-else {
+} else {
+    // По умолчанию - Id Лот существует и лот не пуст
     $page_name = $item['name'];
     $page_content = include_template(
-        'lot.php', [
+        'lot.php', 
+        [
         'categories' => $categories, 
         'item' => $item,
-        'itemBets' => $itemBets
+        'item_bets' => $item_bets
         ]
     );
 }
 
+mysqli_close($conn); // Закрытие подключения к БД
+
 // Подложка
 $layout_content = include_template(
-    'layout.php', [
+    'layout.php', 
+    [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => $page_name,
-    'page_style_main' => ''
+    'title' => $page_name
     ]
 );
 

@@ -111,7 +111,8 @@ if (isset($_POST['sign-up']) && empty($number_err)) {
 mysqli_close($conn); // закрыть подключение БД
 
 $page_content = include_template(
-    'sign-up.php', [
+    'sign-up.php', 
+    [
     'categories' => $categories, 
     'formData' => $formData,
     'formErrors' => $formErrors  
@@ -120,11 +121,11 @@ $page_content = include_template(
 
 // Подложка
 $layout_content = include_template(
-    'layout.php', [
+    'layout.php', 
+    [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => 'Регистрация',
-    'page_style_main' => ''
+    'title' => 'Регистрация'
     ]
 );
 

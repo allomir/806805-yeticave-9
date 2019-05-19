@@ -6,54 +6,53 @@ require 'inc/general.php'; // Общие сценарии всех страни�
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $formVals = $_POST;
     $params = ['email', 'password'];
-    $errors = []; 
+    $form_values = $_POST;
+    $form_errors = []; 
 
     foreach ($params as $param) {
-        if (empty($formVals[$param])) {
+        if (empty($form_values[$param])) {
             if ($param == 'email') {
-                $errors[$param] = 'Введите e-mail';
-            }
-            elseif ($param == 'password') {
-                $errors[$param] = 'Введите пароль';
+                $form_errors[$param] = 'Введите e-mail';
+            } elseif ($param == 'password') {
+                $form_errors[$param] = 'Введите пароль';
             }
         }        
     }
 
-    if (empty($errors['email'])) {
-        if (!filter_var($formVals['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'Email должен быть корректным';
+    if (empty($form_errors['email'])) {
+        if (!filter_var($form_values['email'], FILTER_VALIDATE_EMAIL)) {
+            $form_errors['email'] = 'Email должен быть корректным';
         }
     }
 
-    $saveEmail = mysqli_real_escape_string($conn, $formVals['email']);
-    $user = empty($errors['email']) ? checkUserByEmail($conn, $saveEmail) : '';
+    $save_email = mysqli_real_escape_string($conn, $form_values['email']);
+    $user = empty($form_errors['email']) ? checkUserByEmail($conn, $save_email) : '';
 
-
-    if (empty($user) && empty($errors['email'])) {
-        $errors['email'] = 'Такой пользователь не найден';
+    if (empty($user) && empty($form_errors['email'])) {
+        $form_errors['email'] = 'Такой пользователь не найден';
     } 
     
-    if (empty($errors['password']) && !empty($errors['email'])) {
-        $errors['password'] = 'Неверная пара пользователь/пароль';
+    if (empty($form_errors['password']) && !empty($form_errors['email'])) {
+        $form_errors['password'] = 'Неверная пара пользователь/пароль';
     }
 
-    if (!count($errors)) {
-        if (password_verify($formVals['password'], $user['password'])) {
+    if (!count($form_errors)) {
+        if (password_verify($form_values['password'], $user['password'])) {
             $_SESSION['user'] = $user;
         } else {
-            $errors['password'] = 'Вы ввели неверный пароль';
+            $form_errors['password'] = 'Вы ввели неверный пароль';
         }
     } 
 
     // Страница после отправки формы
-    if (count($errors)) {
+    if (count($form_errors)) {
         $page_content = include_template(
-            'login.php', [
+            'login.php', 
+            [
             'categories' => $categories,
-            'formVals' => $formVals,
-            'errors' => $errors
+            'form_values' => $form_values,
+            'form_errors' => $form_errors
             ]
         );
     } else {
@@ -66,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Страница входа после входа
     if (isset($_SESSION['user'])) {
         $page_content = include_template(
-            'error.php', [
+            'error.php', 
+            [
             'categories' => $categories,
             'page_error' => 'login'
             ]
@@ -74,7 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         // Страница входа обычная 
         $page_content = include_template(
-            'login.php', [
+            'login.php', 
+            [
             'categories' => $categories
             ]
         );
@@ -83,11 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Подложка
 $layout_content = include_template(
-    'layout.php', [
+    'layout.php', 
+    [
     'categories' => $categories, 
     'content' => $page_content, 
-    'title' => 'Вход на сайт',
-    'page_style_main' => ''
+    'title' => 'Вход на сайт'
     ]
 );
 

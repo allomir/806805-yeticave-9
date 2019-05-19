@@ -7,15 +7,16 @@ require 'inc/general.php'; // Общие сценарии всех страни�
 if (isset($_GET['search'])) {
 
     $search = trim($_GET['search']);
-    $saveSearch = mysqli_real_escape_string($conn, $search);
+    $save_search = mysqli_real_escape_string($conn, $search);
     $page = $_GET['page'] ?? 1;
     $limit = $_GET['limit'] ?? 6; 
-    $num_items = findItemsByFText($conn, $saveSearch, 0); // вернет общее число строк
+    $num_items = findItemsByFText($conn, $save_search, 0); // вернет общее число строк если указать 3-й параметр = 0
     $num_pages = ceil($num_items / $limit);
-    $items = findItemsByFText($conn, $saveSearch, $page, $limit); // вернет 6 строк (по лимиту) или 0 строк по запросу
+    $items = findItemsByFText($conn, $save_search, $page, $limit); // вернет 6 строк (лимит) или [] 
 
     $page_content = include_template(
-        'search.php', [
+        'search.php', 
+        [
         'categories' => $categories,
         'items' => $items,
         'num_pages' => $num_pages,
@@ -25,7 +26,8 @@ if (isset($_GET['search'])) {
 }
 else {
     $page_content = include_template(
-        'search.php', [
+        'search.php', 
+        [
         'categories' => $categories
         ]
     );
@@ -33,11 +35,11 @@ else {
 
 // Подложка
 $layout_content = include_template(
-    'layout.php', [
+    'layout.php', 
+    [
     'categories' => $categories,
     'content' => $page_content,
-    'title' => 'Поиск информации о лотах',
-    'page_style_main' => ''
+    'title' => 'Поиск информации о лотах'
     ]
 );
 

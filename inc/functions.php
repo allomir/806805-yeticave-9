@@ -4,8 +4,7 @@
  * Подключает шаблон, передает туда данные и возвращает итоговый HTML контент
  *
  * @param  string $name Путь к файлу шаблона относительно папки templates
- * @param  array  $data Ассоциативный массив с
- *                      данными для шаблона
+ * @param  array  $data Ассоциативный массив с данными для шаблона
  * @return string Итоговый HTML
  */
 function include_template($name, array $data = [])

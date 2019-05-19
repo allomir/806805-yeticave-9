@@ -46,7 +46,7 @@
     </div>
 </header>
 
-<main class="<?= $page_style_main; ?>">
+<main class="<?= $page_style_main ?? ''; ?>">
     <?= $content; ?>
 </main>
 </div>

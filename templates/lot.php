@@ -51,13 +51,13 @@
             </div>
 
             <?php
-            $classErr = isset($formErr) ? 'form__item--invalid' : '';
-            $error = $formErr['cost'] ?? '';
-            $value = $formVal['cost'] ?? '';
+            $class_error = isset($form_error) ? 'form__item--invalid' : '';
+            $error = $form_error['cost'] ?? '';
+            $value = $form_value['cost'] ?? '';
             ?>
 
-            <form class="lot-item__form <?= $classErr ?>" action="/lot.php?itemID=<?= $item['id'] ?>" method="post" autocomplete="off">
-              <p class="lot-item__form-item form__item <?= $classErr ?>">
+            <form class="lot-item__form <?= $class_error ?>" action="/lot.php?item_id=<?= $item['id'] ?>" method="post" autocomplete="off">
+              <p class="lot-item__form-item form__item <?= $class_error ?>">
                 <label for="cost">Ваша ставка</label>
                 <input id="cost" type="text" name="cost" placeholder="<?= makePriceFormat($item['min_bet']); ?>" value="<?= $value ?>">
                 <span class="form__error"><?= $error ?></span>
@@ -68,11 +68,11 @@
           <div class="history">
             <h3>История ставок (<span><?= $item['number_bets']; ?></span>)</h3>
             <table class="history__list">
-              <?php foreach ($itemBets as $bet) : ?>
+              <?php foreach ($item_bets as $bet) : ?>
               <tr class="history__item">
                 <td class="history__name"><?= htmlspecialchars($bet['user_name']); ?></td>
                 <td class="history__price"><?= htmlspecialchars($bet['bet_price']); ?> р</td>
-                <td class="history__time"><?= makeBacktime(htmlspecialchars($bet['ts_betted'])); ?></td>
+                <td class="history__time"><?= showBetTime(htmlspecialchars($bet['ts_betted'])); ?></td>
               </tr>
               <?php endforeach; ?>
             </table>

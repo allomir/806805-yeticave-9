@@ -16,15 +16,15 @@
       </ul>
     </nav>
     <?php $classNameForm = '';
-    if (isset($errors)) {
-        $classNameForm = count($errors) ? 'form--invalid' : '';
+    if (isset($form_errors)) {
+        $classNameForm = count($form_errors) ? 'form--invalid' : '';
     } ?>
     <form class="form container <?= $classNameForm; ?>" action="/login.php" method="post">
       <h2>Вход</h2>
         <?php
-        $className = isset($errors['email']) ? 'form__item--invalid' : '';
-        $value = $formVals['email'] ?? '';
-        $error = $errors['email'] ?? '';
+        $className = isset($form_errors['email']) ? 'form__item--invalid' : '';
+        $value = $form_values['email'] ?? '';
+        $error = $form_errors['email'] ?? '';
         ?>
       <div class="form__item <?= $className; ?>"> 
         <label for="email">E-mail <sup>*</sup></label>
@@ -32,9 +32,9 @@
         <span class="form__error"><?= $error; ?></span>
       </div>
         <?php
-        $className = isset($errors['password']) ? 'form__item--invalid' : '';
-        $value = $formVals['password'] ?? '';
-        $error = $errors['password'] ?? '';
+        $className = isset($form_errors['password']) ? 'form__item--invalid' : '';
+        $value = $form_values['password'] ?? '';
+        $error = $form_errors['password'] ?? '';
         ?>
       <div class="form__item form__item--last <?= $className; ?>">
         <label for="password">Пароль <sup>*</sup></label>

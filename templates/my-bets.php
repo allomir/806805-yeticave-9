@@ -41,7 +41,7 @@
               <img src="<?= $bet['img_url']; ?>" width="54" height="40" alt="<?= $bet['item_name']; ?>">
             </div>
             <div>
-            <h3 class="rates__title"><a href="/lot.php?itemID=<?= $bet['item_id']; ?>"><?= $bet['item_name']; ?></a></h3>
+            <h3 class="rates__title"><a href="/lot.php?item_id=<?= $bet['item_id']; ?>"><?= $bet['item_name']; ?></a></h3>
             <p><?= $user_contacts; ?></p>
             </div>
           </td>

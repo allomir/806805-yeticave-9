@@ -229,11 +229,12 @@ function getItemByID($conn, $itemID)
 
 /* Запрос выбрать ставки по id лота  */
 
-function getBetsByItemID($conn, $itemID)
+function getBetsByItemID($conn, $itemID, $order)
 {
     $sql = "SELECT bets.*, users.name AS user_name FROM bets
         JOIN users ON bets.user_id = users.id
         WHERE item_id = '$itemID' 
+        ORDER BY ts_betted $order
     ";
 
     $result = mysqli_query($conn, $sql);
@@ -303,10 +304,9 @@ function getItemsByCategory($conn, $categoryID)
 
 function findItemsByFText($conn, $search, $page = 1, $limit = 6)
 {
-
     $offset = ($page - 1) * $limit;
 
-    if ($page) {
+    if ($page !== 0) {
         // Если $page > 1 выражение возвращает 6 строк, ищет по лимиту и оффсету
         $sql = "SELECT i.id, i.name, img_url, ts_end, i.step, i.price, 
             categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items i
@@ -318,9 +318,8 @@ function findItemsByFText($conn, $search, $page = 1, $limit = 6)
             LIMIT $limit 
             OFFSET $offset 
         ";
-    }
-    // Если $page = 0 возвращает, общее количество строк
-    else {
+    } else {
+        // Если $page = 0 возвращает, общее количество строк
         $sql = "SELECT items.id FROM items
             WHERE MATCH (items.name, description) AGAINST ('$search' IN BOOLEAN MODE) 
         ";
@@ -334,8 +333,8 @@ function findItemsByFText($conn, $search, $page = 1, $limit = 6)
     if(mysqli_num_rows($result) && !empty($page)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
-        return $items; // если $page > 0 вернется 6 строк или строк 0
+        return $items; // если $page > 0 вернет 6 строк (лимит) или []
     }
 
-    return mysqli_num_rows($result); // При $page = 0 вернет количество строк или 0
+    return mysqli_num_rows($result); // При $page = 0 вернет общее количество строк или 0
 }

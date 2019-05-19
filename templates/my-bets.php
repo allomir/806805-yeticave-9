@@ -2,7 +2,7 @@
     <nav class="nav">
       <ul class="nav__list container">
 
-        <?php foreach ($categories as $category): ?>
+        <?php foreach ($categories as $category) : ?>
           <li class="nav__item">
             <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
           </li>
@@ -15,26 +15,25 @@
       <table class="rates__list">
 
         <?php foreach ($bets as $bet) :
-        $timer = makeTimer(htmlspecialchars($bet['ts_end'])); 
-        $timer_style = $timer['style'];
-        $timer = $timer['DDHHMM'];
-        $class_bet = '';
-        $user_contacts = '';
+            $timer = makeTimer(htmlspecialchars($bet['ts_end']));
+            $timer_style = $timer['style'];
+            $timer = $timer['DDHHMM'];
+            $class_bet = '';
+            $user_contacts = '';
 
-        if (strtotime($bet['ts_end']) < time()) {
-            if(!empty($bet['winner_id'])) {
-                $class_bet = 'rates__item--win';
-                $timer_style = 'timer--win';
-                $timer = 'Ставка выиграла';
-                $user_contacts = $bet['contacts'];
+            if (strtotime($bet['ts_end']) < time()) {
+                if (!empty($bet['winner_id'])) {
+                    $class_bet = 'rates__item--win';
+                    $timer_style = 'timer--win';
+                    $timer = 'Ставка выиграла';
+                    $user_contacts = $bet['contacts'];
+                } else {
+                    $class_bet = 'rates__item--end';
+                    $timer_style = 'timer--end';
+                    $timer = 'Торги окончены';
+                }
             }
-            else {
-                $class_bet = 'rates__item--end';
-                $timer_style = 'timer--end';
-                $timer = 'Торги окончены';
-            }
-        }
-        ?>
+            ?>
 
         <tr class="rates__item <?= $class_bet; ?>">
           <td class="rates__info">
@@ -47,7 +46,7 @@
             </div>
           </td>
           <td class="rates__category">
-          <?= $bet['category']; ?>
+            <?= $bet['category']; ?>
           </td>
           <td class="rates__timer">
             <div class="timer <?= $timer_style; ?>"><?= $timer; ?></div>

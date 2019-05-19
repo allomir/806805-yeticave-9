@@ -47,9 +47,11 @@ if (mysqli_num_rows($result1)) {
         $recipients = [];
         $recipients[$winBet['email']] = $winBet['user_name'];
 
-        $email_content = include_template('email.php', [
+        $email_content = include_template(
+            'email.php', [
             'winBet' => $winBet
-        ]);
+            ]
+        );
 
         $message = new Swift_Message();
         $message->setSubject("Ваша ставка победила!");

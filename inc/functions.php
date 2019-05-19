@@ -2,13 +2,15 @@
 
 // faq.php - удаленные промежуточные данные заданий.
 
-function deffXSS($value) {
-    return htmlspecialchars($value, ENT_QUOTES,'UTF-8', true);
+function deffXSS($value)
+{
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8', true);
 }
 
 // Определение окончания
 
-function getEndingWord($number, $word = 'ставка')  {
+function getEndingWord($number, $word = 'ставка')
+{
     $list = [
         'ставка' => ['ставка', 'ставки', 'ставок'],
         'час' => ['час', 'часа', 'часов'],
@@ -27,27 +29,30 @@ function getEndingWord($number, $word = 'ставка')  {
     elseif ($mod10 == 1) {
         $wordEnd = $list[$word][0]; 
     }
-    elseif ($mod10 >= 2 && $mod10 <= 4){
+    elseif ($mod10 >= 2 && $mod10 <= 4) {
         $wordEnd = $list[$word][1];
     }
-    else {$wordEnd = $list[$word][2];}
+    else {$wordEnd = $list[$word][2];
+    }
 
     return $wordEnd;
 }
 
 /* функция формат цены */
 
-function makePriceFormat($price) {
+function makePriceFormat($price)
+{
     $priceFormat = ceil($price); // Округление и значение поумолчанию если < 1000
-        if ($priceFormat >= 1000) {
-            $priceFormat = number_format($price, $decimals = 0, ".", " ");
-        }
+    if ($priceFormat >= 1000) {
+        $priceFormat = number_format($price, $decimals = 0, ".", " ");
+    }
     return $priceFormat;
 }
 
 /* функция таймер */
 
-function makeTimer($TS_end) {
+function makeTimer($TS_end)
+{
     date_default_timezone_set("Europe/Moscow");
     $TS_diff = strtotime($TS_end) - time(); // Осталось до конца ставки
     $timer = '00:00';
@@ -82,7 +87,8 @@ function makeTimer($TS_end) {
 
 /* Время ставки */
 
-function makeBacktime($value) {
+function makeBacktime($value)
+{
     date_default_timezone_set("Europe/Moscow");
     $TS_diff = time()- strtotime($value);
     
@@ -108,7 +114,8 @@ function makeBacktime($value) {
 
 /* Функция - Вставить класс ошибки, стр добавление лота */
 
-function addErrorStyle($errors) {
+function addErrorStyle($errors)
+{
     // Виды стилей CLASS при заполнении полей или формы
     $formErrStyle = ['form--invalid', 'form__item--invalid']; 
  
@@ -129,5 +136,5 @@ function addErrorStyle($errors) {
         }
     }
     
-    return NULL;
+    return null;
 }

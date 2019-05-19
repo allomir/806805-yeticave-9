@@ -2,7 +2,7 @@
         <nav class="nav">
             <ul class="nav__list container">
 
-            <?php foreach ($categories as $category): ?>
+            <?php foreach ($categories as $category) : ?>
             <li class="nav__item">
                 <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
             </li>
@@ -12,7 +12,6 @@
         </nav>
 
         <?php if (isset($page_error)) : ?>
-
             <?php if ($page_error == '404') : ?>
             <section class="lot-item container">
                 <h2>404 Страница не найдена</h2>

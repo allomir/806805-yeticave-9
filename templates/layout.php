@@ -31,7 +31,7 @@
                 <a class="user-menu__bets" href="/my-bets.php">Мои ставки</a>
                 <a class="user-menu__logout" href="/logout.php">Выход</a>
             </div>
-            <?php else: ?>
+            <?php else : ?>
             <ul class="user-menu__list">
                 <li class="user-menu__item">
                     <a href="/sign-up.php">Регистрация</a>
@@ -55,7 +55,7 @@
     <nav class="nav">
         <ul class="nav__list container">
 
-        <?php foreach ($categories as $category): ?>
+        <?php foreach ($categories as $category) : ?>
             <li class="nav__item">
                 <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
             </li>

@@ -2,7 +2,7 @@
     <nav class="nav">
       <ul class="nav__list container">
 
-        <?php foreach ($categories as $category): ?>
+        <?php foreach ($categories as $category) : ?>
           <li class="nav__item">
             <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
           </li>
@@ -23,10 +23,13 @@
           <select id="category" name="category">
             <option value="Выберите категорию">Выберите категорию</option>
 
-            <?php 
+            <?php
             foreach ($categories as $category) :
-            $selected = ''; if ($category['id'] == $formData['category']) { $selected = ' selected';}
-            ?>
+                $selected = '';
+                if ($category['id'] == $formData['category']) {
+                    $selected = ' selected';
+                }
+                ?>
               <option <?= $selected; ?> value="<?= $category['id']; ?>"> <?= deffXSS($category['name']); ?></option>
             <?php endforeach; ?>
 

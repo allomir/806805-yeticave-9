@@ -1,10 +1,10 @@
 <?php
 
-require('inc/functions.php'); // функции
-require('inc/queries.php'); // Запросы и подключение
-require('inc/helpers.php'); // шаблонизатор
+require 'inc/functions.php'; // функции
+require 'inc/queries.php'; // Запросы и подключение
+require 'inc/helpers.php'; // шаблонизатор
 
-require('inc/general.php'); // Общие сценарии всех страниц 
+require 'inc/general.php'; // Общие сценарии всех страниц 
 
 // параметры - название полей, и название ошибок, если поле не заполнено
 $params = [
@@ -27,7 +27,9 @@ foreach ($params as $param => $errors) {
     $formErrors[$param] = '';
 }
 
-/********************************** Форма отправлена *************************************/
+/**********************************
+ * Форма отправлена 
+*************************************/
 
 if (isset($_POST['sign-up'])) { 
 
@@ -71,7 +73,9 @@ if (isset($_POST['sign-up'])) {
     }
 }
 
-/****************************************** Переадресация *****************************************/
+/******************************************
+ * Переадресация 
+*****************************************/
 
 // После нажатия кнопки и колво ошибок 0 
 if (isset($_POST['sign-up']) && empty($number_err)) {
@@ -108,18 +112,22 @@ if (isset($_POST['sign-up']) && empty($number_err)) {
 
 mysqli_close($conn); // закрыть подключение БД
 
-$page_content = include_template('sign-up.php', [
+$page_content = include_template(
+    'sign-up.php', [
     'categories' => $categories, 
     'formData' => $formData,
     'formErrors' => $formErrors  
-]);
+    ]
+);
 
 // Подложка
-$layout_content = include_template('layout.php', [
+$layout_content = include_template(
+    'layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => 'Регистрация',
     'page_style_main' => ''
-]);
+    ]
+);
 
 print($layout_content);

@@ -1,11 +1,11 @@
 
-<?php if (isset($_GET['lot_success'])): ?>
+<?php if (isset($_GET['lot_success'])) : ?>
   <div class="alert alert-success">
     <p>Лот успешно добавлен!</p>
   </div>
 <?php endif; ?>
 
-<?php if (isset($_GET['bet_success'])): ?>
+<?php if (isset($_GET['bet_success'])) : ?>
   <div class="alert alert-success">
     <p>Ставка принята!</p>
   </div>
@@ -14,7 +14,7 @@
     <nav class="nav">
       <ul class="nav__list container">
 
-        <?php foreach ($categories as $category): ?>
+        <?php foreach ($categories as $category) : ?>
           <li class="nav__item">
             <a href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= deffXSS($category['name']); ?></a>
           </li>
@@ -50,7 +50,7 @@
               </div>
             </div>
 
-            <?php 
+            <?php
             $classErr = isset($formErr) ? 'form__item--invalid' : '';
             $error = $formErr['cost'] ?? '';
             $value = $formVal['cost'] ?? '';

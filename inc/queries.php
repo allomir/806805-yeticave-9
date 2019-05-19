@@ -4,7 +4,8 @@
 
 // Определение проследней цены, добавление в массив мин ставки
 
-function addPricesBets($items) {
+function addPricesBets($items)
+{
     foreach ($items as $key => $item) {
         if(!$item['l_price']) {
             $item['l_price'] = $item['price']; // Последняя ставка или стартовая цена
@@ -23,7 +24,8 @@ function addPricesBets($items) {
 
 /* Общее подключение к БД */
 
-function getConn() {
+function getConn()
+{
     $conn = mysqli_connect("localhost", "root", "", "yeticave");
     mysqli_set_charset($conn, "utf8"); // первым делом кодировка
     if (!$conn) {
@@ -35,7 +37,8 @@ function getConn() {
 
 /* Общий запрос категорий из БД таблицы без защиты от sql-инъекции, тк нет переменных */
 
-function getCategories($conn) {
+function getCategories($conn)
+{
     $sql = 'SELECT * FROM categories'; 
     $result = mysqli_query($conn, $sql);
     if (!$result) {
@@ -46,7 +49,8 @@ function getCategories($conn) {
 
 /* Проверка существования категории */
 
-function checkCategoryByID($conn, $categoryID) {
+function checkCategoryByID($conn, $categoryID)
+{
     $sql = "SELECT * FROM categories
         WHERE categories.id = '$categoryID'
     "; 
@@ -59,7 +63,8 @@ function checkCategoryByID($conn, $categoryID) {
 
 /* Проверка существования email */
 
-function checkUserByEmail($conn, $email) {
+function checkUserByEmail($conn, $email)
+{
     $sql = "SELECT * FROM users 
         WHERE email = '$email'
     ";
@@ -72,9 +77,10 @@ function checkUserByEmail($conn, $email) {
 
 /* Запрос добавить новый лот */
 
-function insertNewItem($conn, $item) {
-
-    $sql = sprintf("INSERT INTO items 
+function insertNewItem($conn, $item)
+{
+    $sql = sprintf(
+        "INSERT INTO items 
     (
     category_id, 
     user_id, 
@@ -88,15 +94,15 @@ function insertNewItem($conn, $item) {
     )
     VALUES
     ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",  
-    $item['category_id'],
-    $item['user_id'],
-    $item['name'],
-    $item['description'],
-    $item['img_url'],
-    $item['price'],
-    $item['step'],
-    // $item['ts_add'],
-    $item['ts_end']
+        $item['category_id'],
+        $item['user_id'],
+        $item['name'],
+        $item['description'],
+        $item['img_url'],
+        $item['price'],
+        $item['step'],
+        // $item['ts_add'],
+        $item['ts_end']
     );
 
     $result = mysqli_query($conn, $sql);
@@ -109,9 +115,10 @@ function insertNewItem($conn, $item) {
 
 /* Запрос добавить нового пользователя */
 
-function insertNewUser($conn, $user) {
-
-    $sql = sprintf("INSERT INTO users 
+function insertNewUser($conn, $user)
+{
+    $sql = sprintf(
+        "INSERT INTO users 
     (
         email, 
         password, 
@@ -140,9 +147,11 @@ function insertNewUser($conn, $user) {
 
 /* Запрос сделать ставку */
 
-function insertNewBet($conn, $bet) {
+function insertNewBet($conn, $bet)
+{
 
-    $sql = sprintf("INSERT INTO bets
+    $sql = sprintf(
+        "INSERT INTO bets
     (
         item_id,
         user_id,
@@ -165,7 +174,8 @@ function insertNewBet($conn, $bet) {
 
 /* Главная стр. Запрос показать активные лоты (врямя окончания не вышло), сортировать от последнего добавленного, не более 9 */
 
-function getItems($conn) {
+function getItems($conn)
+{
     $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
         JOIN categories ON items.category_id = categories.id
         LEFT JOIN bets ON items.id = bets.item_id
@@ -191,7 +201,8 @@ function getItems($conn) {
 
 /* Страница Лот. Запрос показать данные одного лота по id или вернуть [] */
 
-function getItemByID($conn, $itemID) {
+function getItemByID($conn, $itemID)
+{
     $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
         JOIN categories ON items.category_id = categories.id
         LEFT JOIN bets ON items.id = bets.item_id
@@ -218,7 +229,8 @@ function getItemByID($conn, $itemID) {
 
 /* Запрос выбрать ставки по id лота  */
 
-function getBetsByItemID($conn, $itemID) {
+function getBetsByItemID($conn, $itemID)
+{
     $sql = "SELECT bets.*, users.name AS user_name FROM bets
         JOIN users ON bets.user_id = users.id
         WHERE item_id = '$itemID' 
@@ -239,7 +251,8 @@ function getBetsByItemID($conn, $itemID) {
 
 /* Запрос выбрать ставки по id юзера  */
 
-function getBetsByUserID($conn, $userID) {
+function getBetsByUserID($conn, $userID)
+{
     $sql = "SELECT bets.*, items.name AS item_name, items.img_url, ts_end, categories.name AS category, users.contacts FROM bets
         JOIN items ON bets.item_id = items.id
         JOIN categories ON items.category_id = categories.id
@@ -262,7 +275,8 @@ function getBetsByUserID($conn, $userID) {
 
 /* Страница категории. Запрос лотов активных в выбранной категории */
 
-function getItemsByCategory($conn, $categoryID) {
+function getItemsByCategory($conn, $categoryID)
+{
     $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
     JOIN categories ON items.category_id = categories.id
     LEFT JOIN bets ON items.id = bets.item_id
@@ -287,7 +301,8 @@ function getItemsByCategory($conn, $categoryID) {
 
 /* Полнотекстовый поиск по items(name,description) */
 
-function findItemsByFText($conn, $search, $page = 1, $limit = 6) {
+function findItemsByFText($conn, $search, $page = 1, $limit = 6)
+{
 
     $offset = ($page - 1) * $limit;
 

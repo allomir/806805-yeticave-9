@@ -17,8 +17,8 @@
         <?php if (!empty($items)) : ?>
         <ul class="lots__list">
 
-        <?php foreach ($items as $item):
-        $Timer = makeTimer(htmlspecialchars($item['ts_end'])); ?>
+            <?php foreach ($items as $item) :
+                $Timer = makeTimer(htmlspecialchars($item['ts_end'])); ?>
             <li class="lots__item lot">
                 <div class="lot__image">
                     <img src="<?= htmlspecialchars($item['img_url']); ?>" width="350" height="260" alt="<?= htmlspecialchars($item['name']); ?>">
@@ -29,7 +29,7 @@
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount"><?= $item['number_bets'] ?></span>
-                            <span class="lot__cost"><?= makePriceFormat( htmlspecialchars($item['l_price']) ); ?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?= makePriceFormat(htmlspecialchars($item['l_price'])); ?><b class="rub">р</b></span>
                         </div>
                         <div class="lot__timer timer <?= $Timer['style']; ?>">
                             <?= $Timer['DDHHMM']; ?>
@@ -37,54 +37,56 @@
                     </div>
                 </div>
             </li>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
 
         </ul>
         <?php endif; ?>
 
       </section>
 
-      <?php if (!empty($num_pages)) : ?>
+        <?php if (!empty($num_pages)) : ?>
       <ul class="pagination-list">
 
-        <?php /* Пагинация */
-        $params = $_GET ?? []; 
-        if ($num_pages >= 2) : 
+            <?php /* Пагинация */
             $params = $_GET ?? [];
-            $params['page'] = !empty($params['page']) ? $params['page']-1 : 1;
-            if ($params['page'] - 1 < 1) {
-                $params['page'] = 1;
-            } 
-            $row_get = http_build_query($params); ?>
+            if ($num_pages >= 2) :
+                $params = $_GET ?? [];
+                $params['page'] = !empty($params['page']) ? $params['page']-1 : 1;
+                if ($params['page'] - 1 < 1) {
+                    $params['page'] = 1;
+                }
+                $row_get = http_build_query($params); ?>
         <li class="pagination-item pagination-item-prev"><a href="/search.php?<?= $row_get; ?>">Назад</a></li>
-        <?php endif;
-        $i=1; 
-        $params = $_GET ?? [];
-        $current_page = $params['page'] ?? 'начало';
-
-        while ($i <= $num_pages) : 
-            $class_active = '';
-            if ($current_page == $i OR $current_page == 'начало') {
-                $class_active = 'pagination-item-active'; 
-                $current_page = '';
-            }
-            $params['page'] = $i; $row_get = http_build_query($params); 
-        ?>
-        <li class="pagination-item <?= $class_active; ?>"><a href="/search.php?<?= $row_get; ?>"><?= $i; ?></a></li>
-        <?php 
-        $i++; endwhile; 
-
-        if ($num_pages >= 2) : 
+            <?php endif;
+            $i=1;
             $params = $_GET ?? [];
-            $params['page'] = !empty($params['page']) ? $params['page']+1 : 2;
-            if ($params['page'] + 1 > $num_pages) {
-                $params['page'] = $num_pages;
-            } 
-            $row_get = http_build_query($params); ?>
+            $current_page = $params['page'] ?? 'начало';
+
+            while ($i <= $num_pages) :
+                $class_active = '';
+                if ($current_page == $i or $current_page == 'начало') {
+                    $class_active = 'pagination-item-active';
+                    $current_page = '';
+                }
+                $params['page'] = $i;
+                $row_get = http_build_query($params);
+                ?>
+        <li class="pagination-item <?= $class_active; ?>"><a href="/search.php?<?= $row_get; ?>"><?= $i; ?></a></li>
+                <?php
+                $i++;
+            endwhile;
+
+            if ($num_pages >= 2) :
+                $params = $_GET ?? [];
+                $params['page'] = !empty($params['page']) ? $params['page']+1 : 2;
+                if ($params['page'] + 1 > $num_pages) {
+                    $params['page'] = $num_pages;
+                }
+                $row_get = http_build_query($params); ?>
         <li class="pagination-item pagination-item-next"><a href="/search.php?<?= $row_get; ?>">Вперед</a></li>
-        <?php endif; ?>
+            <?php endif; ?>
 
       </ul>
-      <?php endif; ?>
+        <?php endif; ?>
 
     </div>

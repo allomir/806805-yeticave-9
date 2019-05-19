@@ -1,10 +1,10 @@
 <?php
 
-require('inc/functions.php'); // функции
-require('inc/queries.php'); // Запросы и подключение
-require('inc/helpers.php'); // шаблонизатор
+require 'inc/functions.php'; // функции
+require 'inc/queries.php'; // Запросы и подключение
+require 'inc/helpers.php'; // шаблонизатор
 
-require('inc/general.php'); // Общие сценарии всех страниц 
+require 'inc/general.php'; // Общие сценарии всех страниц 
 
 if (isset($_GET['search'])) {
 
@@ -16,25 +16,31 @@ if (isset($_GET['search'])) {
     $num_pages = ceil($num_items / $limit);
     $items = findItemsByFText($conn, $saveSearch, $page, $limit); // вернет 6 строк (по лимиту) или 0 строк по запросу
 
-    $page_content = include_template('search.php', [
+    $page_content = include_template(
+        'search.php', [
         'categories' => $categories,
         'items' => $items,
         'num_pages' => $num_pages,
         'search' => $search
-    ]);
+        ]
+    );
 }
 else {
-    $page_content = include_template('search.php', [
+    $page_content = include_template(
+        'search.php', [
         'categories' => $categories
-    ]);
+        ]
+    );
 }
 
 // Подложка
-$layout_content = include_template('layout.php', [
+$layout_content = include_template(
+    'layout.php', [
     'categories' => $categories,
     'content' => $page_content,
     'title' => 'Поиск информации о лотах',
     'page_style_main' => ''
-]);
+    ]
+);
 
 print($layout_content);

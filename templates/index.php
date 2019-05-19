@@ -1,4 +1,4 @@
-<?php if (isset($_GET['welcome'])): ?>
+<?php if (isset($_GET['welcome'])) : ?>
   <div class="alert alert-success">
     <p>Добро пожаловать !</p>
   </div>
@@ -10,7 +10,7 @@
         <ul class="promo__list">
 
         <?php /* Главное меню - главная страница */
-        foreach ($categories as $category): ?>
+        foreach ($categories as $category) : ?>
             <li class="promo__item promo__item--<?= htmlspecialchars($category['symbol']); ?>">
                 <a class="promo__link" href="/all-lots.php?categoryID=<?= $category['id']; ?>"><?= htmlspecialchars($category['name']); ?></a>
             </li>
@@ -24,8 +24,8 @@
         </div>
         <ul class="lots__list">
 
-        <?php foreach ($items as $item):
-        $Timer = makeTimer(htmlspecialchars($item['ts_end'])); ?>
+        <?php foreach ($items as $item) :
+            $Timer = makeTimer(htmlspecialchars($item['ts_end'])); ?>
             <li class="lots__item lot">
                 <div class="lot__image">
                     <img src="<?= htmlspecialchars($item['img_url']); ?>" width="350" height="260" alt="<?= htmlspecialchars($item['name']); ?>">
@@ -36,7 +36,7 @@
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount"><?= $item['number_bets'] ?></span>
-                            <span class="lot__cost"><?= makePriceFormat( htmlspecialchars($item['l_price']) ); ?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?= makePriceFormat(htmlspecialchars($item['l_price'])); ?><b class="rub">р</b></span>
                         </div>
                         <div class="lot__timer timer <?= $Timer['style']; ?>">
                             <?= $Timer['DDHHMM']; ?>

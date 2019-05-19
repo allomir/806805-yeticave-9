@@ -1,10 +1,10 @@
 <?php
 
-require('inc/functions.php'); // функции
-require('inc/queries.php'); // Запросы и подключение
-require('inc/helpers.php'); // шаблонизатор
+require 'inc/functions.php'; // функции
+require 'inc/queries.php'; // Запросы и подключение
+require 'inc/helpers.php'; // шаблонизатор
 
-require('inc/general.php'); // Общие сценарии всех страниц 
+require 'inc/general.php'; // Общие сценарии всех страниц 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -51,11 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Страница после отправки формы
     if (count($errors)) {
-        $page_content = include_template('login.php', [
+        $page_content = include_template(
+            'login.php', [
             'categories' => $categories,
             'formVals' => $formVals,
             'errors' => $errors
-        ]);
+            ]
+        );
     } else {
         header("Location: /?welcome=true");
         exit();
@@ -65,24 +67,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Страница входа после входа
     if (isset($_SESSION['user'])) {
-        $page_content = include_template('error.php', [
+        $page_content = include_template(
+            'error.php', [
             'categories' => $categories,
             'page_error' => 'login'
-        ]);
+            ]
+        );
     } else {
         // Страница входа обычная 
-        $page_content = include_template('login.php', [
+        $page_content = include_template(
+            'login.php', [
             'categories' => $categories
-        ]);
+            ]
+        );
     }
 }
 
 // Подложка
-$layout_content = include_template('layout.php', [
+$layout_content = include_template(
+    'layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => 'Вход на сайт',
     'page_style_main' => ''
-]);
+    ]
+);
 
 print($layout_content);

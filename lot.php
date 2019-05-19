@@ -1,10 +1,10 @@
 <?php
 
-require('inc/functions.php'); // функции
-require('inc/queries.php'); // Запросы и подключение
-require('inc/helpers.php'); // шаблонизатор
+require 'inc/functions.php'; // функции
+require 'inc/queries.php'; // Запросы и подключение
+require 'inc/helpers.php'; // шаблонизатор
 
-require('inc/general.php'); // Общие сценарии всех страниц 
+require 'inc/general.php'; // Общие сценарии всех страниц 
 
 $user = $_SESSION['user'] ?? [];
 
@@ -70,42 +70,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 mysqli_close($conn); // Закрытие подключения к БД
 
 // Лот пуст (лота с таким id нет) или id лота нет (втч параметра запроса нет)
-if(empty($item) OR empty($_GET['itemID'])){
+if(empty($item) OR empty($_GET['itemID'])) {
     $page_name = '404 Страница не найдена';
     $response_code = http_response_code(404);
-    $page_content = include_template('error.php', [
+    $page_content = include_template(
+        'error.php', [
         'categories' => $categories,
         'page_error' => '404'
-    ]);
+        ]
+    );
 }
 // Если отправлена ставка, страница с ошибками и данынми
 elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $page_name = $item['name'];
-    $page_content = include_template('lot.php', [
+    $page_content = include_template(
+        'lot.php', [
         'categories' => $categories, 
         'item' => $item,
         'itemBets' => $itemBets,
         'formVal' => $formVal,
         'formErr' => $formErr
-    ]);
+        ]
+    );
 }
 // По умолчанию - Id Лот существует и лот не пуст
 else {
     $page_name = $item['name'];
-    $page_content = include_template('lot.php', [
+    $page_content = include_template(
+        'lot.php', [
         'categories' => $categories, 
         'item' => $item,
         'itemBets' => $itemBets
-    ]);
+        ]
+    );
 }
 
 // Подложка
-$layout_content = include_template('layout.php', [
+$layout_content = include_template(
+    'layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => $page_name,
     'page_style_main' => ''
-]);
+    ]
+);
 
 $response_code;
 print($layout_content);

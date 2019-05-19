@@ -1,10 +1,10 @@
 <?php
 
-require('inc/functions.php'); // функции
-require('inc/queries.php'); // Запросы и подключение
-require('inc/helpers.php'); // шаблонизатор
+require 'inc/functions.php'; // функции
+require 'inc/queries.php'; // Запросы и подключение
+require 'inc/helpers.php'; // шаблонизатор
 
-require('inc/general.php'); // Общие сценарии всех страниц 
+require 'inc/general.php'; // Общие сценарии всех страниц 
 
 $user = $_SESSION['user'] ?? []; // Аунтификация пользователя
 
@@ -32,7 +32,8 @@ foreach ($params as $param => $error) {
     $formErrors[$param] = ''; // Массив для хранения названия ошибки или пусто, вначале всегда пусто, используется для сообщий в верстке
     $formData[$param] = $_POST[$param] ?? ''; // Массив для получения данных из форм, используется для автозаполнения в верстке 
 }
-If ($formData['category'] == 'Выберите категорию') {$formData['category'] = '';} // Исключение - параметр приравниваем к пусто
+If ($formData['category'] == 'Выберите категорию') {$formData['category'] = '';
+} // Исключение - параметр приравниваем к пусто
 
 // Параметры файла-изображения
 $imgData = $_FILES['lot-img'] ?? []; // Сокращенная запись isset else
@@ -45,7 +46,9 @@ $imgData['maxsize'] = 1048576; // особый параметр - максима
 
 $item = []; // Параметры лота, взятые из формы 
 $number_err = 0; // Колво ошибок
-/********************************** Форма отправлена *************************************/
+/**********************************
+ * Форма отправлена 
+*************************************/
 
 
 // Проверка - событие нажатие кнопки
@@ -166,7 +169,9 @@ if (isset($_POST['add_lot'])) {
     }
 }
 
-/****************************************** Переадресация *****************************************/
+/******************************************
+ * Переадресация 
+*****************************************/
 
 // После нажатия кнопки и Колво ошибок 0 
 if (isset($_POST['add_lot']) && $number_err == 0) {
@@ -206,28 +211,34 @@ mysqli_close($conn);
 
 // Страница для зарегистрированных или ошибка доступа
 if (isset($_SESSION['user'])) {
-    $page_content = include_template('add-lot.php', [
+    $page_content = include_template(
+        'add-lot.php', [
         'categories' => $categories, 
         'formData' => $formData,
         'formErrors' => $formErrors,
         'imgData' => $imgData
         
-    ]);
+        ]
+    );
 } else {
     $response_code = http_response_code(403);
-    $page_content = include_template('error.php', [
+    $page_content = include_template(
+        'error.php', [
         'categories' => $categories,
         'page_error' => '403'
-    ]);
+        ]
+    );
 }
 
 // Подложка
-$layout_content = include_template('layout.php', [
+$layout_content = include_template(
+    'layout.php', [
     'categories' => $categories, 
     'content' => $page_content, 
     'title' => 'Добавление лота',
     'page_style_main' => ''
-]);
+    ]
+);
 
 $response_code;
 print($layout_content);

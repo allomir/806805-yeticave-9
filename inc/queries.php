@@ -9,9 +9,11 @@ function getConn()
 {
     $conn = mysqli_connect("localhost", "root", "", "yeticave");
     mysqli_set_charset($conn, "utf8"); 
+
     if (!$conn) {
         print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
     }
+    
     return $conn;
 }
 
@@ -43,10 +45,12 @@ function checkCategoryByID($conn, $category_id)
     $sql = "SELECT * FROM categories
         WHERE categories.id = $category_id
     ";
+
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn));
     }
+
     return mysqli_fetch_assoc($result);
 }
 
@@ -61,10 +65,12 @@ function checkUserByEmail($conn, $email)
     $sql = "SELECT * FROM users 
         WHERE email = '$email'
     ";
+
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn));
     }
+    
     return mysqli_fetch_assoc($result);
 }
 
@@ -78,19 +84,19 @@ function insertNewItem($conn, $item)
 {
     $sql = sprintf(
         "INSERT INTO items 
-    (
-    category_id, 
-    user_id, 
-    name,
-    description,
-    img_url,
-    price,
-    step,
-    -- ts_add, -- автозаполнение
-    ts_end
-    )
-    VALUES
-    ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+            (
+            category_id, 
+            user_id, 
+            name,
+            description,
+            img_url,
+            price,
+            step,
+            -- ts_add, -- автозаполнение
+            ts_end
+            )
+        VALUES
+            ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
         $item['category_id'],
         $item['user_id'],
         $item['name'],
@@ -120,21 +126,21 @@ function insertNewUser($conn, $user)
 {
     $sql = sprintf(
         "INSERT INTO users 
-    (
-        email, 
-        password, 
-        name, 
-        contacts,
-        avatar_url -- не требуется по заданию, но не может быть пусто
-        -- ts_created -- автозаполнение
-    )
-    VALUES
-    ('%s', '%s', '%s', '%s', '%s')",
+            (
+            email, 
+            password, 
+            name, 
+            contacts,
+            avatar_url -- но не может быть пусто
+            -- ts_created -- автозаполнение
+            )
+        VALUES
+            ('%s', '%s', '%s', '%s', '%s')",
         $user['email'],
         $user['password'],
         $user['name'],
         $user['contacts'],
-        $user['avatar_url'] // не требуется по заданию, но не может быть пусто
+        $user['avatar_url'] // не может быть пусто
         // ts_created // автозаполнение
     );
 
@@ -311,11 +317,11 @@ function getBetsByUserID($conn, $user_id)
 function getItemsByCategory($conn, $category_id)
 {
     $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price FROM items
-    JOIN categories ON items.category_id = categories.id
-    LEFT JOIN bets ON items.id = bets.item_id
-    WHERE categories.id = '$category_id' AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
-    GROUP BY items.id 
-    ORDER BY ts_add DESC
+        JOIN categories ON items.category_id = categories.id
+        LEFT JOIN bets ON items.id = bets.item_id
+        WHERE categories.id = '$category_id' AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
+        GROUP BY items.id 
+        ORDER BY ts_add DESC
     ";
 
     $result = mysqli_query($conn, $sql);
@@ -349,22 +355,18 @@ function getItemsByCategory($conn, $category_id)
 function findItemsByFText($conn, $search, $limit = 0, $page = 1)
 {
     $offset = ($page - 1) * $limit;
-    $sql = "SELECT i.id";
 
+    $sql = "SELECT i.id";
     if ($limit) {
         $sql .= ", i.name, img_url, ts_end, i.step, i.price, categories.name AS category,"
             . " COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price";
     }
-
     $sql .= " FROM items i";
-
     if ($limit) {
         $sql .= " JOIN categories ON i.category_id = categories.id"
             . " LEFT JOIN bets ON i.id = bets.item_id ";
     }
-
     $sql .= " WHERE MATCH (i.name, description) AGAINST ('$search' IN BOOLEAN MODE)";
-
     if ($limit) {
         $sql .= " GROUP BY i.id"
             . " ORDER BY ts_add DESC "
@@ -373,13 +375,11 @@ function findItemsByFText($conn, $search, $limit = 0, $page = 1)
     }
 
     $result = mysqli_query($conn, $sql);
-
     if (!$result) {
         print('Ошибка MySQL: ' . mysqli_error($conn));
     }
 
     $items = [];
-
     if (mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = !empty($limit) ? addPricesBets($items) : $items; // Добавление последняя цена, мин ставка
@@ -389,15 +389,16 @@ function findItemsByFText($conn, $search, $limit = 0, $page = 1)
 }
 
 /** 
- * # Последняя цена, мин ставки, колво ставок. Перезапись и добавление 3х значений для карточек лотов
- * Примечание: используется ф. getEndingWord для поля колво ставок - number_bets,  формат '3 ставки', если ставки есть или макс. цена не пуста
+ * # Последняя цена, мин ставки, колво ставок. Перезапись и добавление 3х параметров для карточек лотов
+ * Примечание: используется ф. getEndingWord для поля колво ставок - number_bets,  формат '3 ставки', если число ставок (или макс. цена) не пусто
  * 
- * @param array $items двумерный массив с полями
+ * @param array $items двумерный массив с полями 'last_price', 'number_bets', добавляется поле 'min_bet'
  * @return array двууровневый массив с полями из таблицы БД или []
  */
 function addPricesBets($items)
 {
     foreach ($items as $key => $item) {
+
         if (!$item['last_price']) {
             $item['last_price'] = $item['price']; // Последняя ставка или стартовая цена
             $item['number_bets'] = 'Стартовая цена';
@@ -406,8 +407,10 @@ function addPricesBets($items)
             $word = getEndingWord($item['number_bets']);
             $item['number_bets'] .= " $word";
         }
+
         $item['min_bet'] = $item['last_price'] + $item['step']; // Добавление поля - Мин ставка
         $items[$key] = $item; // Перезаписать строку в массиве
     }
+
     return $items;
 }

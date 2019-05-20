@@ -289,7 +289,8 @@ function getBetsByUserID($conn, $user_id)
         JOIN items ON bets.item_id = items.id
         JOIN categories ON items.category_id = categories.id
         JOIN users ON items.user_id = users.id
-        WHERE bets.user_id = '$user_id' 
+        WHERE bets.user_id = '$user_id'
+        ORDER BY ts_betted DESC
     ";
 
     $result = mysqli_query($conn, $sql);

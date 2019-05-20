@@ -32,7 +32,7 @@ foreach ($params as $param => $error) {
 }
 
 // Исключение - параметр приравниваем к пусто
-if ($form_values['category'] == 'Выберите категорию') {
+if ($form_values['category'] === 'Выберите категорию') {
     $form_values['category'] = '';
 }
 
@@ -56,12 +56,12 @@ if (isset($_POST['add-lot'])) {
     foreach ($params as $param => $error) {
         if (empty($form_values[$param])) {
             $form_errors[$param] = $error;
-        } elseif ($param == 'lot-name' or $param == 'message') {
+        } elseif ($param === 'lot-name' or $param === 'message') {
             // Если поле не пусто, проверяем особые условия для каждого поля, переполнение, число
             if (strlen($form_values[$param]) > $options[$param]['max_length']) {
                 $form_errors[$param] = 'Превышено число знаков' . $options[$param]['max_length'];
             } 
-        } elseif ($param == 'lot-rate' or $param == 'lot-step') {
+        } elseif ($param === 'lot-rate' or $param === 'lot-step') {
             // Проверка число или строка с числом (как поле ввода в форме, которое всегда является строкой), используйте is_numeric()!!!
             if (!is_numeric($form_values[$param])) {
                 $form_errors[$param] = 'Введите число';
@@ -136,7 +136,7 @@ if (isset($_POST['add-lot'])) {
 /* Переадресация */
 
 // После нажатия кнопки и если колво ошибок 0
-if (isset($_POST['add-lot']) && $num_errors == 0) {
+if (isset($_POST['add-lot']) && $num_errors === 0) {
 
     // Параметры лота
     $item = [

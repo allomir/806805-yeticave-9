@@ -1,57 +1,47 @@
 <?php
 
-/* Внутренние функции для БД */
-
-// Определение проследней цены, добавление в массив мин ставки
-
-function addPricesBets($items)
-{
-    foreach ($items as $key => $item) {
-        if (!$item['l_price']) {
-            $item['l_price'] = $item['price']; // Последняя ставка или стартовая цена
-            $item['number_bets'] = 'Стартовая цена';
-        } else {
-            // Определение окончания и запись в массив
-            $word = getEndingWord($item['number_bets']);
-            $item['number_bets'] .= " $word";
-        }
-        $item['min_bet'] = $item['l_price'] + $item['step']; // Добавление поля - Мин ставка
-        $items[$key] = $item; // Перезаписать строку в массиве
-    }
-    return $items;
-}
-
-/* Общее подключение к БД */
-
+/** 
+ * #1 Общее подключение к БД
+ * Примечание: mysqli_set_charset($conn, "utf8");
+ * @return link соединение с БД
+ */
 function getConn()
 {
     $conn = mysqli_connect("localhost", "root", "", "yeticave");
-    mysqli_set_charset($conn, "utf8"); // первым делом кодировка
+    mysqli_set_charset($conn, "utf8"); 
     if (!$conn) {
         print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
-        // die('Ошибка при подключении: ' . mysqli_connect_error()); // вариант 2.
     }
     return $conn;
 }
 
-/* Общий запрос категорий из БД таблицы без защиты от sql-инъекции, тк нет переменных */
-
+/** 
+ * #2 Все категории - поля таблицы categories
+ * @param link   $conn соединение с БД
+ * @return array двууровневый массив с полями из таблицы БД или []
+ */
 function getCategories($conn)
 {
     $sql = 'SELECT * FROM categories';
+
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         print("Ошибка MySQL: " . mysqli_error($conn));
     }
+
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-/* Проверка существования категории */
-
-function checkCategoryByID($conn, $categoryID)
+/** 
+ * #3 Проверка существования категории по id - поля таблицы categories
+ * @param link   $conn соединение с БД
+ * @param int    $category_id уникальный ключ (id) категории в виде числа
+ * @return array ассоциат массив с полями из таблицы БД или []
+ */
+function checkCategoryByID($conn, $category_id)
 {
     $sql = "SELECT * FROM categories
-        WHERE categories.id = '$categoryID'
+        WHERE categories.id = $category_id
     ";
     $result = mysqli_query($conn, $sql);
     if (!$result) {
@@ -60,8 +50,12 @@ function checkCategoryByID($conn, $categoryID)
     return mysqli_fetch_assoc($result);
 }
 
-/* Проверка существования email */
-
+/** 
+ * #4 Проверка существования адреса эл. почты - поля таблицы users
+ * @param link   $conn соединение с БД
+ * @param string $email валидный адрес эл. почты в виде строки
+ * @return array ассоциат массив с полями из таблицы БД или []
+ */
 function checkUserByEmail($conn, $email)
 {
     $sql = "SELECT * FROM users 
@@ -74,8 +68,12 @@ function checkUserByEmail($conn, $email)
     return mysqli_fetch_assoc($result);
 }
 
-/* Запрос добавить новый лот */
-
+/** 
+ * #5 Добавить в таблицу items новый лот и его данные
+ * @param link  $conn соединение с БД
+ * @param array $item поля таблицы и их значения в виде ассоциат. массива
+ * @return boolean true если записи успешно добавлена 
+ */
 function insertNewItem($conn, $item)
 {
     $sql = sprintf(
@@ -112,8 +110,12 @@ function insertNewItem($conn, $item)
     return $result; // Возвращает тру или ошибка
 }
 
-/* Запрос добавить нового пользователя */
-
+/** 
+ * #6 Добавить в таблицу users нового пользователя и его данные
+ * @param link  $conn соединение с БД
+ * @param array $user поля таблицы и их значения в виде ассоциат. массива
+ * @return boolean true если записи успешно добавлена 
+ */
 function insertNewUser($conn, $user)
 {
     $sql = sprintf(
@@ -144,8 +146,12 @@ function insertNewUser($conn, $user)
     return $result; // Возвращает тру или ошибка
 }
 
-/* Запрос сделать ставку */
-
+/** 
+ * #7 Добавить в таблицу bets ставки и ее данные
+ * @param link  $conn соединение с БД
+ * @param array $bet поля таблицы и их значения в виде ассоциат. массива
+ * @return boolean true если запись успешно добавлена 
+ */
 function insertNewBet($conn, $bet)
 {
     $sql = sprintf(
@@ -170,11 +176,17 @@ function insertNewBet($conn, $bet)
     return $result; // Возвращает тру или ошибка
 }
 
-/* Главная стр. Запрос показать активные лоты (врямя окончания не вышло), сортировать от последнего добавленного, не более 9 */
 
+/** 
+ * #8 Активные лоты из таблицы items на главной стр., последние 9шт, категорию из categories, а также колво ставок из bets и макс. цену из bets каждого лота
+ * Примечание: используется ф. addPricesBets, определяет последнюю цену и считает размер мин. ставки
+ * 
+ * @param link  $conn соединение с БД
+ * @return array двууровневый массив с полями из таблицы БД или []
+ */
 function getItems($conn)
 {
-    $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
+    $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price FROM items
         JOIN categories ON items.category_id = categories.id
         LEFT JOIN bets ON items.id = bets.item_id
         WHERE ts_end > CURRENT_TIMESTAMP -- показывать только активные
@@ -197,14 +209,20 @@ function getItems($conn)
     return  $items;
 }
 
-/* Страница Лот. Запрос показать данные одного лота по id или вернуть [] */
-
-function getItemByID($conn, $itemID)
+/** 
+ * #9 Данные одного лота из таблицы items по его id на стр. Лот , категорию из categories, колво ставок из bets и макс. цену из bets каждого лота
+ * Примечание: внутри функции определяется последня цена и считается размер мин. ставки, значения передаются в массив
+ * 
+ * @param link  $conn соединение с БД
+ * @param int  $item_id значение id лота из таблицы items в виде числа
+ * @return array $item ассоциат массив с полями из таблицы БД или []
+ */
+function getItemByID($conn, $item_id)
 {
-    $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
+    $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price FROM items
         JOIN categories ON items.category_id = categories.id
         LEFT JOIN bets ON items.id = bets.item_id
-        WHERE items.id = '$itemID' -- AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
+        WHERE items.id = '$item_id' -- AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
         GROUP BY items.id DESC
     ";
 
@@ -216,22 +234,27 @@ function getItemByID($conn, $itemID)
     $item = [];
     if (mysqli_num_rows($result)) {
         $item = mysqli_fetch_assoc($result); // Ассоциативный массив
-        if (!$item['l_price']) {
-            $item['l_price'] = $item['price']; // Последняя ставка или стартовая цена
+        if (!$item['last_price']) {
+            $item['last_price'] = $item['price']; // Последняя ставка или стартовая цена
         }
-        $item['min_bet'] = $item['l_price'] + $item['step']; // Добавление поля - Мин ставка
+        $item['min_bet'] = $item['last_price'] + $item['step']; // Добавление поля - Мин ставка
     }
 
     return $item;
 }
 
-/* Запрос выбрать ставки по id лота  */
-
-function getBetsByItemID($conn, $itemID, $order)
+/** 
+ * #10 Ставки одного лота по его id на стр. Лот, имя пользователя по его id из bets и пользователей, сделавших ставку из users
+ * @param link   $conn соединение с БД
+ * @param int    $item_id уникальный ключ (id) лота в виде числа
+ * @param string $order принимает значения DESC или ASC, влияет на определение пользователя с последней ставкой
+ * @return array $itemBets двууровневый массив с полями из таблицы БД или []
+ */
+function getBetsByItemID($conn, $item_id, $order)
 {
     $sql = "SELECT bets.*, users.name AS user_name FROM bets
         JOIN users ON bets.user_id = users.id
-        WHERE item_id = '$itemID' 
+        WHERE item_id = '$item_id' 
         ORDER BY ts_betted $order
     ";
 
@@ -248,15 +271,19 @@ function getBetsByItemID($conn, $itemID, $order)
     return $itemBets;
 }
 
-/* Запрос выбрать ставки по id юзера  */
-
-function getBetsByUserID($conn, $userID)
+/** 
+ * #11 Ставки одного пользователя по его id на стр. Мои ставки из bets, название и изображение лота из items, категория лота из categories, контакты владельца лота из users
+ * @param link   $conn соединение с БД
+ * @param int    $item_id уникальный ключ (id) пользователя после аутентификациии в виде числа
+ * @return array $itemBets двууровневый массив с полями из таблицы БД или []
+ */
+function getBetsByUserID($conn, $user_id)
 {
     $sql = "SELECT bets.*, items.name AS item_name, items.img_url, ts_end, categories.name AS category, users.contacts FROM bets
         JOIN items ON bets.item_id = items.id
         JOIN categories ON items.category_id = categories.id
         JOIN users ON items.user_id = users.id
-        WHERE bets.user_id = '$userID' 
+        WHERE bets.user_id = '$user_id' 
     ";
 
     $result = mysqli_query($conn, $sql);
@@ -272,14 +299,21 @@ function getBetsByUserID($conn, $userID)
     return $bets;
 }
 
-/* Страница категории. Запрос лотов активных в выбранной категории */
 
-function getItemsByCategory($conn, $categoryID)
+/** 
+ * #12 Все активные лоты в выбранной категории по id категории из таблицы items, категорию из categories, колво ставок и макс. цену из bets каждого лота
+ * Примечание: аналогичен полнотекстовому поиску, кроме условия, должен содержать limit и page (не требуется по заданию).
+ * 
+ * @param link   $conn соединение с БД
+ * @param int    $category_id уникальный ключ (id) категории в виде числа
+ * @return array $items двууровневый массив с полями из таблицы БД или []
+ */
+function getItemsByCategory($conn, $category_id)
 {
-    $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items
+    $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price FROM items
     JOIN categories ON items.category_id = categories.id
     LEFT JOIN bets ON items.id = bets.item_id
-    WHERE categories.id = '$categoryID' AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
+    WHERE categories.id = '$category_id' AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
     GROUP BY items.id 
     ORDER BY ts_add DESC
     ";
@@ -298,8 +332,20 @@ function getItemsByCategory($conn, $categoryID)
     return $items;
 }
 
-/* Полнотекстовый поиск по items(name,description) */
-
+/** 
+ * #13 Полнотекстовый поиск по полям items(name,description) в таблице items
+ * 
+ * Ограничения:
+ * Если $limit = 0 или не задан то возвращает общее число строк (по умолчанию)
+ * Если $limit = число то возвращает число строк 
+ * $page - определяет значение оффсета, должно быть больше или равно 1 (по умолчанию)
+ * 
+ * @param mysqli $conn соединение с БД
+ * @param string $search слова из строки поиска в виде строки 
+ * @param int $limit макс колво показываемых лотов на одной странице
+ * @param int $page номер страницы, используется для определения offset
+ * @return array двууровневый массив с полями из таблицы БД или []
+ */
 function findItemsByFText($conn, $search, $limit = 0, $page = 1)
 {
     $offset = ($page - 1) * $limit;
@@ -307,7 +353,7 @@ function findItemsByFText($conn, $search, $limit = 0, $page = 1)
 
     if ($limit) {
         $sql .= ", i.name, img_url, ts_end, i.step, i.price, categories.name AS category,"
-            . " COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price";
+            . " COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price";
     }
 
     $sql .= " FROM items i";
@@ -339,5 +385,29 @@ function findItemsByFText($conn, $search, $limit = 0, $page = 1)
         $items = !empty($limit) ? addPricesBets($items) : $items; // Добавление последняя цена, мин ставка
     }
 
+    return $items;
+}
+
+/** 
+ * # Последняя цена, мин ставки, колво ставок. Перезапись и добавление 3х значений для карточек лотов
+ * Примечание: используется ф. getEndingWord для поля колво ставок - number_bets,  формат '3 ставки', если ставки есть или макс. цена не пуста
+ * 
+ * @param array $items двумерный массив с полями
+ * @return array двууровневый массив с полями из таблицы БД или []
+ */
+function addPricesBets($items)
+{
+    foreach ($items as $key => $item) {
+        if (!$item['last_price']) {
+            $item['last_price'] = $item['price']; // Последняя ставка или стартовая цена
+            $item['number_bets'] = 'Стартовая цена';
+        } else {
+            // Определение окончания и запись в массив (по умолчанию - ставка)
+            $word = getEndingWord($item['number_bets']);
+            $item['number_bets'] .= " $word";
+        }
+        $item['min_bet'] = $item['last_price'] + $item['step']; // Добавление поля - Мин ставка
+        $items[$key] = $item; // Перезаписать строку в массиве
+    }
     return $items;
 }

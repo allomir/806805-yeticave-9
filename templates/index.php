@@ -36,7 +36,7 @@
                     <div class="lot__state">
                         <div class="lot__rate">
                             <span class="lot__amount"><?= $item['number_bets'] ?></span>
-                            <span class="lot__cost"><?= makePriceFormat(htmlspecialchars($item['l_price'])); ?><b class="rub">р</b></span>
+                            <span class="lot__cost"><?= makePriceFormat(htmlspecialchars($item['last_price'])); ?><b class="rub">р</b></span>
                         </div>
                         <div class="lot__timer timer <?= $Timer['style']; ?>">
                             <?= $Timer['DDHHMM']; ?>

@@ -12,21 +12,21 @@
         </nav>
 
         <?php if (isset($page_error)) : ?>
-            <?php if ($page_error == '404') : ?>
+            <?php if ($page_error === '404') : ?>
             <section class="lot-item container">
                 <h2>404 Страница не найдена</h2>
                 <p>Данной страницы не существует на сайте.</p>
             </section>
             <?php endif; ?>
 
-            <?php if ($page_error == '403') : ?>
+            <?php if ($page_error === '403') : ?>
             <section class="lot-item container">
                 <h2>403 Ошибка доступа</h2>
                 <p>Для просмотра страницы авторизуйтесь</p>
             </section>
             <?php endif; ?>
 
-            <?php if ($page_error == 'login') : ?>
+            <?php if ($page_error === 'login') : ?>
             <section class="lot-item container">
                 <h2>Добро пожаловать,  <?= $_SESSION["user"]["name"]; ?></h2>
                 <p>Успешных ставок!</p>

@@ -27,14 +27,14 @@ if (!$result1) {
 
 // Обновение поля winner_id - присвоение id последнего пользователя, сделавшего ставку
 if (mysqli_num_rows($result1)) {
-    $winBet = mysqli_fetch_assoc($result1);
+    $win_bet = mysqli_fetch_assoc($result1);
 
-    $userID = $winBet['user_id'];
-    $ID = $winBet['id'];
+    $user_id = $win_bet['user_id'];
+    $bet_id = $win_bet['id'];
 
     $sql2 = "UPDATE bets 
-        SET winner_id = '$userID'
-        WHERE id = '$ID'
+        SET winner_id = '$user_id'
+        WHERE id = '$bet_id'
     ";
 
     $result2 = mysqli_query($conn, $sql2);
@@ -43,13 +43,14 @@ if (mysqli_num_rows($result1)) {
     }
     // Отправка почты для каждого победителя
     else {
-        $winBet['winner_id'] = $userID;
+        $win_bet['winner_id'] = $user_id;
         $recipients = [];
-        $recipients[$winBet['email']] = $winBet['user_name'];
+        $recipients[$win_bet['email']] = $win_bet['user_name'];
 
         $email_content = include_template(
-            'email.php', [
-            'winBet' => $winBet
+            'email.php', 
+            [
+            'win_bet' => $win_bet
             ]
         );
 

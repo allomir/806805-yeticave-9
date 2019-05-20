@@ -9,24 +9,24 @@
 
       </ul>
     </nav>
-    <form class="form container <?= addErrorStyle($form_errors); ?>" action="sign-up.php" method="post" autocomplete="off">
+    <form class="form container <?= !empty(array_filter($form_errors)) ? 'form--invalid' : ''; ?>" action="sign-up.php" method="post" autocomplete="off">
       <h2>Регистрация нового аккаунта</h2>
-      <div class="form__item <?= addErrorStyle($form_errors['email']); ?>">
+      <div class="form__item <?= !empty($form_errors['email']) ? 'form__item--invalid' : ''; ?>">
         <label for="email">E-mail <sup>*</sup></label>
         <input id="email" type="text" name="email" placeholder="Введите e-mail" value="<?= htmlspecialchars($form_values['email']) ?>">
         <span class="form__error "><?= $form_errors['email']; ?></span>
       </div>
-      <div class="form__item <?= addErrorStyle($form_errors['password']); ?>">
+      <div class="form__item <?= !empty($form_errors['password']) ? 'form__item--invalid' : ''; ?>">
         <label for="password">Пароль <sup>*</sup></label>
         <input id="password" type="password" name="password" placeholder="Введите пароль" value="<?= htmlspecialchars($form_values['password']) ?>">
         <span class="form__error"><?= $form_errors['password']; ?></span>
       </div>
-      <div class="form__item <?= addErrorStyle($form_errors['name']); ?>">
+      <div class="form__item <?= !empty($form_errors['name']) ? 'form__item--invalid' : ''; ?>">
         <label for="name">Имя <sup>*</sup></label>
         <input id="name" type="text" name="name" placeholder="Введите имя" value="<?= htmlspecialchars($form_values['name']) ?>">
         <span class="form__error"><?= $form_errors['name']; ?></span>
       </div>
-      <div class="form__item <?= addErrorStyle($form_errors['message']); ?>">
+      <div class="form__item <?= !empty($form_errors['message']) ? 'form__item--invalid' : ''; ?>">
         <label for="message">Контактные данные <sup>*</sup></label>
         <textarea id="message" name="message" placeholder="Напишите как с вами связаться"><?= htmlspecialchars($form_values['message']) ?></textarea>
         <span class="form__error"><?= $form_errors['message']; ?></span>

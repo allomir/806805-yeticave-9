@@ -36,7 +36,7 @@ if (isset($_POST['sign-up'])) {
         } elseif (strlen($form_values[$param]) > $options[$param]['max_length'] ) {
             // Максимальная длина строк
             $form_errors[$param] = 'Превышено число знаков: ' . $options[$param]['max_length'];
-        } elseif ($param == 'password') {
+        } elseif ($param === 'password') {
             // Минимальное число знаков пароля
             if (strlen($form_values[$param]) < $options[$param]['min_length']) {
                 $form_errors[$param] = 'Пароль должен быть не менее ' . $options[$param]['min_length'] . ' знаков';

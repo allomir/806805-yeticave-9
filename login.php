@@ -12,9 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     foreach ($params as $param) {
         if (empty($form_values[$param])) {
-            if ($param == 'email') {
+            if ($param === 'email') {
                 $form_errors[$param] = 'Введите e-mail';
-            } elseif ($param == 'password') {
+            } elseif ($param === 'password') {
                 $form_errors[$param] = 'Введите пароль';
             }
         }        

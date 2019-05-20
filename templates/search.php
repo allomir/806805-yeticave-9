@@ -44,49 +44,53 @@
 
       </section>
 
-        <?php if (!empty($num_pages)) : ?>
-      <ul class="pagination-list">
-
-            <?php /* Пагинация */
+        <?php if ($num_pages >= 2) : ?>
+        <ul class="pagination-list">
+            <?php 
             $params = $_GET ?? [];
-            if ($num_pages >= 2) :
-                $params = $_GET ?? [];
-                $params['page'] = !empty($params['page']) ? $params['page']-1 : 1;
-                if ($params['page'] - 1 < 1) {
-                    $params['page'] = 1;
-                }
-                $row_get = http_build_query($params); ?>
-        <li class="pagination-item pagination-item-prev"><a href="/search.php?<?= $row_get; ?>">Назад</a></li>
-            <?php endif;
+            $link_back = !empty($params['page']) ? $params['page'] - 1 : 0;
+            
+            if ($link_back < 1) {
+                $row_get = '';
+            } else {
+                $params['page'] = $link_back;
+                $row_get = http_build_query($params); 
+            }           
+            ?>
+            <li class="pagination-item pagination-item-prev"><a <?= !empty($row_get) ? ' href="/search.php?' . $row_get : ' style="color: #789"'; ?>">Назад</a></li>
+            
+            <?php
             $i=1;
             $params = $_GET ?? [];
-            $current_page = $params['page'] ?? 'начало';
-
+            $current_link = $params['page'] ?? 1;
             while ($i <= $num_pages) :
                 $class_active = '';
-                if ($current_page == $i or $current_page == 'начало') {
+
+                if ($current_link == $i) {
                     $class_active = 'pagination-item-active';
-                    $current_page = '';
                 }
+
                 $params['page'] = $i;
                 $row_get = http_build_query($params);
-                ?>
-        <li class="pagination-item <?= $class_active; ?>"><a href="/search.php?<?= $row_get; ?>"><?= $i; ?></a></li>
-                <?php
+            ?>
+
+            <li class="pagination-item <?= $class_active; ?>"><a href="/search.php?<?= $row_get; ?>"><?= $i; ?></a></li>
+            <?php
                 $i++;
             endwhile;
 
-            if ($num_pages >= 2) :
-                $params = $_GET ?? [];
-                $params['page'] = !empty($params['page']) ? $params['page']+1 : 2;
-                if ($params['page'] + 1 > $num_pages) {
-                    $params['page'] = $num_pages;
-                }
-                $row_get = http_build_query($params); ?>
-        <li class="pagination-item pagination-item-next"><a href="/search.php?<?= $row_get; ?>">Вперед</a></li>
-            <?php endif; ?>
+            $params = $_GET ?? [];
+            $link_next = !empty($params['page']) ? $params['page'] + 1 : 2;
 
-      </ul>
+            if ($link_next > $num_pages) {
+                $row_get = '';
+            } else {
+                $params['page'] = $link_next;
+                $row_get = http_build_query($params); 
+            }   
+            ?>
+            <li class="pagination-item pagination-item-next"><a <?= !empty($row_get) ? ' href="/search.php?' . $row_get : ' style="color: #899"'; ?>">Вперед</a></li>
+        </ul>
         <?php endif; ?>
 
     </div>

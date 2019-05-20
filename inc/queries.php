@@ -7,11 +7,10 @@
 function addPricesBets($items)
 {
     foreach ($items as $key => $item) {
-        if(!$item['l_price']) {
+        if (!$item['l_price']) {
             $item['l_price'] = $item['price']; // Последняя ставка или стартовая цена
             $item['number_bets'] = 'Стартовая цена';
-        }
-        else {
+        } else {
             // Определение окончания и запись в массив
             $word = getEndingWord($item['number_bets']);
             $item['number_bets'] .= " $word";
@@ -29,7 +28,7 @@ function getConn()
     $conn = mysqli_connect("localhost", "root", "", "yeticave");
     mysqli_set_charset($conn, "utf8"); // первым делом кодировка
     if (!$conn) {
-        print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error()); 
+        print("Ошибка: Невозможно подключиться к MySQL " . mysqli_connect_error());
         // die('Ошибка при подключении: ' . mysqli_connect_error()); // вариант 2.
     }
     return $conn;
@@ -39,12 +38,12 @@ function getConn()
 
 function getCategories($conn)
 {
-    $sql = 'SELECT * FROM categories'; 
+    $sql = 'SELECT * FROM categories';
     $result = mysqli_query($conn, $sql);
     if (!$result) {
-        print("Ошибка MySQL: " . mysqli_error($conn)); 
+        print("Ошибка MySQL: " . mysqli_error($conn));
     }
-    return mysqli_fetch_all($result, MYSQLI_ASSOC); 
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
 /* Проверка существования категории */
@@ -53,10 +52,10 @@ function checkCategoryByID($conn, $categoryID)
 {
     $sql = "SELECT * FROM categories
         WHERE categories.id = '$categoryID'
-    "; 
+    ";
     $result = mysqli_query($conn, $sql);
     if (!$result) {
-        print("Ошибка MySQL: " . mysqli_error($conn)); 
+        print("Ошибка MySQL: " . mysqli_error($conn));
     }
     return mysqli_fetch_assoc($result);
 }
@@ -70,7 +69,7 @@ function checkUserByEmail($conn, $email)
     ";
     $result = mysqli_query($conn, $sql);
     if (!$result) {
-        print("Ошибка MySQL: " . mysqli_error($conn)); 
+        print("Ошибка MySQL: " . mysqli_error($conn));
     }
     return mysqli_fetch_assoc($result);
 }
@@ -93,7 +92,7 @@ function insertNewItem($conn, $item)
     ts_end
     )
     VALUES
-    ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",  
+    ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
         $item['category_id'],
         $item['user_id'],
         $item['name'],
@@ -107,7 +106,7 @@ function insertNewItem($conn, $item)
 
     $result = mysqli_query($conn, $sql);
     if (!$result) {
-        print("Ошибка MySQL: " . mysqli_error($conn)); 
+        print("Ошибка MySQL: " . mysqli_error($conn));
     }
 
     return $result; // Возвращает тру или ошибка
@@ -128,10 +127,10 @@ function insertNewUser($conn, $user)
         -- ts_created -- автозаполнение
     )
     VALUES
-    ('%s', '%s', '%s', '%s', '%s')",  
-        $user['email'], 
-        $user['password'], 
-        $user['name'], 
+    ('%s', '%s', '%s', '%s', '%s')",
+        $user['email'],
+        $user['password'],
+        $user['name'],
         $user['contacts'],
         $user['avatar_url'] // не требуется по заданию, но не может быть пусто
         // ts_created // автозаполнение
@@ -139,7 +138,7 @@ function insertNewUser($conn, $user)
 
     $result = mysqli_query($conn, $sql);
     if (!$result) {
-        print("Ошибка MySQL: " . mysqli_error($conn)); 
+        print("Ошибка MySQL: " . mysqli_error($conn));
     }
 
     return $result; // Возвращает тру или ошибка
@@ -149,7 +148,6 @@ function insertNewUser($conn, $user)
 
 function insertNewBet($conn, $bet)
 {
-
     $sql = sprintf(
         "INSERT INTO bets
     (
@@ -166,7 +164,7 @@ function insertNewBet($conn, $bet)
 
     $result = mysqli_query($conn, $sql);
     if (!$result) {
-        print("Ошибка MySQL: " . mysqli_error($conn)); 
+        print("Ошибка MySQL: " . mysqli_error($conn));
     }
 
     return $result; // Возвращает тру или ошибка
@@ -183,15 +181,15 @@ function getItems($conn)
         GROUP BY items.id 
         ORDER BY ts_add DESC 
         LIMIT 9
-    "; 
+    ";
 
     $result = mysqli_query($conn, $sql);
     if (!$result) {
-        print("Ошибка MySQL: " . mysqli_error($conn)); 
+        print("Ошибка MySQL: " . mysqli_error($conn));
     }
 
     $items = [];
-    if(mysqli_num_rows($result)) {
+    if (mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
     }
@@ -212,17 +210,17 @@ function getItemByID($conn, $itemID)
 
     $result = mysqli_query($conn, $sql);
     if (!$result) {
-        print("Ошибка MySQL: " . mysqli_error($conn)); 
+        print("Ошибка MySQL: " . mysqli_error($conn));
     }
 
-    $item = []; 
-    if(mysqli_num_rows($result)) {
-        $item = mysqli_fetch_assoc($result); // Ассоциативный массив 
-        if(!$item['l_price']) {
+    $item = [];
+    if (mysqli_num_rows($result)) {
+        $item = mysqli_fetch_assoc($result); // Ассоциативный массив
+        if (!$item['l_price']) {
             $item['l_price'] = $item['price']; // Последняя ставка или стартовая цена
         }
         $item['min_bet'] = $item['l_price'] + $item['step']; // Добавление поля - Мин ставка
-    } 
+    }
 
     return $item;
 }
@@ -238,12 +236,12 @@ function getBetsByItemID($conn, $itemID, $order)
     ";
 
     $result = mysqli_query($conn, $sql);
-    if(!$result) {
+    if (!$result) {
         print('Ошибка MySQL:' . mysqli_error($conn));
     }
 
     $itemBets = [];
-    if(mysqli_num_rows($result)) {
+    if (mysqli_num_rows($result)) {
         $itemBets = mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
@@ -262,12 +260,12 @@ function getBetsByUserID($conn, $userID)
     ";
 
     $result = mysqli_query($conn, $sql);
-    if(!$result) {
+    if (!$result) {
         print('Ошибка MySQL:' . mysqli_error($conn));
     }
 
     $bets = [];
-    if(mysqli_num_rows($result)) {
+    if (mysqli_num_rows($result)) {
         $bets = mysqli_fetch_all($result, MYSQLI_ASSOC);
     }
 
@@ -284,57 +282,62 @@ function getItemsByCategory($conn, $categoryID)
     WHERE categories.id = '$categoryID' AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
     GROUP BY items.id 
     ORDER BY ts_add DESC
-    "; 
+    ";
 
     $result = mysqli_query($conn, $sql);
     if (!$result) {
-        print("Ошибка MySQL: " . mysqli_error($conn)); 
+        print("Ошибка MySQL: " . mysqli_error($conn));
     }
 
     $items = [];
-    if(mysqli_num_rows($result)) {
+    if (mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $items = addPricesBets($items); // Добавление последняя цена, мин ставка
-    } 
+    }
 
     return $items;
 }
 
 /* Полнотекстовый поиск по items(name,description) */
 
-function findItemsByFText($conn, $search, $page = 1, $limit = 6)
+function findItemsByFText($conn, $search, $limit = 0, $page = 1)
 {
     $offset = ($page - 1) * $limit;
+    $sql = "SELECT i.id";
 
-    if ($page !== 0) {
-        // Если $page > 1 выражение возвращает 6 строк, ищет по лимиту и оффсету
-        $sql = "SELECT i.id, i.name, img_url, ts_end, i.step, i.price, 
-            categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price FROM items i
-            JOIN categories ON i.category_id = categories.id 
-            LEFT JOIN bets ON i.id = bets.item_id 
-            WHERE MATCH (i.name, description) AGAINST ('$search' IN BOOLEAN MODE) 
-            GROUP BY i.id  
-            ORDER BY ts_add DESC 
-            LIMIT $limit 
-            OFFSET $offset 
-        ";
-    } else {
-        // Если $page = 0 возвращает, общее количество строк
-        $sql = "SELECT items.id FROM items
-            WHERE MATCH (items.name, description) AGAINST ('$search' IN BOOLEAN MODE) 
-        ";
+    if ($limit) {
+        $sql .= ", i.name, img_url, ts_end, i.step, i.price, categories.name AS category,"
+            . " COUNT(item_id) AS number_bets, MAX(bet_price) AS l_price";
+    }
+
+    $sql .= " FROM items i";
+
+    if ($limit) {
+        $sql .= " JOIN categories ON i.category_id = categories.id"
+            . " LEFT JOIN bets ON i.id = bets.item_id ";
+    }
+
+    $sql .= " WHERE MATCH (i.name, description) AGAINST ('$search' IN BOOLEAN MODE)";
+
+    if ($limit) {
+        $sql .= " GROUP BY i.id"
+            . " ORDER BY ts_add DESC "
+            . " LIMIT $limit"
+            . " OFFSET $offset";
     }
 
     $result = mysqli_query($conn, $sql);
+
     if (!$result) {
         print('Ошибка MySQL: ' . mysqli_error($conn));
     }
 
-    if(mysqli_num_rows($result) && !empty($page)) {
+    $items = [];
+
+    if (mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        $items = addPricesBets($items); // Добавление последняя цена, мин ставка
-        return $items; // если $page > 0 вернет 6 строк (лимит) или []
+        $items = !empty($limit) ? addPricesBets($items) : $items; // Добавление последняя цена, мин ставка
     }
 
-    return mysqli_num_rows($result); // При $page = 0 вернет общее количество строк или 0
+    return $items;
 }

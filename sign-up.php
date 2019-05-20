@@ -13,98 +13,85 @@ $params = [
 ];
 
 // Особые параметры полей формы, указываются и проверяются индвивидуально
-$specpars = [
-    'email' => ['maxlen' => '64'], 
-    'password' => ['maxlen' => '64', 'minlen' => '4'], 
-    'name' => ['maxlen' => '64'], 
-    'message' => ['maxlen' => '255']
+$options = [
+    'email' => ['max_length' => '64'], 
+    'password' => ['max_length' => '64', 'min_length' => '4'], 
+    'name' => ['max_length' => '64'], 
+    'message' => ['max_length' => '255']
 ];
 
 foreach ($params as $param => $errors) {
-    $formData[$param] = $_POST[$param] ?? '';
-    $formErrors[$param] = '';
+    $form_values[$param] = $_POST[$param] ?? '';
+    $form_errors[$param] = '';
 }
 
-/**********************************
- * Форма отправлена 
-*************************************/
+/* Форма отправлена - нажатие кнопки */
 
 if (isset($_POST['sign-up'])) { 
 
     foreach ($params as $param => $error) {
         // Проверка каждое поле на пусто 
-        if (empty($formData[$param])) {
-            $formErrors[$param] = $error;
-        }
-        // Максимальная длина строк
-        elseif (strlen($formData[$param]) > $specpars[$param]['maxlen'] ) {
-            $formErrors[$param] = 'Превышено число знаков:' . $specpars[$param]['maxlen'];
-        }
-        // Минимальное число знаков пароля
-        elseif ($param == 'password') {
-            if (strlen($formData[$param]) < 4) {
-                $formErrors[$param] = 'Пароль должен быть не менее ' . $specpars[$param]['minlen'] . ' знаков';
+        if (empty($form_values[$param])) {
+            $form_errors[$param] = $error;
+        } elseif (strlen($form_values[$param]) > $options[$param]['max_length'] ) {
+            // Максимальная длина строк
+            $form_errors[$param] = 'Превышено число знаков: ' . $options[$param]['max_length'];
+        } elseif ($param == 'password') {
+            // Минимальное число знаков пароля
+            if (strlen($form_values[$param]) < $options[$param]['min_length']) {
+                $form_errors[$param] = 'Пароль должен быть не менее ' . $options[$param]['min_length'] . ' знаков';
             }
         }
     }
 
     // Защита email от SQL-инъекции
-    $saveEmail = mysqli_real_escape_string($conn, $formData['email']);
+    $save_email = mysqli_real_escape_string($conn, $form_values['email']);
 
-    if(empty($formErrors['email'])) {
+    if(empty($form_errors['email'])) {
         // проверка валидность
-        if (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
-            $formErrors['email'] = 'Email должен быть корректным';
+        if (!filter_var($form_values['email'], FILTER_VALIDATE_EMAIL)) {
+            $form_errors['email'] = 'Email должен быть корректным';
         }
         // проверка на уникальность
-        elseif (!empty(checkUserByEmail($conn, $saveEmail))) {
-            $formErrors['email'] = 'email занят';
+        elseif (!empty(checkUserByEmail($conn, $save_email))) {
+            $form_errors['email'] = 'email занят';
         }
     }
 
     // Результат - Cчитаем колво ошибок после нажатия кнопки и проверок
-    $number_err = 0;
-    foreach ($formErrors as $error) {
-        if (!empty($error)) {
-            $number_err++;
-        }
+    $num_errors = 0;
+    foreach ($form_errors as $value) {
+        $num_errors = empty($value) ? $num_errors : ++$num_errors; 
     }
 }
 
-/******************************************
- * Переадресация 
-*****************************************/
+/* Переадресация */
 
-// После нажатия кнопки и колво ошибок 0 
-if (isset($_POST['sign-up']) && empty($number_err)) {
-
-    // Пароль обработать встроенной функцией password_hash 
-    $passwordHash = password_hash($formData['password'], PASSWORD_DEFAULT);
+// После нажатия кнопки и если колво ошибок 0 
+if (isset($_POST['sign-up']) && empty($num_errors)) {
+    $passwordHash = password_hash($form_values['password'], PASSWORD_DEFAULT); // Пароль, функция password_hash 
 
     // Параметры пользователя для инсерта
     $user = [
-        'email' => $formData['email'], 
+        'email' => $form_values['email'], 
         'password' => $passwordHash, 
-        'name' => $formData['name'], 
-        'contacts' => $formData['message'],
+        'name' => $form_values['name'], 
+        'contacts' => $form_values['message'],
         'avatar_url' => '/img/user.png' // ставим по умолчанию, не требуется по заданию
         // ts_created // автозаполнение
     ];
 
     // Защита от SQL-инъкция - экранирование
     foreach ($user as $key => $value) {
-        $saveValue = mysqli_real_escape_string($conn, $value);
-        $saveUser[$key] = $saveValue;
+        $save_value = mysqli_real_escape_string($conn, $value);
+        $save_user[$key] = $save_value;
     }
 
     // Запрос БД на добавление нового пользователя
-    if(insertNewUser($conn, $saveUser)) {
-        $last_id = mysqli_insert_id($conn);
-
+    if(insertNewUser($conn, $save_user)) {
         mysqli_close($conn); // закрыть подключение БД
-
-        // Перенаправление на страницу входа
-        header("Location: /login.php/?congratulation=true");
+        header("Location: /login.php/?congratulation=true"); // Перенаправление на страницу входа
+        exit();
     }
 }
 
@@ -114,8 +101,8 @@ $page_content = include_template(
     'sign-up.php', 
     [
     'categories' => $categories, 
-    'formData' => $formData,
-    'formErrors' => $formErrors  
+    'form_values' => $form_values,
+    'form_errors' => $form_errors  
     ]
 );
 

@@ -43,7 +43,7 @@ function getCategories($conn)
 function checkCategoryByID($conn, $category_id)
 {
     $sql = "SELECT * FROM categories
-        WHERE categories.id = $category_id
+        WHERE categories.id = '$category_id'
     ";
 
     $result = mysqli_query($conn, $sql);

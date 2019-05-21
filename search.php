@@ -9,10 +9,10 @@ if (isset($_GET['search'])) {
     $search = trim($_GET['search']);
     $save_search = mysqli_real_escape_string($conn, $search);
     $page = $_GET['page'] ?? 1;
-    $limit = $_GET['limit'] ?? 6; 
+    $limit = $_GET['limit'] ?? 9; 
     $num_items = count(findItemsByFText($conn, $save_search)); // вернет общий массив если не указывать 3й(лимит) и 4й(стр) параметры или []
     $num_pages = ceil($num_items / $limit);
-    $items = findItemsByFText($conn, $save_search, $limit, $page); // вернет массив 6 строк (лимит) или [] 
+    $items = findItemsByFText($conn, $save_search, $limit, $page); // вернет массив 9 строк (лимит) или [] 
 
     $page_content = include_template(
         'search.php', 

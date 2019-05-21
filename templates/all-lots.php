@@ -45,15 +45,58 @@
         <?php endif; ?>
       </section>
 
-        <?php if (!empty($items)) : ?>
-      <ul class="pagination-list">
-        <li class="pagination-item pagination-item-prev"><a>Назад</a></li>
-        <li class="pagination-item pagination-item-active"><a>1</a></li>
-        <li class="pagination-item"><a href="#">2</a></li>
-        <li class="pagination-item"><a href="#">3</a></li>
-        <li class="pagination-item"><a href="#">4</a></li>
-        <li class="pagination-item pagination-item-next"><a href="#">Вперед</a></li>
-      </ul>
+      <?php if ($num_pages >= 2) : ?>
+        <ul class="pagination-list">
+        
+            <?php 
+            $params = $_GET ?? [];
+            $link_back = !empty($params['page']) ? $params['page'] - 1 : 0;
+            
+            if ($link_back < 1) {
+                $row_get = '';
+            } else {
+                $params['page'] = $link_back;
+                $row_get = http_build_query($params); 
+            }           
+            ?>
+
+            <li class="pagination-item pagination-item-prev"><a <?= !empty($row_get) ? ' href="/search.php?' . $row_get : ' style="color: #789"'; ?>">Назад</a></li>
+            
+            <?php
+            $i=1;
+            $params = $_GET ?? [];
+            $current_link = $params['page'] ?? 1;
+            while ($i <= $num_pages) :
+                $class_active = '';
+
+                if ($current_link == $i) {
+                    $class_active = 'pagination-item-active';
+                }
+
+                $params['page'] = $i;
+                $row_get = http_build_query($params);
+            ?>
+
+            <li class="pagination-item <?= $class_active; ?>"><a href="/search.php?<?= $row_get; ?>"><?= $i; ?></a></li>
+
+            <?php
+                $i++;
+            endwhile;
+
+            $params = $_GET ?? [];
+            $link_next = !empty($params['page']) ? $params['page'] + 1 : 2;
+
+            if ($link_next > $num_pages) {
+                $row_get = '';
+            } else {
+                $params['page'] = $link_next;
+                $row_get = http_build_query($params); 
+            }   
+            ?>
+
+            <li class="pagination-item pagination-item-next"><a <?= !empty($row_get) ? ' href="/search.php?' . $row_get : ' style="color: #899"'; ?>">Вперед</a></li>
+
+        </ul>
         <?php endif; ?>
 
     </div>

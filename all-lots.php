@@ -8,7 +8,11 @@ require 'inc/general.php'; // Общие сценарии всех страни�
 
 if (isset($_GET['category_id'])) {
     $save_category_id = mysqli_real_escape_string($conn, $_GET['category_id']); // Защита от SQL-инъкция - экранирование
-    $items = getItemsByCategory($conn, $save_category_id);
+    $page = $_GET['page'] ?? 1;
+    $limit = $_GET['limit'] ?? 9; 
+    $num_items = count(getItemsByCategory($conn, $save_category_id)); // вернет общий массив если не указывать 3й(лимит) и 4й(стр) параметры или []
+    $num_pages = ceil($num_items / $limit);
+    $items = getItemsByCategory($conn, $save_category_id, $limit, $page); // вернет массив 9 строк (лимит) или [] 
     $check_category = checkCategoryByID($conn, $save_category_id); // Проверка существ. id, массив с категорией
 }
 
@@ -24,7 +28,8 @@ if (empty($items) && !empty($check_category)) {
         'all-lots.php', 
         [
         'categories' => $categories,
-        'category_name' => $category_name
+        'category_name' => $category_name,
+        'num_pages' => $num_pages
         ]
     );
 }
@@ -35,7 +40,8 @@ elseif (!empty($items)) {
         'all-lots.php', 
         [
         'categories' => $categories, 
-        'items' => $items
+        'items' => $items,
+        'num_pages' => $num_pages
         ]
     );
 }

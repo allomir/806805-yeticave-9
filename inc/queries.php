@@ -96,7 +96,7 @@ function insertNewItem($conn, $item)
             ts_end
             )
         VALUES
-            ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+            ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", 
         $item['category_id'],
         $item['user_id'],
         $item['name'],
@@ -162,13 +162,13 @@ function insertNewBet($conn, $bet)
 {
     $sql = sprintf(
         "INSERT INTO bets
-    (
-        item_id,
-        user_id,
-        bet_price
-    ) 
-    VALUES
-    ('%s', '%s', '%s')",
+            (
+            item_id,
+            user_id,
+            bet_price
+            ) 
+        VALUES
+            ('%s', '%s', '%s')",
         $bet['item_id'],
         $bet['user_id'],
         $bet['bet_price']
@@ -195,7 +195,7 @@ function getItems($conn)
     $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price FROM items
         JOIN categories ON items.category_id = categories.id
         LEFT JOIN bets ON items.id = bets.item_id
-        WHERE ts_end > CURRENT_TIMESTAMP -- показывать только активные
+        WHERE ts_end > NOW() -- показывать только активные
         GROUP BY items.id 
         ORDER BY ts_add DESC 
         LIMIT 9
@@ -306,34 +306,49 @@ function getBetsByUserID($conn, $user_id)
     return $bets;
 }
 
-
 /** 
  * #12 Все активные лоты в выбранной категории по id категории из таблицы items, категорию из categories, колво ставок и макс. цену из bets каждого лота
- * Примечание: аналогичен полнотекстовому поиску, кроме условия, должен содержать limit и page (не требуется по заданию).
+ * 
+ * Ограничения:
+ * Если $limit = 0 или не задан то возвращает общее число строк (по умолчанию)
+ * Если $limit = число то возвращает число строк по лимиту
+ * $page - определяет значение оффсета, должно быть больше или равно 1 (по умолчанию)
  * 
  * @param link   $conn соединение с БД
  * @param int    $category_id уникальный ключ (id) категории в виде числа
  * @return array $items двууровневый массив с полями из таблицы БД или []
  */
-function getItemsByCategory($conn, $category_id)
+function getItemsByCategory($conn, $category_id, $limit = 0, $page = 1)
 {
-    $sql = "SELECT items.*, categories.name AS category, COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price FROM items
-        JOIN categories ON items.category_id = categories.id
-        LEFT JOIN bets ON items.id = bets.item_id
-        WHERE categories.id = '$category_id' AND ts_end > CURRENT_TIMESTAMP -- показывать только активные
-        GROUP BY items.id 
-        ORDER BY ts_add DESC
-    ";
+    $offset = ($page - 1) * $limit;
+
+    $sql = "SELECT i.id";
+    if ($limit) {
+        $sql .= ", i.name, img_url, ts_end, i.step, i.price, categories.name AS category,"
+            . " COUNT(item_id) AS number_bets, MAX(bet_price) AS last_price";
+    }
+    $sql .= " FROM items i";
+    if ($limit) {
+        $sql .= " JOIN categories ON i.category_id = categories.id"
+            . " LEFT JOIN bets ON i.id = bets.item_id ";
+    }
+    $sql .= " WHERE i.category_id = '$category_id' AND ts_end > NOW()";
+    if ($limit) {
+        $sql .= " GROUP BY i.id"
+            . " ORDER BY ts_add DESC "
+            . " LIMIT $limit"
+            . " OFFSET $offset";
+    }
 
     $result = mysqli_query($conn, $sql);
     if (!$result) {
-        print("Ошибка MySQL: " . mysqli_error($conn));
+        print('Ошибка MySQL: ' . mysqli_error($conn));
     }
 
     $items = [];
     if (mysqli_num_rows($result)) {
         $items = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        $items = addPricesBets($items); // Добавление последняя цена, мин ставка
+        $items = !empty($limit) ? addPricesBets($items) : $items; // Добавление последняя цена, мин ставка
     }
 
     return $items;
@@ -344,7 +359,7 @@ function getItemsByCategory($conn, $category_id)
  * 
  * Ограничения:
  * Если $limit = 0 или не задан то возвращает общее число строк (по умолчанию)
- * Если $limit = число то возвращает число строк 
+ * Если $limit = число то возвращает число строк по лимиту
  * $page - определяет значение оффсета, должно быть больше или равно 1 (по умолчанию)
  * 
  * @param mysqli $conn соединение с БД
@@ -367,7 +382,7 @@ function findItemsByFText($conn, $search, $limit = 0, $page = 1)
         $sql .= " JOIN categories ON i.category_id = categories.id"
             . " LEFT JOIN bets ON i.id = bets.item_id ";
     }
-    $sql .= " WHERE MATCH (i.name, description) AGAINST ('$search' IN BOOLEAN MODE)";
+    $sql .= " WHERE MATCH (i.name, description) AGAINST ('$search' IN BOOLEAN MODE) AND ts_end > NOW()";
     if ($limit) {
         $sql .= " GROUP BY i.id"
             . " ORDER BY ts_add DESC "

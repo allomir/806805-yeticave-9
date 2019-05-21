@@ -316,6 +316,8 @@ function getBetsByUserID($conn, $user_id)
  * 
  * @param link   $conn соединение с БД
  * @param int    $category_id уникальный ключ (id) категории в виде числа
+ * @param int $limit макс колво показываемых лотов на одной странице
+ * @param int $page номер страницы, используется для определения offset
  * @return array $items двууровневый массив с полями из таблицы БД или []
  */
 function getItemsByCategory($conn, $category_id, $limit = 0, $page = 1)
